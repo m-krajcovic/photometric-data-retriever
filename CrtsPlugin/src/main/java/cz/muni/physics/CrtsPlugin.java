@@ -17,6 +17,7 @@ public class CrtsPlugin implements Plugin {
     public PluginDescription getPluginDescription() {
         return new PluginDescription(
                 "CRTS",
+                "",
                 ""
         );
     }
@@ -25,5 +26,15 @@ public class CrtsPlugin implements Plugin {
         List<PhotometricData> result = new ArrayList<>();
         result.add(new PhotometricData("1", "2.3", "0.02"));
         return result;
+    }
+
+    @Override
+    public List<PhotometricData> getDataByAlias(String alias) {
+        return null;
+    }
+
+    @Override
+    public List<PhotometricData> getDataByCoords() {
+        return null;
     }
 }

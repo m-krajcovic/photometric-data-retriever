@@ -11,4 +11,8 @@ public interface Plugin {
     PluginDescription getPluginDescription();
 
     List<PhotometricData> getDataByName(String name);
+
+    List<PhotometricData> getDataByAlias(String alias);
+
+    List<PhotometricData> getDataByCoords();
 }

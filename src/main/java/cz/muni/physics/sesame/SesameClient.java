@@ -8,6 +8,6 @@ import org.springframework.web.client.ResourceAccessException;
  * @since 24/03/16
  */
 public interface SesameClient {
-    SesameResult getAliases(String name) throws ResourceAccessException;
+    SesameResult getData(String name) throws ResourceAccessException;
     boolean isAvailable();
 }

@@ -51,7 +51,7 @@ public class SearchOverviewController {
             logger.debug("Handling search by name '" + searchTextField.getText() + "'.");
             List<String> names;
             try {
-                names = sesameClient.getAliases(searchTextField.getText()).getNames();
+                names = sesameClient.getData(searchTextField.getText()).getNames();
             } catch(ResourceAccessException exc){
                 FXMLUtil.INSTANCE.showAlert("Error!", "Something is wrong", "Seriously fucked up", Alert.AlertType.ERROR);
                 toggleElements(false);

@@ -17,12 +17,23 @@ public class NsvsPlugin implements Plugin {
     public PluginDescription getPluginDescription() {
         return new PluginDescription(
                 "NSVS",
-                "http://skydot.lanl.gov/nsvs/nsvs.php"
+                "http://skydot.lanl.gov/nsvs/nsvs.php",
+                ""
         );
     }
 
     @Override
     public List<PhotometricData> getDataByName(String name) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<PhotometricData> getDataByAlias(String alias) {
+        return null;
+    }
+
+    @Override
+    public List<PhotometricData> getDataByCoords() {
+        return null;
     }
 }

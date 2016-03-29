@@ -8,10 +8,20 @@ package cz.muni.physics.java;
 public class PluginDescription {
     private String name;
     private String URL;
+    private String aliasPattern;
 
-    public PluginDescription(String name, String URL) {
+    public PluginDescription(String name, String URL, String aliasPattern) {
         this.name = name;
         this.URL = URL;
+        this.aliasPattern = aliasPattern;
+    }
+
+    public String getAliasPattern() {
+        return aliasPattern;
+    }
+
+    public void setAliasPattern(String aliasPattern) {
+        this.aliasPattern = aliasPattern;
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 package cz.muni.physics.sesame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,16 +9,25 @@ import java.util.List;
  * @since 27/03/16
  */
 public class SesameResult {
-    private List<String> names;
-    private String J20000;
-    private String B19500;
+    private List<String> names = new ArrayList<>();
+    private String jpos;
+    private String jraddeg;
+    private String jdedeg;
 
-    public String getB19500() {
-        return B19500;
+    public String getJdedeg() {
+        return jdedeg;
     }
 
-    public void setB19500(String b19500) {
-        B19500 = b19500;
+    public void setJdedeg(String jdedeg) {
+        this.jdedeg = jdedeg;
+    }
+
+    public String getJraddeg() {
+        return jraddeg;
+    }
+
+    public void setJraddeg(String jraddeg) {
+        this.jraddeg = jraddeg;
     }
 
     public List<String> getNames() {
@@ -28,11 +38,11 @@ public class SesameResult {
         this.names = names;
     }
 
-    public String getJ20000() {
-        return J20000;
+    public String getJpos() {
+        return jpos;
     }
 
-    public void setJ20000(String j20000) {
-        J20000 = j20000;
+    public void setJpos(String jpos) {
+        this.jpos = jpos;
     }
 }

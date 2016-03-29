@@ -2,10 +2,18 @@ package cz.muni.physics.sesame;
 
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestOperations;
-import org.springframework.xml.xpath.XPathOperations;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
-import javax.xml.transform.Source;
-import java.util.stream.Collectors;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michal Krajčovič
@@ -15,24 +23,34 @@ import java.util.stream.Collectors;
 public class SesameClientImpl implements SesameClient {
     private final RestOperations restTemplate;
 
-    private final XPathOperations xpathTemplate;
 
-    public SesameClientImpl(RestOperations restTemplate, XPathOperations xpathTemplate) {
+    public SesameClientImpl(RestOperations restTemplate) {
         this.restTemplate = restTemplate;
-        this.xpathTemplate = xpathTemplate;
     }
 
-    public SesameResult getAliases(String name) throws ResourceAccessException{
+    public SesameResult getData(String name) throws ResourceAccessException{
         String sesameUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oIX/A?{name}";
-
-        Source aliases = restTemplate.getForObject(sesameUrl, Source.class, name);
-        System.out.println(restTemplate.getForObject(sesameUrl, String.class, name));
+        String response = restTemplate.getForObject(sesameUrl, String.class, name);
+        InputSource source = new InputSource(new StringReader(response));
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
         SesameResult result = new SesameResult();
-        result.setNames(xpathTemplate.evaluate("//alias | //oname", aliases, (node, i) -> {
-            return node.getTextContent();
-        }).stream().distinct().collect(Collectors.toList()));
-
-
+        try {
+            Document doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+            NodeList list= (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
+            List<String> names = new ArrayList<>(list.getLength());
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                names.add(node.getTextContent());
+            }
+            result.setNames(names);
+            result.setJpos(xpath.evaluate("//jpos[1]", doc));
+            result.setJdedeg(xpath.evaluate("//jradeg[1]", doc));
+            result.setJraddeg(xpath.evaluate("//jdedeg[1]", doc));
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result.getJpos());
         return result;
     }
 
