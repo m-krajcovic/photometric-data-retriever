@@ -383,3 +383,13 @@
 2016-03-29 20:04:16 DEBUG SpringFxmlLoader:23 - Loading resource: /view/SearchOverview.fxml
 2016-03-29 20:04:16 DEBUG SpringFxmlLoader:29 - Getting bean: cz.muni.physics.controller.SearchOverviewController
 2016-03-29 20:04:18 DEBUG SearchOverviewController:51 - Handling search by name 'RW Com'.
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:65 - Searching for available .jar plugins.
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:70 - Found 2 .jar plugins
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:29 - Loading plugin from CRTSPlugin.jar
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:40 - Loading class cz.muni.physics.CrtsPlugin
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:29 - Loading plugin from NSVSPlugin.jar
+2016-03-29 21:14:20 DEBUG JavaPluginLoader:40 - Loading class cz.muni.physics.NsvsPlugin
+2016-03-29 21:14:20 DEBUG SpringFxmlLoader:23 - Loading resource: /view/RootLayout.fxml
+2016-03-29 21:14:21 DEBUG SpringFxmlLoader:23 - Loading resource: /view/SearchOverview.fxml
+2016-03-29 21:14:21 DEBUG SpringFxmlLoader:29 - Getting bean: cz.muni.physics.controller.SearchOverviewController
+2016-03-29 21:14:23 DEBUG SearchOverviewController:51 - Handling search by name 'RW Com'.

@@ -39,9 +39,9 @@ public class PluginOverviewController{
         pluginURLColumn.setCellFactory(new HyperlinkCellFactory<>());
         pluginEnabledColumn.setCellFactory(new CheckBoxCellFactory<>());
 
-        pluginNameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-        pluginURLColumn.setCellValueFactory(cellData -> cellData.getValue().getURLProperty());
-        pluginEnabledColumn.setCellValueFactory(cellData -> cellData.getValue().getEnabledProperty());
+        pluginNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        pluginURLColumn.setCellValueFactory(cellData -> cellData.getValue().URLProperty());
+        pluginEnabledColumn.setCellValueFactory(cellData -> cellData.getValue().enabledProperty());
 
         pluginTableView.getItems().add(new Plugin("Super WASP1", "http://www.url.com", "main.jar", "java -jar", "/plugins", true));
         pluginTableView.getItems().add(new Plugin("Super WASP2", "http://www.url.com", "main.jar", "java -jar", "/plugins", false));
