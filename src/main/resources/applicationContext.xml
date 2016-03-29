@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="cz.muni.physics"/>
+
+    <bean id="searchOverviewController" class="cz.muni.physics.controller.SearchOverviewController"/>
+    <bean id="searchResultController" class="cz.muni.physics.controller.SearchResultController"/>
+    <bean id="pluginOverviewController" class="cz.muni.physics.controller.PluginOverviewController"/>
+
+    <bean id="sesameClient" class="cz.muni.physics.sesame.SesameClientImpl">
+        <constructor-arg index="0" ref="restTemplate"/>
+        <constructor-arg index="1" ref="xpathTemplate"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+
+    <bean id="xpathTemplate" class="org.springframework.xml.xpath.Jaxp13XPathTemplate"/>
+
+    <bean id="javaPluginLoader" class="cz.muni.physics.plugin.java.JavaPluginLoader"/>
+    <bean id="javaPluginManager" class="cz.muni.physics.plugin.java.JavaPluginManager">
+        <property name="pluginJars"
+                  value="#{javaPluginLoader.availablePluginJars}"/>
+    </bean>
+</beans>
