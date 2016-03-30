@@ -29,9 +29,13 @@ public class JavaPluginManager {
         return data;
     }
 
-    public void loadAllPlugins() {
+    public void loadPlugin(File file) throws JavaPluginLoaderException {
+        plugins.add(pluginLoader.load(file));
+    }
+
+    public void loadAllPlugins() throws JavaPluginLoaderException {
         for (File file : pluginJars) {
-            plugins.add(pluginLoader.load(file));
+            loadPlugin(file);
         }
     }
 

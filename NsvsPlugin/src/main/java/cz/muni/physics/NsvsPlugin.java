@@ -4,7 +4,7 @@ import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.java.Plugin;
 import cz.muni.physics.java.PluginDescription;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +24,9 @@ public class NsvsPlugin implements Plugin {
 
     @Override
     public List<PhotometricData> getDataByName(String name) {
-        return Collections.emptyList();
+        List<PhotometricData> result = new ArrayList<>();
+        result.add(new PhotometricData("2", "5.3", "1.02"));
+        return result;
     }
 
     @Override

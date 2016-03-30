@@ -1,5 +1,6 @@
 package cz.muni.physics;
 
+import cz.muni.physics.utils.PreloaderHandlerEvent;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -11,11 +12,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
- * Created by Michal on 20/03/16.
+ * @author Michal Krajčovič
+ * @version 1.0
+ * @since 20/03/16
  */
 public class MainPreloader extends Preloader {
 
     private Stage preloaderStage;
+    private Label infoLabel;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -26,7 +30,7 @@ public class MainPreloader extends Preloader {
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefWidth(240);
         loading.getChildren().add(progressBar);
-        Label infoLabel = new Label("Please wait...");
+        infoLabel = new Label("Please wait...");
         loading.getChildren().add(infoLabel);
         BorderPane root = new BorderPane(loading);
         Scene scene = new Scene(root);
@@ -41,6 +45,13 @@ public class MainPreloader extends Preloader {
     public void handleStateChangeNotification(StateChangeNotification stateChangeNotification) {
         if (stateChangeNotification.getType() == StateChangeNotification.Type.BEFORE_START) {
             preloaderStage.hide();
+        }
+    }
+
+    @Override
+    public void handleApplicationNotification(PreloaderNotification info) {
+        if(info instanceof PreloaderHandlerEvent){
+            infoLabel.setText(((PreloaderHandlerEvent) info).getMessage());
         }
     }
 }

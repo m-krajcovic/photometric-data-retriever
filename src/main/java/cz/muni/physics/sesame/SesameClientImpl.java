@@ -1,6 +1,5 @@
 package cz.muni.physics.sesame;
 
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestOperations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,28 +27,24 @@ public class SesameClientImpl implements SesameClient {
         this.restTemplate = restTemplate;
     }
 
-    public SesameResult getData(String name) throws ResourceAccessException{
+    public SesameResult getData(String name) throws XPathExpressionException {
         String sesameUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oIX/A?{name}";
         String response = restTemplate.getForObject(sesameUrl, String.class, name);
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
         SesameResult result = new SesameResult();
-        try {
-            Document doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-            NodeList list= (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
-            List<String> names = new ArrayList<>(list.getLength());
-            for (int i = 0; i < list.getLength(); i++) {
-                Node node = list.item(i);
-                names.add(node.getTextContent());
-            }
-            result.setNames(names);
-            result.setJpos(xpath.evaluate("//jpos[1]", doc));
-            result.setJdedeg(xpath.evaluate("//jradeg[1]", doc));
-            result.setJraddeg(xpath.evaluate("//jdedeg[1]", doc));
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
+        Document doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+        NodeList list= (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
+        List<String> names = new ArrayList<>(list.getLength());
+        for (int i = 0; i < list.getLength(); i++) {
+            Node node = list.item(i);
+            names.add(node.getTextContent());
         }
+        result.setNames(names);
+        result.setJpos(xpath.evaluate("//jpos[1]", doc));
+        result.setJdedeg(xpath.evaluate("//jradeg[1]", doc));
+        result.setJraddeg(xpath.evaluate("//jdedeg[1]", doc));
         System.out.println(result.getJpos());
         return result;
     }

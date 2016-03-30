@@ -9,12 +9,12 @@ import javafx.scene.control.Hyperlink;
  * @since 29/03/16
  */
 public class Plugin {
-    StringProperty name;
-    ObjectProperty<Hyperlink> URL;
-    StringProperty mainFile;
-    StringProperty command;
-    StringProperty path;
-    BooleanProperty enabled;
+    private StringProperty name;
+    private ObjectProperty<Hyperlink> URL;
+    private StringProperty mainFile;
+    private StringProperty command;
+    private StringProperty path;
+    private BooleanProperty enabled;
 
     public Plugin(String name, String URL, String mainFile, String command, String path, boolean enabled) {
         this.name = new SimpleStringProperty(name);

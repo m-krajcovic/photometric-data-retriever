@@ -1,9 +1,9 @@
 package cz.muni.physics;
 
+import com.sun.javafx.application.LauncherImpl;
+import cz.muni.physics.plugin.java.JavaPluginLoaderException;
 import cz.muni.physics.plugin.java.JavaPluginManager;
-import cz.muni.physics.utils.ApplicationContextHolder;
-import cz.muni.physics.utils.PropUtils;
-import cz.muni.physics.utils.SpringFxmlLoader;
+import cz.muni.physics.utils.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michal Krajčovič
@@ -27,8 +29,11 @@ public class MainApp extends Application {
 
     private static JavaPluginManager javaPluginManager;
 
+    private List<Exception> initExceptions = new ArrayList<>();
+
     private Stage primaryStage;
     private BorderPane rootLayout;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,6 +45,10 @@ public class MainApp extends Application {
         initRootLayout();
 
         showSearch();
+
+        showInitExceptions();
+
+
 //        showPlugins();
     }
 
@@ -60,18 +69,33 @@ public class MainApp extends Application {
         primaryStage.show();
     }
 
+    private void showInitExceptions() {
+        for (Exception initException : initExceptions) {
+            FXMLUtil.showExceptionAlert("What a mess!", "Something went wrong during initialization.", initException.getMessage(), initException);
+        }
+    }
+
     @Override
-    public void init() throws Exception {
+    public void init() throws InterruptedException {
+        logger.debug("Initializing application.");
         File dir = new File(PropUtils.get("plugin.dir.path"));
-        if(!dir.exists()){
+        notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
+        if (!dir.exists()) {
             logger.debug("Plugin folder not found, creating new one.");
             dir.mkdir();
         }
+        notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
         javaPluginManager = ApplicationContextHolder.getBean(JavaPluginManager.class);
-        javaPluginManager.loadAllPlugins();
+        for (File file : javaPluginManager.getPluginJars()) {
+            try {
+                javaPluginManager.loadPlugin(file);
+            } catch (JavaPluginLoaderException e) {
+                initExceptions.add(e);
+            }
+        }
     }
 
     public static void main(String[] args) {
-        launch(args);
+        LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
     }
 }

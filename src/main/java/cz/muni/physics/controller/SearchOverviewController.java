@@ -3,12 +3,15 @@ package cz.muni.physics.controller;
 import cz.muni.physics.plugin.java.JavaPluginManager;
 import cz.muni.physics.sesame.SesameClientImpl;
 import cz.muni.physics.utils.FXMLUtil;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -49,26 +52,29 @@ public class SearchOverviewController {
             FXMLUtil.showTooltip("Text field is empty", primaryStage, searchTextField);
         } else {
             logger.debug("Handling search by name '" + searchTextField.getText() + "'.");
-            List<String> names;
-            try {
-                names = sesameClient.getData(searchTextField.getText()).getNames();
-            } catch(ResourceAccessException exc){
-                FXMLUtil.showAlert("Error!", "Something is wrong", "Seriously fucked up", Alert.AlertType.ERROR);
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                protected List<String> call() throws Exception {
+                    return sesameClient.getData(searchTextField.getText()).getNames();
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                List<String> names = task.getValue();
+                if (names.size() == 0) {
+                    FXMLUtil.showTooltip("No results found", primaryStage, searchTextField);
+                } else {
+                    javaPluginManager.startPlugins(names).forEach(d -> System.out.println(d.getJulianDate() + ", " + d.getMagnitude()));
+                }
                 toggleElements(false);
-                return;
-            }
-            if (names.size() == 0) {
-                FXMLUtil.showTooltip("No results found", primaryStage, searchTextField);
-            } else {
-                javaPluginManager.startPlugins(names).forEach(d -> System.out.println(d.getJulianDate() + ", " + d.getMagnitude()));
-//                SpringFxmlLoader loader = new SpringFxmlLoader();
-//                AnchorPane pane = (AnchorPane) loader.load("/view/SearchResult.fxml");
-//                SearchResultController controller = loader.getLastLoader().getController();
-//                controller.setAliases(FXCollections.observableArrayList(names));
-//                FXMLUtil.INSTANCE.createDialogStage("Search Result", pane, primaryStage);
-            }
+            });
+
+            task.setOnFailed(e -> {
+                toggleElements(false);
+            });
+
+            new Thread(task).start();
         }
-        toggleElements(false);
     }
 
     private void toggleElements(boolean disabled) {

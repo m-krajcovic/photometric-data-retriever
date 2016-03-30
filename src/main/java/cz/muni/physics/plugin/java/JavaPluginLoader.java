@@ -2,7 +2,6 @@ package cz.muni.physics.plugin.java;
 
 import cz.muni.physics.java.Plugin;
 import cz.muni.physics.plugin.PluginLoader;
-import cz.muni.physics.utils.FXMLUtil;
 import cz.muni.physics.utils.PropUtils;
 import org.apache.log4j.Logger;
 
@@ -23,41 +22,45 @@ public class JavaPluginLoader implements PluginLoader {
 
     private final static Logger logger = Logger.getLogger(JavaPluginLoader.class);
 
-    //Class loader -> v manifeste od jaru bude prilozena trieda pluginu :)
-    public Plugin load(File file) {
+    public Plugin load(File file) throws JavaPluginLoaderException {
         logger.debug("Loading plugin from " + file.getName());
+        URLClassLoader loader;
         try {
-            URLClassLoader loader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()});
-            URL manifestUrl = loader.findResource("META-INF/MANIFEST.MF");
-            Manifest manifest = new Manifest(manifestUrl.openStream());
-            Attributes attributes = manifest.getMainAttributes();
-            String pluginClass = attributes.getValue("Plugin-Class");
-            if(pluginClass == null || pluginClass.isEmpty()){
-                logger.error("Manifest doesn't contain Plugin-Class attribute");
-                return null;
-            }
-            logger.debug("Loading class " + pluginClass);
-            Object obj = loader.loadClass(pluginClass).newInstance();
-            if (obj instanceof Plugin) {
-                return (Plugin) obj;
-            } else {
-                logger.error("Class " + pluginClass + " does not implement " + Plugin.class.getCanonicalName());
-            }
-        } catch (InstantiationException e) {
-            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
-        } catch (IllegalAccessException e) {
-            logger.error("Access to read plugin " + file.getName() + " file denied.");
-            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
-        } catch (ClassNotFoundException e) {
-            logger.error("Class specified in Plugin-Class attribute was not found inside .jar file");
-            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
+            loader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()});
         } catch (MalformedURLException e) {
-            logger.error("Provided plugin file name " + file.getName() + " is malformed");
-            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
-        } catch (IOException e) {
-            logger.error("Something is wrong", e);
+            throw new JavaPluginLoaderException("Provided plugin file URL " + file.getName() + " is malformed", e);
         }
-        return null;
+
+        URL manifestUrl = loader.findResource("META-INF/MANIFEST.MF");
+        Manifest manifest;
+        try {
+            manifest = new Manifest(manifestUrl.openStream());
+        } catch (IOException e) {
+            throw new JavaPluginLoaderException("Can't read manifest file from " + file.getName(), e);
+        }
+
+        Attributes attributes = manifest.getMainAttributes();
+        String pluginClass = attributes.getValue("Plugin-Class");
+        if (pluginClass == null || pluginClass.isEmpty()) {
+            throw new JavaPluginLoaderException("Manifest from " + file.getName() + " doesn't contain Plugin-Class attribute");
+        }
+
+        Object obj;
+        try {
+            logger.debug("Loading class " + pluginClass);
+            obj = loader.loadClass(pluginClass).newInstance();
+        } catch (InstantiationException e) {
+            throw new JavaPluginLoaderException("Could not create a new instance of plugin class " + pluginClass, e);
+        } catch (IllegalAccessException e) {
+            throw new JavaPluginLoaderException("Access to load class " + pluginClass + " denied.", e);
+        } catch (ClassNotFoundException e) {
+            throw new JavaPluginLoaderException("Class " + pluginClass + " specified in Plugin-Class attribute was not found inside " + file.getName(), e);
+        }
+        if (obj instanceof Plugin) {
+            return (Plugin) obj;
+        } else {
+            throw new JavaPluginLoaderException("Class " + pluginClass + " does not implement " + Plugin.class.getCanonicalName());
+        }
     }
 
     public File[] getAvailablePluginJars() {

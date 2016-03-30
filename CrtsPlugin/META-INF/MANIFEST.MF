@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Plugin-Class: cz.muni.physics.CrtsPlugin
+Plugin-Class: cz.muni.physics.asd
