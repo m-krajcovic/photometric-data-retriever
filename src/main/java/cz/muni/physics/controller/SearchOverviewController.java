@@ -46,19 +46,19 @@ public class SearchOverviewController {
         Stage primaryStage = (Stage) searchButton.getScene().getWindow();
         if (searchTextField.getText().isEmpty()) {
             logger.debug("Text field is empty");
-            FXMLUtil.INSTANCE.showTooltip("Text field is empty", primaryStage, searchTextField);
+            FXMLUtil.showTooltip("Text field is empty", primaryStage, searchTextField);
         } else {
             logger.debug("Handling search by name '" + searchTextField.getText() + "'.");
             List<String> names;
             try {
                 names = sesameClient.getData(searchTextField.getText()).getNames();
             } catch(ResourceAccessException exc){
-                FXMLUtil.INSTANCE.showAlert("Error!", "Something is wrong", "Seriously fucked up", Alert.AlertType.ERROR);
+                FXMLUtil.showAlert("Error!", "Something is wrong", "Seriously fucked up", Alert.AlertType.ERROR);
                 toggleElements(false);
                 return;
             }
             if (names.size() == 0) {
-                FXMLUtil.INSTANCE.showTooltip("No results found", primaryStage, searchTextField);
+                FXMLUtil.showTooltip("No results found", primaryStage, searchTextField);
             } else {
                 javaPluginManager.startPlugins(names).forEach(d -> System.out.println(d.getJulianDate() + ", " + d.getMagnitude()));
 //                SpringFxmlLoader loader = new SpringFxmlLoader();

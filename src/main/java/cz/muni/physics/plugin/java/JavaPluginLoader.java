@@ -5,7 +5,6 @@ import cz.muni.physics.plugin.PluginLoader;
 import cz.muni.physics.utils.FXMLUtil;
 import cz.muni.physics.utils.PropUtils;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class JavaPluginLoader implements PluginLoader {
     private final static Logger logger = Logger.getLogger(JavaPluginLoader.class);
 
     //Class loader -> v manifeste od jaru bude prilozena trieda pluginu :)
-    public Plugin load(@NotNull File file) {
+    public Plugin load(File file) {
         logger.debug("Loading plugin from " + file.getName());
         try {
             URLClassLoader loader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()});
@@ -45,16 +44,16 @@ public class JavaPluginLoader implements PluginLoader {
                 logger.error("Class " + pluginClass + " does not implement " + Plugin.class.getCanonicalName());
             }
         } catch (InstantiationException e) {
-            FXMLUtil.INSTANCE.showExceptionAlert();
+            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
         } catch (IllegalAccessException e) {
             logger.error("Access to read plugin " + file.getName() + " file denied.");
-            FXMLUtil.INSTANCE.showExceptionAlert();
+            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
         } catch (ClassNotFoundException e) {
             logger.error("Class specified in Plugin-Class attribute was not found inside .jar file");
-            FXMLUtil.INSTANCE.showExceptionAlert();
+            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
         } catch (MalformedURLException e) {
             logger.error("Provided plugin file name " + file.getName() + " is malformed");
-            FXMLUtil.INSTANCE.showExceptionAlert();
+            FXMLUtil.showExceptionAlert("Oh no", "Oh no", "Oh no", e);
         } catch (IOException e) {
             logger.error("Something is wrong", e);
         }
