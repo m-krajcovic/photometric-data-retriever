@@ -10,9 +10,5 @@ import java.util.List;
 public interface Plugin {
     PluginDescription getPluginDescription();
 
-    List<PhotometricData> getDataByName(String name);
-
-    List<PhotometricData> getDataByAlias(String alias);
-
-    List<PhotometricData> getDataByCoords();
+    List<PhotometricData> getDataFromUrl(String url);
 }

@@ -1,7 +1,12 @@
-package cz.muni.physics.plugin;
+package cz.muni.physics.model;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Hyperlink;
+
+import java.text.MessageFormat;
 
 /**
  * @author Michal Krajčovič
@@ -14,15 +19,17 @@ public class Plugin {
     private StringProperty mainFile;
     private StringProperty command;
     private StringProperty path;
-    private BooleanProperty enabled;
 
-    public Plugin(String name, String URL, String mainFile, String command, String path, boolean enabled) {
+    public Plugin(String name, String URL, String mainFile, String command, String path) {
         this.name = new SimpleStringProperty(name);
         this.URL = new SimpleObjectProperty<Hyperlink>(new Hyperlink(URL));
         this.mainFile = new SimpleStringProperty(mainFile);
         this.command = new SimpleStringProperty(command);
         this.path = new SimpleStringProperty(path);
-        this.enabled = new SimpleBooleanProperty(enabled);
+    }
+
+    public String getFullCommand(String url){
+        return MessageFormat.format(getCommand(), getPath() + getMainFile(), url);
     }
 
     public String getName() {
@@ -85,15 +92,33 @@ public class Plugin {
         this.path.set(path);
     }
 
-    public boolean getEnabled() {
-        return enabled.get();
+    @Override
+    public String toString() {
+        return name.get();
     }
 
-    public BooleanProperty enabledProperty() {
-        return enabled;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Plugin plugin = (Plugin) o;
+
+        if (name != null ? !name.equals(plugin.name) : plugin.name != null) return false;
+        if (URL != null ? !URL.equals(plugin.URL) : plugin.URL != null) return false;
+        if (mainFile != null ? !mainFile.equals(plugin.mainFile) : plugin.mainFile != null) return false;
+        if (command != null ? !command.equals(plugin.command) : plugin.command != null) return false;
+        return path != null ? path.equals(plugin.path) : plugin.path == null;
+
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled.set(enabled);
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (URL != null ? URL.hashCode() : 0);
+        result = 31 * result + (mainFile != null ? mainFile.hashCode() : 0);
+        result = 31 * result + (command != null ? command.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
     }
 }

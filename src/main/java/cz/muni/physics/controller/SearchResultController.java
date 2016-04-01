@@ -1,5 +1,6 @@
 package cz.muni.physics.controller;
 
+import cz.muni.physics.MainApp;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,8 @@ import javafx.scene.control.TableView;
  * @since 24/03/16
  */
 public class SearchResultController{
+
+    private MainApp mainApp;
 
     @FXML
     private TableView aliasTableView;
@@ -34,5 +37,10 @@ public class SearchResultController{
     public void setAliases(ObservableList<String> aliases) {
         this.aliases.clear();
         this.aliases.addAll(aliases);
+    }
+
+
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
     }
 }

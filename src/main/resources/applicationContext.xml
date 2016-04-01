@@ -9,6 +9,10 @@
     <bean id="searchOverviewController" class="cz.muni.physics.controller.SearchOverviewController"/>
     <bean id="searchResultController" class="cz.muni.physics.controller.SearchResultController"/>
     <bean id="pluginOverviewController" class="cz.muni.physics.controller.PluginOverviewController"/>
+    <bean id="databaseOverviewController" class="cz.muni.physics.controller.DatabaseOverviewController"/>
+    <bean id="rootLayoutController" class="cz.muni.physics.controller.RootLayoutController"/>
+    <bean id="photometricDataOverviewController" class="cz.muni.physics.controller.PhotometricDataOverviewController"/>
+    <bean id="databaseEditDialogController" class="cz.muni.physics.controller.DatabaseEditDialogController"/>
 
     <bean id="sesameClient" class="cz.muni.physics.sesame.SesameClientImpl">
         <constructor-arg index="0" ref="restTemplate"/>

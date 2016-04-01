@@ -14,8 +14,11 @@ import java.net.URL;
 public class SpringFxmlLoader {
 
     private final static Logger logger = Logger.getLogger(SpringFxmlLoader.class);
+    private final static SpringFxmlLoader instance = new SpringFxmlLoader();
 
 //    private static final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+    private SpringFxmlLoader(){}
 
     private FXMLLoader lastLoader;
 
@@ -35,6 +38,9 @@ public class SpringFxmlLoader {
         }
     }
 
+    public static SpringFxmlLoader getInstance() {
+        return instance;
+    }
 
     public FXMLLoader getLastLoader() {
         return lastLoader;

@@ -1,10 +1,9 @@
-package cz.muni.physics;
+package cz.muni.physics.crts;
 
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.java.Plugin;
 import cz.muni.physics.java.PluginDescription;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,19 +21,8 @@ public class CrtsPlugin implements Plugin {
         );
     }
 
-    public List<PhotometricData> getDataByName(String name) {
-        List<PhotometricData> result = new ArrayList<>();
-        result.add(new PhotometricData("1", "2.3", "0.02"));
-        return result;
-    }
-
     @Override
-    public List<PhotometricData> getDataByAlias(String alias) {
-        return null;
-    }
-
-    @Override
-    public List<PhotometricData> getDataByCoords() {
+    public List<PhotometricData> getDataFromUrl(String url) {
         return null;
     }
 }

@@ -1,6 +1,6 @@
 package cz.muni.physics;
 
-import cz.muni.physics.utils.PreloaderHandlerEvent;
+import cz.muni.physics.javafx.PreloaderHandlerEvent;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;

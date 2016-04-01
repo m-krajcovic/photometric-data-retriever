@@ -1,6 +1,5 @@
 package cz.muni.physics.plugin.java;
 
-import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.java.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,26 +16,16 @@ public class JavaPluginManager {
 
     @Autowired
     private JavaPluginLoader pluginLoader;
+
     private File[] pluginJars;
     private List<Plugin> plugins = new ArrayList<>();
-
-    public List<PhotometricData> startPlugins(List<String> starNames){
-        List<PhotometricData> data = new ArrayList<>();
-        for(Plugin plugin : plugins){
-            data.addAll(plugin.getDataByName(starNames.get(0)));
-        }
-
-        return data;
-    }
 
     public void loadPlugin(File file) throws JavaPluginLoaderException {
         plugins.add(pluginLoader.load(file));
     }
 
-    public void loadAllPlugins() throws JavaPluginLoaderException {
-        for (File file : pluginJars) {
-            loadPlugin(file);
-        }
+    public List<Plugin> getPlugins() {
+        return plugins;
     }
 
     public File[] getPluginJars() {

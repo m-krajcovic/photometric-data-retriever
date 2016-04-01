@@ -1,4 +1,4 @@
-package cz.muni.physics.utils;
+package cz.muni.physics.javafx;
 
 import javafx.application.Preloader;
 

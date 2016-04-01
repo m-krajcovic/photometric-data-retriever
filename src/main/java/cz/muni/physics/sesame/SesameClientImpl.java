@@ -45,7 +45,6 @@ public class SesameClientImpl implements SesameClient {
         result.setJpos(xpath.evaluate("//jpos[1]", doc));
         result.setJdedeg(xpath.evaluate("//jradeg[1]", doc));
         result.setJraddeg(xpath.evaluate("//jdedeg[1]", doc));
-        System.out.println(result.getJpos());
         return result;
     }
 
