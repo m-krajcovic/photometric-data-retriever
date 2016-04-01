@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="NsvsPlugin:jar">
+    <output-path>$PROJECT_DIR$/plugins/NSVS</output-path>
+    <root id="archive" name="NsvsPlugin.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/NsvsPlugin/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="NsvsPlugin" />
+      <element id="module-output" name="JavaPlugin" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

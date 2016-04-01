@@ -2,11 +2,9 @@ package cz.muni.physics.controller;
 
 import cz.muni.physics.MainApp;
 import cz.muni.physics.javafx.CheckBoxCellFactory;
-import cz.muni.physics.javafx.HyperlinkCellFactory;
 import cz.muni.physics.model.Plugin;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -30,8 +28,6 @@ public class PluginOverviewController {
     @FXML
     private TableColumn<Plugin, String> pluginNameColumn;
     @FXML
-    private TableColumn<Plugin, Hyperlink> pluginURLColumn;
-    @FXML
     private TableColumn<Plugin, Boolean> pluginEnabledColumn;
     @FXML
     private Button randomButton;
@@ -46,14 +42,12 @@ public class PluginOverviewController {
 
     @FXML
     private void initialize() {
-        pluginURLColumn.setCellFactory(new HyperlinkCellFactory<>());
         pluginEnabledColumn.setCellFactory(new CheckBoxCellFactory<>());
 
         pluginNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        pluginURLColumn.setCellValueFactory(cellData -> cellData.getValue().URLProperty());
 
-        pluginTableView.getItems().add(new Plugin("CRTS", "http://www.url.com", "CrtsPlugin.jar", "java -jar {0}", "plugins/"));
-        pluginTableView.getItems().add(new Plugin("NSVS", "http://www.url.com", "NsvsPlugin.jar", "java -cp {0} cz.muni.physics.NsvsPlugin", "plugins/"));
+        pluginTableView.getItems().add(new Plugin("CRTS", "CrtsPlugin.jar", "java -jar {0}", "plugins/"));
+        pluginTableView.getItems().add(new Plugin("NSVS", "NsvsPlugin.jar", "java -cp {0} cz.muni.physics.NsvsPlugin", "plugins/"));
 
         try {
             for (Plugin p : pluginTableView.getItems()) {

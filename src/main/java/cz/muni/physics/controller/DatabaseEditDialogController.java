@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * @author Michal Krajčovič
@@ -35,7 +36,17 @@ public class DatabaseEditDialogController {
 
     @FXML
     private void initialize(){
+        pluginChoiceBox.setConverter(new StringConverter<Plugin>() {
+            @Override
+            public String toString(Plugin object) {
+                return object.getName();
+            }
 
+            @Override
+            public Plugin fromString(String string) {
+                return null;
+            }
+        });
     }
 
     @FXML

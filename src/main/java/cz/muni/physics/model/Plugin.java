@@ -1,10 +1,7 @@
 package cz.muni.physics.model;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.control.Hyperlink;
 
 import java.text.MessageFormat;
 
@@ -15,14 +12,12 @@ import java.text.MessageFormat;
  */
 public class Plugin {
     private StringProperty name;
-    private ObjectProperty<Hyperlink> URL;
     private StringProperty mainFile;
     private StringProperty command;
     private StringProperty path;
 
-    public Plugin(String name, String URL, String mainFile, String command, String path) {
+    public Plugin(String name, String mainFile, String command, String path) {
         this.name = new SimpleStringProperty(name);
-        this.URL = new SimpleObjectProperty<Hyperlink>(new Hyperlink(URL));
         this.mainFile = new SimpleStringProperty(mainFile);
         this.command = new SimpleStringProperty(command);
         this.path = new SimpleStringProperty(path);
@@ -42,18 +37,6 @@ public class Plugin {
 
     public void setName(String name) {
         this.name.set(name);
-    }
-
-    public Hyperlink getURL() {
-        return URL.get();
-    }
-
-    public ObjectProperty<Hyperlink> URLProperty() {
-        return URL;
-    }
-
-    public void setURL(Hyperlink URL) {
-        this.URL.set(URL);
     }
 
     public String getMainFile() {
@@ -94,7 +77,12 @@ public class Plugin {
 
     @Override
     public String toString() {
-        return name.get();
+        return "Plugin{" +
+                "name=" + name +
+                ", mainFile=" + mainFile +
+                ", command=" + command +
+                ", path=" + path +
+                '}';
     }
 
     @Override
@@ -105,7 +93,6 @@ public class Plugin {
         Plugin plugin = (Plugin) o;
 
         if (name != null ? !name.equals(plugin.name) : plugin.name != null) return false;
-        if (URL != null ? !URL.equals(plugin.URL) : plugin.URL != null) return false;
         if (mainFile != null ? !mainFile.equals(plugin.mainFile) : plugin.mainFile != null) return false;
         if (command != null ? !command.equals(plugin.command) : plugin.command != null) return false;
         return path != null ? path.equals(plugin.path) : plugin.path == null;
@@ -115,7 +102,6 @@ public class Plugin {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (URL != null ? URL.hashCode() : 0);
         result = 31 * result + (mainFile != null ? mainFile.hashCode() : 0);
         result = 31 * result + (command != null ? command.hashCode() : 0);
         result = 31 * result + (path != null ? path.hashCode() : 0);

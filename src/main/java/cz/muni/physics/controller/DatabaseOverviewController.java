@@ -35,28 +35,6 @@ public class DatabaseOverviewController {
     @FXML
     private Button button;
 
-    private void handleButton() {
-//        DatabaseRecord selected = dbTableView.getSelectionModel().getSelectedItem();
-//        try {
-//            String objId = textField.getText().isEmpty() ? "7622769" : textField.getText();
-//            String url = MessageFormat.format(selected.getURL(), objId);
-//            Process process = Runtime.getRuntime().exec(selected.getPlugin().getFullCommand(url));
-//            InputStream is = process.getInputStream();
-//            InputStreamReader isr = new InputStreamReader(is);
-//            BufferedReader buff = new BufferedReader(isr);
-//
-//            String line;
-//            while ((line = buff.readLine()) != null){
-//                String[] split = line.split(",");
-//                PhotometricData data = new PhotometricData(split[0], split[1], split[2]);
-//                System.out.println(data);
-//            }
-//        } catch (IOException e) {
-//            System.out.println("fuck this shit");
-//            e.printStackTrace();
-//        }
-    }
-
     @FXML
     private void handleNewButton() {
         DatabaseRecord tempDb = new DatabaseRecord("", "", null, "");
@@ -72,7 +50,7 @@ public class DatabaseOverviewController {
         if (selectedRecord != null) {
             boolean okClicked = mainApp.showDatabaseEditDialog(selectedRecord);
             if (okClicked) {
-                //showPersonDetails(selectedRecord);
+                dbTableView.refresh();
             }
         } else {
             // Nothing selected.

@@ -6,8 +6,8 @@ import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.javafx.PreloaderHandlerEvent;
 import cz.muni.physics.model.DatabaseRecord;
 import cz.muni.physics.model.Plugin;
-import cz.muni.physics.plugin.java.JavaPluginLoaderException;
-import cz.muni.physics.plugin.java.JavaPluginManager;
+import cz.muni.physics.plugin.PluginManager;
+import cz.muni.physics.plugin.PluginManagerException;
 import cz.muni.physics.utils.ApplicationContextHolder;
 import cz.muni.physics.utils.FXMLUtil;
 import cz.muni.physics.utils.PropUtils;
@@ -37,7 +37,6 @@ public class MainApp extends Application {
     private final static Logger logger = Logger.getLogger(MainApp.class);
 
     private List<Exception> initExceptions = new ArrayList<>();
-
     private ObservableList<DatabaseRecord> dbRecords = FXCollections.observableArrayList();
     private ObservableList<Plugin> plugins = FXCollections.observableArrayList();
 
@@ -141,16 +140,17 @@ public class MainApp extends Application {
             dir.mkdir();
         }
         notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
-        JavaPluginManager javaPluginManager = ApplicationContextHolder.getBean(JavaPluginManager.class);
-        for (File file : javaPluginManager.getPluginJars()) {
-            try {
-                javaPluginManager.loadPlugin(file);
-            } catch (JavaPluginLoaderException e) {
-                initExceptions.add(e);
-            }
+
+        PluginManager pluginManager = ApplicationContextHolder.getBean(PluginManager.class);
+
+        try {
+            plugins.addAll(pluginManager.getAvailablePlugins());
+        } catch (PluginManagerException e) {
+            initExceptions.add(e);
         }
-        Plugin nsvsPlugin = new Plugin("NSVS", "http://www.url.com", "NsvsPlugin.jar", "java -jar {0} {1}", "plugins/");
-        plugins.add(nsvsPlugin);
+
+        Plugin nsvsPlugin = plugins.stream().filter(p -> p.getName().equals("NSVS")).findFirst().get();
+
         dbRecords.add(new DatabaseRecord("NSVS", "http://skydot.lanl.gov/nsvs/star.php?num={0}&mask=32004", nsvsPlugin, "NSVS\\s(\\d*)"));
 
     }

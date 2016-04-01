@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: lib/jsoup-1.8.3.jar
-Plugin-Class: cz.muni.physics.nsvs.NsvsPlugin
-Main-Class: cz.muni.physics.nsvs.Main
-

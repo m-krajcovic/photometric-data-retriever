@@ -21,6 +21,8 @@
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 
 
+    <bean id="pluginManager" class="cz.muni.physics.plugin.PluginManagerImpl"/>
+
     <bean id="javaPluginLoader" class="cz.muni.physics.plugin.java.JavaPluginLoader"/>
     <bean id="javaPluginManager" class="cz.muni.physics.plugin.java.JavaPluginManager">
         <property name="pluginJars"
