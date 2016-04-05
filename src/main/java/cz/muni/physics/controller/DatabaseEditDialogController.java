@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Michal Krajčovič
@@ -63,8 +64,9 @@ public class DatabaseEditDialogController {
     }
 
     private boolean isInputValid() {
-        // TODO verify this shit lol.
-        return true;
+        return !nameTextField.getText().isEmpty() && StringUtils.isAlphanumericSpace(nameTextField.getText())
+                && !urlTextArea.getText().isEmpty() && StringUtils.isAlphanumeric(urlTextArea.getText())
+                && pluginChoiceBox.getValue() != null;
     }
 
     @FXML

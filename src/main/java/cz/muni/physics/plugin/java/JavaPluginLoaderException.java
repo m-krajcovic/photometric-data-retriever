@@ -1,6 +1,8 @@
 package cz.muni.physics.plugin.java;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Michal Krajčovič
@@ -9,7 +11,7 @@ import org.apache.log4j.Logger;
  */
 public class JavaPluginLoaderException extends Exception {
 
-    private final static Logger logger = Logger.getLogger(JavaPluginLoader.class);
+    private final static Logger logger = LogManager.getLogger(JavaPluginLoader.class);
 
     public JavaPluginLoaderException(String message, Throwable cause) {
         super(message, cause);

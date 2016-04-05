@@ -1,5 +1,6 @@
 package cz.muni.physics.sesame;
 
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestOperations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -10,7 +11,11 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +32,9 @@ public class SesameClientImpl implements SesameClient {
         this.restTemplate = restTemplate;
     }
 
-    public SesameResult getData(String name) throws XPathExpressionException {
+    public SesameResult getData(String name) throws XPathExpressionException, ResourceAccessException {
         String sesameUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oIX/A?{name}";
-        String response = restTemplate.getForObject(sesameUrl, String.class, name);
+        String response = restTemplate.getForObject(sesameUrl, String.class, name); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
@@ -42,14 +47,25 @@ public class SesameClientImpl implements SesameClient {
             names.add(node.getTextContent());
         }
         result.setNames(names);
-        result.setJpos(xpath.evaluate("//jpos[1]", doc));
-        result.setJdedeg(xpath.evaluate("//jradeg[1]", doc));
-        result.setJraddeg(xpath.evaluate("//jdedeg[1]", doc));
+        result.setJpos(xpath.evaluate("//jpos[1]", doc)); // TODO check these somehow
+        result.setJraddeg(xpath.evaluate("//jradeg[1]", doc));
+        result.setJdedeg(xpath.evaluate("//jdedeg[1]", doc));
         return result;
     }
 
     @Override
     public boolean isAvailable() {
-        return false;
+        String testUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame";
+        try {
+            final URL url = new URL(testUrl);
+            final URLConnection conn = url.openConnection();
+            conn.setConnectTimeout(2000);
+            conn.connect();
+            return true;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

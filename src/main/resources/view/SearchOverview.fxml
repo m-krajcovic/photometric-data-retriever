@@ -24,6 +24,6 @@
           <MenuItem mnemonicParsing="false" text="By Coordinates" />
         </items>
       </SplitMenuButton>
-      <Label fx:id="progressLabel" layoutX="283.0" layoutY="362.0" text="Label" visible="false" />
+      <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="359.0" prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false" />
    </children>
 </AnchorPane>

@@ -3,7 +3,8 @@ package cz.muni.physics.plugin.java;
 import cz.muni.physics.java.Plugin;
 import cz.muni.physics.plugin.PluginLoader;
 import cz.muni.physics.utils.PropUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.jar.Manifest;
  */
 public class JavaPluginLoader implements PluginLoader {
 
-    private final static Logger logger = Logger.getLogger(JavaPluginLoader.class);
+    private final static Logger logger = LogManager.getLogger(JavaPluginLoader.class);
 
     public Plugin load(File file) throws JavaPluginLoaderException {
         logger.debug("Loading plugin from " + file.getName());

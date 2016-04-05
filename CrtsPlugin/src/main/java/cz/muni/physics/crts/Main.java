@@ -7,6 +7,6 @@ package cz.muni.physics.crts;
  */
 public class Main {
     public static void main(String[] args) {
-        System.out.println("hahahahahaha");
+        System.out.println("2451500,12,0");
     }
 }
