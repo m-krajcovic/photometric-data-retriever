@@ -4,9 +4,14 @@ import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.DatabaseRecord;
 import cz.muni.physics.plugin.StreamGobbler;
 import cz.muni.physics.sesame.SesameResult;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.util.UriTemplate;
 
 import java.io.IOException;
@@ -25,9 +30,11 @@ import java.util.regex.Pattern;
  */
 public class DatabaseSearchService extends Service<List<PhotometricData>> {
 
+    private final static Logger logger = LogManager.getLogger(DatabaseSearchService.class);
+
     private SesameResult sesameResult;
     private List<DatabaseRecord> databaseRecords;
-
+    private ObservableMap<DatabaseRecord, Boolean> dbRecordMap = FXCollections.observableMap(new HashMap<>());
 
     @Override
     protected Task<List<PhotometricData>> createTask() {
@@ -35,29 +42,25 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
             @Override
             protected List<PhotometricData> call() {
                 List<PhotometricData> result = Collections.synchronizedList(new ArrayList<>());
-
                 ExecutorService executor = Executors.newFixedThreadPool(6);
-
                 for (DatabaseRecord record : databaseRecords) {
                     if (record.getPlugin() == null) {
-//                        logger.debug("Plugin not found for db record: ", record.getName());
+                        logger.debug("Plugin not found for db record: ", record.getName());
+                        updateDbRecords(record, false);
                         continue;
                     }
-
                     Map<String, String> urlVars = getUrlVars(sesameResult, record);
                     String url = getUrl(record, urlVars);
-
                     Process process;
+                    String command = record.getPlugin().getFullCommand(url);
                     try {
-                        process = Runtime.getRuntime().exec(record.getPlugin().getFullCommand(url));
+                        process = Runtime.getRuntime().exec(command);
                     } catch (IOException e) {
-                        // TODO handling in controller task
-//                            e.printStackTrace();
+                        logger.error("Failed to run {}", command);
+                        updateDbRecords(record, false);
                         continue;
                     }
-
                     StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream());
-
                     StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), line -> {
                         String[] split = line.split(",");
                         if (split.length >= 3 && NumberUtils.isParsable(split[0])
@@ -66,12 +69,10 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
                             result.add(data);
                         }
                     });
-//                    outputGobbler.setFinished(() ->
-//                            Platform.runLater(() -> progressLabel.setText("Finished searching in " + record.getName() + " database.")));
-
+                    outputGobbler.setFinished(() -> updateDbRecords(record, true));
+                    outputGobbler.setFailed(() -> updateDbRecords(record, false));
                     executor.execute(errorGobbler);
                     executor.execute(outputGobbler);
-
                 }
                 executor.shutdown();
                 try {
@@ -82,6 +83,10 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
                 return result;
             }
         };
+    }
+
+    private void updateDbRecords(DatabaseRecord dbRecord, boolean succeeded) {
+        Platform.runLater(() -> dbRecordMap.put(dbRecord, succeeded));
     }
 
     private String getUrl(DatabaseRecord record, Map<String, String> urlVars) {
@@ -124,5 +129,13 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
 
     public void setDatabaseRecords(List<DatabaseRecord> databaseRecords) {
         this.databaseRecords = databaseRecords;
+    }
+
+    public ObservableMap<DatabaseRecord, Boolean> getDbRecordMap() {
+        return dbRecordMap;
+    }
+
+    public void setDbRecordMap(ObservableMap<DatabaseRecord, Boolean> dbRecordMap) {
+        this.dbRecordMap = dbRecordMap;
     }
 }

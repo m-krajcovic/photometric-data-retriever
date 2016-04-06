@@ -8,8 +8,6 @@
 
     <!--CONTROLLERS-->
     <bean id="searchOverviewController" class="cz.muni.physics.controller.SearchOverviewController"/>
-    <bean id="searchResultController" class="cz.muni.physics.controller.SearchResultController"/>
-    <bean id="pluginOverviewController" class="cz.muni.physics.controller.PluginOverviewController"/>
     <bean id="databaseOverviewController" class="cz.muni.physics.controller.DatabaseOverviewController"/>
     <bean id="rootLayoutController" class="cz.muni.physics.controller.RootLayoutController"/>
     <bean id="photometricDataOverviewController" class="cz.muni.physics.controller.PhotometricDataOverviewController"/>

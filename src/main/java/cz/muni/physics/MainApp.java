@@ -86,12 +86,6 @@ public class MainApp extends Application {
         dialogStage.show();
     }
 
-    public void showPlugins() {
-        AnchorPane pluginOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/PluginsOverview.fxml");
-        ApplicationContextHolder.getBean(PluginOverviewController.class).setMainApp(this);
-        rootLayout.setCenter(pluginOverview);
-    }
-
     public void showDatabaseOverview() {
         AnchorPane databaseOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/DatabaseOverview.fxml");
         ((DatabaseOverviewController) SpringFxmlLoader.getInstance().getLastLoader().getController()).setMainApp(this);

@@ -2,10 +2,12 @@ package cz.muni.physics.controller;
 
 import cz.muni.physics.MainApp;
 import cz.muni.physics.java.PhotometricData;
+import cz.muni.physics.model.DatabaseRecord;
 import cz.muni.physics.service.DatabaseSearchService;
 import cz.muni.physics.service.SesameService;
 import cz.muni.physics.sesame.SesameResult;
 import cz.muni.physics.utils.FXMLUtil;
+import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -73,6 +75,10 @@ public class SearchOverviewController {
                 databaseSearchService.setOnFailed(e1 -> {
                     logger.debug("Failed");
                     toggleElements(false);
+                });
+
+                databaseSearchService.getDbRecordMap().addListener((MapChangeListener<DatabaseRecord, Boolean>) change -> {
+                    progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded());
                 });
 
                 databaseSearchService.start();

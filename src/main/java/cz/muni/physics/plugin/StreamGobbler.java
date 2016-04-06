@@ -11,6 +11,7 @@ public class StreamGobbler extends Thread {
     private InputStream is;
     private LineProcessor lineProcessor;
     private Callback finished;
+    private Callback failed;
 
     public StreamGobbler(String name, InputStream is, LineProcessor lineProcessor) {
         super(name);
@@ -40,7 +41,11 @@ public class StreamGobbler extends Thread {
                 }
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (failed != null) {
+                failed.call();
+            } else {
+                ioe.printStackTrace();
+            }
         }
         if (finished != null) finished.call();
     }
@@ -67,6 +72,14 @@ public class StreamGobbler extends Thread {
 
     public void setFinished(Callback finished) {
         this.finished = finished;
+    }
+
+    public Callback getFailed() {
+        return failed;
+    }
+
+    public void setFailed(Callback failed) {
+        this.failed = failed;
     }
 
     public interface LineProcessor {
