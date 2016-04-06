@@ -21,15 +21,9 @@
     <bean id="sesameClient" class="cz.muni.physics.sesame.SesameClientImpl">
         <constructor-arg index="0" ref="restTemplate"/>
     </bean>
-    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-    </bean>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 
     <!--PLUGINS-->
     <bean id="pluginManager" class="cz.muni.physics.plugin.PluginManagerImpl"/>
 
-    <bean id="javaPluginLoader" class="cz.muni.physics.plugin.java.JavaPluginLoader"/>
-    <bean id="javaPluginManager" class="cz.muni.physics.plugin.java.JavaPluginManager">
-        <property name="pluginJars"
-                  value="#{javaPluginLoader.availablePluginJars}"/>
-    </bean>
 </beans>

@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,13 +31,13 @@ public class FXMLUtil {
         return dialogStage;
     }
 
-    public static void showTooltip(String text, Stage stage, Control control){
+    public static void showTooltip(String text, Window window, Control control){
         Tooltip tooltip = new Tooltip(text);
         Point2D point = control.localToScene(0.0, 0.0);
         tooltip.setAutoHide(true);
-        tooltip.show(stage,
-                control.getWidth()/2 - text.length()*2.9 + control.getScene().getX() + stage.getX() + point.getX(),
-                control.getHeight() - 5 + control.getScene().getY() + stage.getY() + point.getY());
+        tooltip.show(window,
+                control.getWidth()/2 - text.length()*2.9 + control.getScene().getX() + window.getX() + point.getX(),
+                control.getHeight() - 5 + control.getScene().getY() + window.getY() + point.getY());
     }
 
     public static void showAlert(String title, String header, String content, Alert.AlertType type){

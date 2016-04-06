@@ -1,5 +1,7 @@
 package cz.muni.physics.crts;
 
+import cz.muni.physics.java.Plugin;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -7,6 +9,8 @@ package cz.muni.physics.crts;
  */
 public class Main {
     public static void main(String[] args) {
-        System.out.println("2451500,12,0");
+        String url = args[0];
+        Plugin plugin = new CrtsPlugin();
+        plugin.getDataFromUrl(url).forEach(d -> System.out.println(d.getJulianDate() + "," + d.getMagnitude() + "," + d.getError()));
     }
 }

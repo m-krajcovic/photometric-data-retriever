@@ -1,14 +1,14 @@
 package cz.muni.physics.plugin;
 
 import cz.muni.physics.model.Plugin;
-import cz.muni.physics.utils.PropUtils;
+import cz.muni.physics.storage.DataStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -19,13 +19,13 @@ public class PluginManagerImpl implements PluginManager {
 
     private final static Logger logger = LogManager.getLogger(PluginManagerImpl.class);
 
-    public List<Plugin> getAvailablePlugins() throws PluginManagerException {
-        List<Plugin> result = new ArrayList<>();
-        String pluginsDirPath = PropUtils.get("plugin.dir.path");
-        File dir = new File(pluginsDirPath);
+    public Set<Plugin> getAvailablePlugins() throws PluginManagerException {
+        Set<Plugin> result = new HashSet<>();
+        File dir = DataStorage.getPluginsDir();
+        String pluginsDirPath = dir.getAbsolutePath() + File.separator;
         String[] dirs = dir.list((file, name) -> new File(file, name).isDirectory());
         for (String pluginDirName : dirs) {
-            String pluginDirPath = pluginsDirPath + pluginDirName + "/";
+            String pluginDirPath = pluginsDirPath + pluginDirName + File.separator;
             File pluginProps = new File(pluginDirPath, "plugin.properties");
             if (pluginProps.exists()) {
                 logger.debug("Found plugin properties in: " + pluginDirPath);
@@ -43,7 +43,7 @@ public class PluginManagerImpl implements PluginManager {
                 if (name == null || mainFile == null || command == null) {
                     throw new PluginManagerException("There are some properties missing inside " + pluginDirPath + "plugin.properties");
                 }
-                Plugin plugin = new Plugin(name, mainFile, command, pluginDirPath);
+                Plugin plugin = new Plugin(name, mainFile, command);
                 result.add(plugin);
             } else {
                 logger.debug("Plugin not found inside " + pluginDirPath);

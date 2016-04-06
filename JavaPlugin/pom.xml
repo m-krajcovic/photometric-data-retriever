@@ -43,7 +43,7 @@
                     <configuration>
                         <finalName>${plugin.name}</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
-                        <outputDirectory>/Users/Michal/Documents/Development/IdeaProjects/PhotometricDataRetriever/plugins/${plugin.folder}/</outputDirectory>
+                        <outputDirectory>/Users/Michal/.pdr/plugins/${plugin.folder}/</outputDirectory>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
                         </descriptorRefs>
@@ -77,7 +77,7 @@
                                 <goal>copy-resources</goal>
                             </goals>
                             <configuration>
-                                <outputDirectory>/Users/Michal/Documents/Development/IdeaProjects/PhotometricDataRetriever/plugins/${plugin.folder}</outputDirectory>
+                                <outputDirectory>/Users/Michal/.pdr/plugins/${plugin.folder}</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>properties</directory>

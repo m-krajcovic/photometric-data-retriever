@@ -9,11 +9,7 @@ import cz.muni.physics.sesame.SesameResult;
 import cz.muni.physics.utils.FXMLUtil;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,47 +42,53 @@ public class SearchOverviewController {
     private Label progressLabel;
 
     @FXML
+    private void initialize() {
+        sesameService.setOnSucceeded(e -> {
+            SesameResult sesameResult = sesameService.getValue();
+            databaseSearchService.setSesameResult(sesameResult);
+            databaseSearchService.setDatabaseRecords(mainApp.getDbRecords());
+
+            databaseSearchService.start();
+            sesameService.reset();
+        });
+        sesameService.setOnFailed(e -> {
+            logger.error("Failed to get data from Sesame Name Resolver");
+            FXMLUtil.showAlert("Error", null, "Failed to get data from Sesame Name Resolver", Alert.AlertType.ERROR);
+            sesameService.reset();
+            toggleElements(false);
+        });
+
+        databaseSearchService.setOnSucceeded(e -> {
+            List<PhotometricData> data = databaseSearchService.getValue();
+            if (data.size() == 0) {
+                FXMLUtil.showTooltip("No results found", searchButton.getScene().getWindow(), searchTextField);
+            } else {
+                mainApp.showPhotometricDataOverview(data);
+            }
+            databaseSearchService.reset();
+            toggleElements(false);
+        });
+        databaseSearchService.setOnFailed(e -> {
+            logger.debug("Failed");
+            databaseSearchService.reset();
+            toggleElements(false);
+        });
+        databaseSearchService.getDbRecordMap().addListener((MapChangeListener<DatabaseRecord, Boolean>) change -> {
+            if (change.wasAdded())
+                progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded());
+        });
+    }
+
+    @FXML
     private void handleSearchButtonAction() {
         toggleElements(true);
-        Stage primaryStage = (Stage) searchButton.getScene().getWindow();
         if (searchTextField.getText().isEmpty()) {
             logger.debug("Text field is empty");
-            FXMLUtil.showTooltip("Text field is empty", primaryStage, searchTextField);
+            FXMLUtil.showTooltip("Text field is empty", searchButton.getScene().getWindow(), searchTextField);
+            toggleElements(false);
         } else {
             logger.debug("Handling search by name '{}'", searchTextField.getText());
             sesameService.setSearchText(searchTextField.getText());
-            sesameService.setOnSucceeded(e -> {
-                logger.debug("Found some stuff");
-                SesameResult sesameResult = sesameService.getValue();
-                databaseSearchService.setSesameResult(sesameResult);
-                databaseSearchService.setDatabaseRecords(mainApp.getDbRecords());
-
-                databaseSearchService.setOnSucceeded(e1 -> {
-                    logger.debug("Succeeded");
-                    List<PhotometricData> data = databaseSearchService.getValue();
-                    if (data.size() == 0) {
-                        FXMLUtil.showTooltip("No results found", primaryStage, searchTextField);
-                    } else {
-                        mainApp.showPhotometricDataOverview(data);
-                    }
-                    toggleElements(false);
-                });
-
-                databaseSearchService.setOnFailed(e1 -> {
-                    logger.debug("Failed");
-                    toggleElements(false);
-                });
-
-                databaseSearchService.getDbRecordMap().addListener((MapChangeListener<DatabaseRecord, Boolean>) change -> {
-                    progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded());
-                });
-
-                databaseSearchService.start();
-
-            });
-            sesameService.setOnFailed(e -> {
-                // TODO announce to client
-            });
             sesameService.start();
         }
     }
@@ -96,6 +98,9 @@ public class SearchOverviewController {
         searchTextField.setDisable(disabled);
         searchProgressIndicator.setVisible(disabled);
         progressLabel.setVisible(disabled);
+        if(!disabled){
+            progressLabel.setText("");
+        }
     }
 
     public void setMainApp(MainApp mainApp) {

@@ -65,7 +65,7 @@ public class DatabaseEditDialogController {
 
     private boolean isInputValid() {
         return !nameTextField.getText().isEmpty() && StringUtils.isAlphanumericSpace(nameTextField.getText())
-                && !urlTextArea.getText().isEmpty() && StringUtils.isAlphanumeric(urlTextArea.getText())
+                && !urlTextArea.getText().isEmpty()
                 && pluginChoiceBox.getValue() != null;
     }
 

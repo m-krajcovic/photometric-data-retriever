@@ -9,12 +9,15 @@ import cz.muni.physics.model.Plugin;
 import cz.muni.physics.plugin.PluginManager;
 import cz.muni.physics.plugin.PluginManagerException;
 import cz.muni.physics.sesame.SesameClient;
+import cz.muni.physics.storage.DataStorage;
 import cz.muni.physics.utils.ApplicationContextHolder;
 import cz.muni.physics.utils.FXMLUtil;
-import cz.muni.physics.utils.PropUtils;
 import cz.muni.physics.utils.SpringFxmlLoader;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -23,12 +26,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -41,7 +46,12 @@ public class MainApp extends Application {
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
-    private ObservableList<DatabaseRecord> dbRecords = FXCollections.observableArrayList();
+    private ObservableList<DatabaseRecord> dbRecords = FXCollections.observableArrayList(new Callback<DatabaseRecord, Observable[]>() {
+        @Override
+        public Observable[] call(DatabaseRecord param) {
+            return new Observable[]{param.nameProperty(), param.sesameAliasProperty(), param.URLProperty(), param.pluginProperty()};
+        }
+    });
     private ObservableList<Plugin> plugins = FXCollections.observableArrayList();
 
     private Stage primaryStage;
@@ -71,7 +81,7 @@ public class MainApp extends Application {
         rootLayout.setCenter(searchView);
     }
 
-    public void showPhotometricDataOverview(List<PhotometricData> data){
+    public void showPhotometricDataOverview(List<PhotometricData> data) {
         AnchorPane databaseOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = SpringFxmlLoader.getInstance().getLastLoader().getController();
         controller.setMainApp(this);
@@ -129,9 +139,8 @@ public class MainApp extends Application {
         }
     }
 
-    private void showInitErrors(){
-        for(String error : initErrors){
-            System.out.println(error);
+    private void showInitErrors() {
+        for (String error : initErrors) {
             FXMLUtil.showAlert("Error", null, error, Alert.AlertType.ERROR);
         }
     }
@@ -139,32 +148,43 @@ public class MainApp extends Application {
     @Override
     public void init() throws InterruptedException {
         logger.debug("Initializing application.");
-        File dir = new File(PropUtils.get("plugin.dir.path"));
+        File dir = DataStorage.getPluginsDir();
         notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         if (!dir.exists()) {
             logger.debug("Plugin folder not found, creating new one.");
             dir.mkdir();
         }
 
+        notifyPreloader(PreloaderHandlerEvent.CHECKING_DATABASE_RECORDS);
+        dbRecords.addListener((ListChangeListener<DatabaseRecord>) c -> Platform.runLater(() -> DataStorage.saveDbRecords(new ArrayList<>(c.getList()))));
+        dbRecords.addAll(DataStorage.loadDbRecords()); // TODO catch here
+
         notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
         PluginManager pluginManager = ApplicationContextHolder.getBean(PluginManager.class);
-
+        Set<Plugin> availablePlugins = null;
         try {
-            plugins.addAll(pluginManager.getAvailablePlugins());
+            availablePlugins = pluginManager.getAvailablePlugins();
+
         } catch (PluginManagerException e) {
+            logger.error(e.getMessage());
             initExceptions.add(e);
         }
+        if (availablePlugins == null || availablePlugins.isEmpty()) {
+            initErrors.add("There are 0 plugins inside plugins folder.");
+        } else {
+            for (DatabaseRecord record : dbRecords) {
+                if (!availablePlugins.contains(record.getPlugin())) {
+                    initErrors.add(record.getPlugin().getName() + " is not available inside plugins folder.");
+                    record.setPlugin(null);
+                }
+            }
+            plugins.addAll(availablePlugins);
+        }
 
-        notifyPreloader(PreloaderHandlerEvent.CHECKING_DATABASE_RECORDS);
-        Plugin nsvsPlugin = plugins.stream().filter(p -> p.getName().equals("NSVS")).findFirst().get();
-        Plugin crtsPlugin = plugins.stream().filter(p -> p.getName().equals("CRTS")).findFirst().get();
-
-        dbRecords.add(new DatabaseRecord("NSVS", "http://skydot.lanl.gov/nsvs/star.php?num={id}&mask=32004", nsvsPlugin, "NSVS\\s(?<id>\\d*)"));
-        dbRecords.add(new DatabaseRecord("CRTS", "http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&Dec={dec}&Rad=0.2&DB=photcat&OUT=csv&SHORT=short&PLOT=plot", crtsPlugin, ""));
-        //TODO save this somewhere
         notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
         SesameClient sesameClient = ApplicationContextHolder.getBean(SesameClient.class);
-        if(!sesameClient.isAvailable()){
+        if (!sesameClient.isAvailable()) {
+            logger.error("Sesame Name Resolver is not available right now.");
             initErrors.add("Sesame Name Resolver is not available. Check your internet connection.");
         }
     }

@@ -37,6 +37,12 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
     private ObservableMap<DatabaseRecord, Boolean> dbRecordMap = FXCollections.observableMap(new HashMap<>());
 
     @Override
+    public void reset() {
+        super.reset();
+        dbRecordMap.clear();
+    }
+
+    @Override
     protected Task<List<PhotometricData>> createTask() {
         return new Task<List<PhotometricData>>() {
             @Override
@@ -76,7 +82,7 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
                 }
                 executor.shutdown();
                 try {
-                    executor.awaitTermination(240, TimeUnit.SECONDS);
+                    executor.awaitTermination(300, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -91,13 +97,12 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
 
     private String getUrl(DatabaseRecord record, Map<String, String> urlVars) {
         UriTemplate uriTemplate = new UriTemplate(record.getURL());
-        URI uri = uriTemplate.expand(urlVars);
+        URI uri = uriTemplate.expand(urlVars); // TODO check variables -> show me something, log at least
         return uri.toString();
     }
 
     private Map<String, String> getUrlVars(SesameResult sesameResult, DatabaseRecord record) {
         Map<String, String> urlVars = new HashMap<>();
-
         Set<String> groupNames = record.getSesameVariables();
         Pattern p = record.getSesamePattern();
         if (!record.getSesameAlias().isEmpty()) {

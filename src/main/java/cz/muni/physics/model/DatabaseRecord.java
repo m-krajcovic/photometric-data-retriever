@@ -1,5 +1,7 @@
 package cz.muni.physics.model;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
 public class DatabaseRecord {
     private StringProperty name;
     private StringProperty URL;
-    private Plugin plugin;
+    private ObjectProperty<Plugin> plugin;
     private StringProperty sesameAlias;
     private Pattern sesamePattern;
     private Set<String> sesameVariables;
@@ -23,7 +25,7 @@ public class DatabaseRecord {
     public DatabaseRecord(String name, String URL, Plugin plugin, String sesameAlias) {
         this.name = new SimpleStringProperty(name);
         this.URL = new SimpleStringProperty(URL);
-        this.plugin = plugin;
+        this.plugin = new SimpleObjectProperty<>(plugin);
         this.sesameAlias = new SimpleStringProperty(sesameAlias);
         derivateSesameVariables();
     }
@@ -85,14 +87,6 @@ public class DatabaseRecord {
         this.URL.set(URL);
     }
 
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     public String getSesameAlias() {
         return sesameAlias.get();
     }
@@ -108,6 +102,18 @@ public class DatabaseRecord {
 
     public Set<String> getSesameVariables() {
         return sesameVariables;
+    }
+
+    public Plugin getPlugin() {
+        return plugin.get();
+    }
+
+    public ObjectProperty<Plugin> pluginProperty() {
+        return plugin;
+    }
+
+    public void setPlugin(Plugin plugin) {
+        this.plugin.set(plugin);
     }
 
     @Override

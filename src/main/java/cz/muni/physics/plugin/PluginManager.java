@@ -2,7 +2,7 @@ package cz.muni.physics.plugin;
 
 import cz.muni.physics.model.Plugin;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -10,5 +10,5 @@ import java.util.List;
  * @since 21/03/16
  */
 public interface PluginManager {
-    List<Plugin> getAvailablePlugins() throws PluginManagerException;
+    Set<Plugin> getAvailablePlugins() throws PluginManagerException;
 }

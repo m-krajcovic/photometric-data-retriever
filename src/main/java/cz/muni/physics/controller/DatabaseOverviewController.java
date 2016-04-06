@@ -2,13 +2,11 @@ package cz.muni.physics.controller;
 
 import cz.muni.physics.MainApp;
 import cz.muni.physics.model.DatabaseRecord;
-import cz.muni.physics.plugin.java.JavaPluginLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Michal Krajčovič
@@ -18,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DatabaseOverviewController {
 
     private MainApp mainApp;
-
-    @Autowired
-    private JavaPluginLoader javaPluginLoader;
 
     @FXML
     private TableView<DatabaseRecord> dbTableView;
@@ -57,7 +52,7 @@ public class DatabaseOverviewController {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Person Selected");
+            alert.setHeaderText("No Database Record Selected");
             alert.setContentText("Please select a person in the table.");
 
             alert.showAndWait();

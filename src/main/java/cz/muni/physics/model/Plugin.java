@@ -1,8 +1,10 @@
 package cz.muni.physics.model;
 
+import cz.muni.physics.storage.DataStorage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.io.File;
 import java.text.MessageFormat;
 
 /**
@@ -14,17 +16,18 @@ public class Plugin {
     private StringProperty name;
     private StringProperty mainFile;
     private StringProperty command;
-    private StringProperty path;
 
-    public Plugin(String name, String mainFile, String command, String path) {
+    public Plugin() {
+    }
+
+    public Plugin(String name, String mainFile, String command) {
         this.name = new SimpleStringProperty(name);
         this.mainFile = new SimpleStringProperty(mainFile);
         this.command = new SimpleStringProperty(command);
-        this.path = new SimpleStringProperty(path);
     }
 
     public String getFullCommand(String url){
-        return MessageFormat.format(getCommand(), getPath() + getMainFile(), url);
+        return MessageFormat.format(getCommand(), DataStorage.getPluginsDir().getAbsolutePath() + File.separator + getName() + File.separator + getMainFile(), url);
     }
 
     public String getName() {
@@ -63,17 +66,6 @@ public class Plugin {
         this.command.set(command);
     }
 
-    public String getPath() {
-        return path.get();
-    }
-
-    public StringProperty pathProperty() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path.set(path);
-    }
 
     @Override
     public String toString() {
@@ -81,7 +73,6 @@ public class Plugin {
                 "name=" + name +
                 ", mainFile=" + mainFile +
                 ", command=" + command +
-                ", path=" + path +
                 '}';
     }
 
@@ -92,19 +83,17 @@ public class Plugin {
 
         Plugin plugin = (Plugin) o;
 
-        if (name != null ? !name.equals(plugin.name) : plugin.name != null) return false;
-        if (mainFile != null ? !mainFile.equals(plugin.mainFile) : plugin.mainFile != null) return false;
-        if (command != null ? !command.equals(plugin.command) : plugin.command != null) return false;
-        return path != null ? path.equals(plugin.path) : plugin.path == null;
-
+        if (getName() != null ? !getName().equals(plugin.getName()) : plugin.getName() != null) return false;
+        if (getMainFile() != null ? !getMainFile().equals(plugin.getMainFile()) : plugin.getMainFile() != null)
+            return false;
+        return getCommand() != null ? getCommand().equals(plugin.getCommand()) : plugin.getCommand() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (mainFile != null ? mainFile.hashCode() : 0);
-        result = 31 * result + (command != null ? command.hashCode() : 0);
-        result = 31 * result + (path != null ? path.hashCode() : 0);
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + (getMainFile() != null ? getMainFile().hashCode() : 0);
+        result = 31 * result + (getCommand() != null ? getCommand().hashCode() : 0);
         return result;
     }
 }
