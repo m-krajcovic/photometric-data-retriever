@@ -8,7 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.controller.DatabaseOverviewController">
     <children>
-        <TableView fx:id="dbTableView" editable="true" maxHeight="-Infinity" maxWidth="600" minHeight="-Infinity" minWidth="600" prefHeight="309.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <TableView fx:id="dbTableView" editable="true" maxHeight="-Infinity" maxWidth="600" minHeight="-Infinity" minWidth="600" prefHeight="309.0" prefWidth="600.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columns>
                 <TableColumn fx:id="dbNameColumn" prefWidth="68.0" text="Name" />
                 <TableColumn fx:id="dbSesameIdentifier" prefWidth="163.0" text="Sesame Identifier" />
@@ -19,7 +19,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
         </TableView>
-      <ButtonBar layoutX="336.0" layoutY="310.0" prefHeight="40.0" prefWidth="200.0">
+      <ButtonBar layoutX="336.0" layoutY="310.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="14.0">
         <buttons>
           <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" text="New..." />
             <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditButton" text="Edit..." />

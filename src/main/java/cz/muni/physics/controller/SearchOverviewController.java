@@ -3,6 +3,7 @@ package cz.muni.physics.controller;
 import cz.muni.physics.MainApp;
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.DatabaseRecord;
+import cz.muni.physics.plugin.StreamGobbler;
 import cz.muni.physics.sesame.SesameClient;
 import cz.muni.physics.sesame.SesameResult;
 import cz.muni.physics.utils.FXMLUtil;
@@ -22,12 +23,12 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriTemplate;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,71 +66,61 @@ public class SearchOverviewController {
             logger.debug("Handling search by name '{}'", searchTextField.getText());
             Task<List<PhotometricData>> task = new Task<List<PhotometricData>>() {
                 @Override
-                protected List<PhotometricData> call()  {
-                    List<PhotometricData> result = new ArrayList<>();
-                    SesameResult sesameResult = null;
+                protected List<PhotometricData> call() {
+                    List<PhotometricData> result = Collections.synchronizedList(new ArrayList<>());
+                    SesameResult sesameResult;
                     try {
                         sesameResult = sesameClient.getData(searchTextField.getText());
                     } catch (XPathExpressionException | ResourceAccessException e) {
                         //e.printStackTrace();
                         cancel();
-                        return null;
+                        return null; // TODO may be in more tasks -> one for getting sesame -> second for searching stuff n shit :) yeah.
                     }
 
+                    ExecutorService executor = Executors.newFixedThreadPool(6);
+
                     for (DatabaseRecord record : mainApp.getDbRecords()) {
-                        if(record.getPlugin() == null){
+                        if (record.getPlugin() == null) {
                             logger.debug("Plugin not found for db record: ", record.getName());
                             continue;
                         }
-                        Map<String, String> urlVars = new HashMap<>();
-                        Platform.runLater(() -> progressLabel.setText("Searching in " + record.getName() + " database."));
-                        Set<String> groupNames = record.getSesameVariables();
-                        Pattern p = record.getSesamePattern();
-                        if(!record.getSesameAlias().isEmpty()) {
-                            for (String name : sesameResult.getNames()) {
-                                Matcher m = p.matcher(name);
-                                if (m.matches()) {
-                                    for (String group : groupNames) {
-                                        urlVars.put(group, m.group(group));
-                                    }
-                                }
-                            }
-                        }
-                        urlVars.put("ra", sesameResult.getJraddeg());
-                        urlVars.put("dec", sesameResult.getJdedeg());
+
+                        Map<String, String> urlVars = getUrlVars(sesameResult, record);
+                        String url = getUrl(record, urlVars);
+
+                        Process process;
                         try {
-                            UriTemplate uriTemplate = new UriTemplate(record.getURL());
-                            URI url = uriTemplate.expand(urlVars);
-                            System.out.println(url);
+                            process = Runtime.getRuntime().exec(record.getPlugin().getFullCommand(url));
+                        } catch (IOException e) {
+                            // TODO handling in controller task
+//                            e.printStackTrace();
+                            continue;
+                        }
 
-                            // TODO StreamGubbler or whatever that was
+                        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream());
 
-                            Process process = Runtime.getRuntime().exec(record.getPlugin().getFullCommand(url.toString()));
-                            InputStream is = process.getInputStream();
-                            InputStream ise = process.getInputStream();
-                            InputStreamReader isr = new InputStreamReader(is);
-                            InputStreamReader isre = new InputStreamReader(ise);
-                            BufferedReader buff = new BufferedReader(isr);
-                            BufferedReader buffe = new BufferedReader(isre);
-
-                            String line;
-                            while ((line = buff.readLine()) != null) {
-                                String[] split = line.split(",");
-                                if(split.length < 3 || !NumberUtils.isParsable(split[0])
-                                        || !NumberUtils.isParsable(split[1]) || !NumberUtils.isParsable(split[2])) continue;
+                        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), line -> {
+                            String[] split = line.split(",");
+                            if (split.length >= 3 && NumberUtils.isParsable(split[0])
+                                    && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
                                 PhotometricData data = new PhotometricData(split[0], split[1], split[2]);
                                 result.add(data);
                             }
-                            while ((line = buffe.readLine()) != null) {
-                                System.out.println(line);
-                            }
-                        } catch (IOException e) {
-                            System.out.println("fuck this shit"); // TODO
-                            e.printStackTrace();
-                        }
+                        });
+                        outputGobbler.setFinished(() -> {
+                            Platform.runLater(() -> progressLabel.setText("Finished searching in " + record.getName() + " database."));
+                        });
+
+                        executor.execute(errorGobbler);
+                        executor.execute(outputGobbler);
+
                     }
-
-
+                    executor.shutdown();
+                    try {
+                        executor.awaitTermination(120, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     return result;
                 }
             };
@@ -150,13 +141,39 @@ public class SearchOverviewController {
                 toggleElements(false);
             });
 
-            task.setOnCancelled(e ->{
+            task.setOnCancelled(e -> {
                 logger.error("This got cancelled due to reasons"); // TODO
                 toggleElements(false);
             });
 
             new Thread(task).start();
         }
+    }
+
+    private String getUrl(DatabaseRecord record, Map<String, String> urlVars) {
+        UriTemplate uriTemplate = new UriTemplate(record.getURL());
+        URI uri = uriTemplate.expand(urlVars);
+        return uri.toString();
+    }
+
+    private Map<String, String> getUrlVars(SesameResult sesameResult, DatabaseRecord record) {
+        Map<String, String> urlVars = new HashMap<>();
+
+        Set<String> groupNames = record.getSesameVariables();
+        Pattern p = record.getSesamePattern();
+        if (!record.getSesameAlias().isEmpty()) {
+            for (String name : sesameResult.getNames()) {
+                Matcher m = p.matcher(name);
+                if (m.matches()) {
+                    for (String group : groupNames) {
+                        urlVars.put(group, m.group(group));
+                    }
+                }
+            }
+        }
+        urlVars.put("ra", sesameResult.getJraddeg());
+        urlVars.put("dec", sesameResult.getJdedeg());
+        return urlVars;
     }
 
     private void toggleElements(boolean disabled) {

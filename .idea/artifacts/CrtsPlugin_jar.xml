@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/plugins/CRTS</output-path>
     <root id="archive" name="CrtsPlugin.jar">
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/CrtsPlugin/src/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/JavaPlugin/CrtsPlugin/src/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="CrtsPlugin" />
       <element id="module-output" name="JavaPlugin" />
