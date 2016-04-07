@@ -70,7 +70,6 @@ public class MainApp extends Application {
         initRootLayout();
 
         showSearch();
-//        showPlugins();
         showInitExceptions();
         showInitErrors();
     }
