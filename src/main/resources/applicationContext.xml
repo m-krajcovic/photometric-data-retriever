@@ -8,18 +8,20 @@
 
     <!--CONTROLLERS-->
     <bean id="searchOverviewController" class="cz.muni.physics.controller.SearchOverviewController"/>
-    <bean id="databaseOverviewController" class="cz.muni.physics.controller.DatabaseOverviewController"/>
+    <bean id="databaseOverviewController" class="cz.muni.physics.controller.StarSurveyOverviewController"/>
     <bean id="rootLayoutController" class="cz.muni.physics.controller.RootLayoutController"/>
     <bean id="photometricDataOverviewController" class="cz.muni.physics.controller.PhotometricDataOverviewController"/>
-    <bean id="databaseEditDialogController" class="cz.muni.physics.controller.DatabaseEditDialogController"/>
+    <bean id="databaseEditDialogController" class="cz.muni.physics.controller.StarSurveyEditDialogController"/>
 
     <!--SERVICES-->
     <bean id="sesameService" class="cz.muni.physics.service.SesameService"/>
-    <bean id="databaseSearchService" class="cz.muni.physics.service.DatabaseSearchService"/>
+    <bean id="databaseSearchService" class="cz.muni.physics.service.StarSurveySearchService"/>
 
 
     <bean id="sesameClient" class="cz.muni.physics.sesame.SesameClientImpl">
         <constructor-arg index="0" ref="restTemplate"/>
+        <constructor-arg index="1" value="http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oIX/A?{name}"/>
+        <constructor-arg index="2" value="http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"/>
     </bean>
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 

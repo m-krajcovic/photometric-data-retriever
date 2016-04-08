@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 31/03/16
  */
-public class DatabaseRecord {
+public class StarSurvey {
     private StringProperty name;
     private StringProperty URL;
     private ObjectProperty<Plugin> plugin;
@@ -22,7 +22,7 @@ public class DatabaseRecord {
     private Pattern sesamePattern;
     private Set<String> sesameVariables;
 
-    public DatabaseRecord(String name, String URL, Plugin plugin, String sesameAlias) {
+    public StarSurvey(String name, String URL, Plugin plugin, String sesameAlias) {
         this.name = new SimpleStringProperty(name);
         this.URL = new SimpleStringProperty(URL);
         this.plugin = new SimpleObjectProperty<>(plugin);
@@ -30,7 +30,7 @@ public class DatabaseRecord {
         derivateSesameVariables();
     }
 
-    public DatabaseRecord() {
+    public StarSurvey() {
     }
 
     private Set<String> findNamedGroups(){
@@ -118,7 +118,7 @@ public class DatabaseRecord {
 
     @Override
     public String toString() {
-        return "DatabaseRecord{" +
+        return "StarSurvey{" +
                 "name=" + name +
                 ", URL=" + URL +
                 ", plugin=" + plugin +

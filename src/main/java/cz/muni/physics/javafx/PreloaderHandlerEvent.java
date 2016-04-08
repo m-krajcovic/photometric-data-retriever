@@ -12,7 +12,7 @@ public class PreloaderHandlerEvent implements Preloader.PreloaderNotification {
     public static final PreloaderHandlerEvent PLUGIN_FOLDER_CHECK = new PreloaderHandlerEvent("Looking for plugins folder...");
     public static final PreloaderHandlerEvent LOADING_PLUGINS = new PreloaderHandlerEvent("Loading plugins...");
     public static final PreloaderHandlerEvent CHECKING_SESAME = new PreloaderHandlerEvent("Checking Sesame availability...");
-    public static final PreloaderHandlerEvent CHECKING_DATABASE_RECORDS = new PreloaderHandlerEvent("Looking for database records...");
+    public static final PreloaderHandlerEvent CHECKING_STAR_SURVEYS = new PreloaderHandlerEvent("Looking for database records...");
 
     private String message;
 

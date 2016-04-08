@@ -4,7 +4,7 @@ import com.sun.javafx.application.LauncherImpl;
 import cz.muni.physics.controller.*;
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.javafx.PreloaderHandlerEvent;
-import cz.muni.physics.model.DatabaseRecord;
+import cz.muni.physics.model.StarSurvey;
 import cz.muni.physics.model.Plugin;
 import cz.muni.physics.plugin.PluginManager;
 import cz.muni.physics.plugin.PluginManagerException;
@@ -12,6 +12,7 @@ import cz.muni.physics.sesame.SesameClient;
 import cz.muni.physics.storage.DataStorage;
 import cz.muni.physics.utils.ApplicationContextHolder;
 import cz.muni.physics.utils.FXMLUtil;
+import cz.muni.physics.utils.PropUtils;
 import cz.muni.physics.utils.SpringFxmlLoader;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -46,9 +47,9 @@ public class MainApp extends Application {
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
-    private ObservableList<DatabaseRecord> dbRecords = FXCollections.observableArrayList(new Callback<DatabaseRecord, Observable[]>() {
+    private ObservableList<StarSurvey> starSurveys = FXCollections.observableArrayList(new Callback<StarSurvey, Observable[]>() {
         @Override
-        public Observable[] call(DatabaseRecord param) {
+        public Observable[] call(StarSurvey param) {
             return new Observable[]{param.nameProperty(), param.sesameAliasProperty(), param.URLProperty(), param.pluginProperty()};
         }
     });
@@ -63,9 +64,9 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("PDR");
+        this.primaryStage.setTitle(PropUtils.get("app.name"));
 
-        this.primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/images/planet.png")));
+        this.primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream(PropUtils.get("app.icon"))));
 
         initRootLayout();
 
@@ -81,7 +82,7 @@ public class MainApp extends Application {
     }
 
     public void showPhotometricDataOverview(List<PhotometricData> data) {
-        AnchorPane databaseOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/PhotometricDataOverview.fxml");
+        AnchorPane photometricDataOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = SpringFxmlLoader.getInstance().getLastLoader().getController();
         controller.setMainApp(this);
         controller.setData(data);
@@ -89,35 +90,35 @@ public class MainApp extends Application {
         dialogStage.setTitle("Search result");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
-        Scene scene = new Scene(databaseOverview);
+        Scene scene = new Scene(photometricDataOverview);
         dialogStage.setScene(scene);
 
         dialogStage.show();
     }
 
-    public void showDatabaseOverview() {
-        AnchorPane databaseOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/DatabaseOverview.fxml");
-        ((DatabaseOverviewController) SpringFxmlLoader.getInstance().getLastLoader().getController()).setMainApp(this);
+    public void showStarSurveyOverview() {
+        AnchorPane starSurveyOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/StarSurveyOverview.fxml");
+        ((StarSurveyOverviewController) SpringFxmlLoader.getInstance().getLastLoader().getController()).setMainApp(this);
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Databases");
+        dialogStage.setTitle("Star surveys");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
-        Scene scene = new Scene(databaseOverview);
+        Scene scene = new Scene(starSurveyOverview);
         dialogStage.setScene(scene);
 
         dialogStage.show();
     }
 
-    public boolean showDatabaseEditDialog(DatabaseRecord record) {
-        AnchorPane databaseOverview = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/DatabaseEditDialog.fxml");
-        DatabaseEditDialogController controller = SpringFxmlLoader.getInstance().getLastLoader().getController();
+    public boolean showStarSurveyEditDialog(StarSurvey record) {
+        AnchorPane starSurveyDialog = (AnchorPane) SpringFxmlLoader.getInstance().load("/view/StarSurveyEditDialog.fxml");
+        StarSurveyEditDialogController controller = SpringFxmlLoader.getInstance().getLastLoader().getController();
         controller.setMainApp(this);
-        controller.setDbRecord(record);
+        controller.setStarSurvey(record);
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Edit DB Record");
+        dialogStage.setTitle("Edit Star Survey");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
-        Scene scene = new Scene(databaseOverview);
+        Scene scene = new Scene(starSurveyDialog);
         dialogStage.setScene(scene);
         controller.setDialogStage(dialogStage);
         dialogStage.showAndWait();
@@ -154,9 +155,9 @@ public class MainApp extends Application {
             dir.mkdir();
         }
 
-        notifyPreloader(PreloaderHandlerEvent.CHECKING_DATABASE_RECORDS);
-        dbRecords.addListener((ListChangeListener<DatabaseRecord>) c -> Platform.runLater(() -> DataStorage.saveDbRecords(new ArrayList<>(c.getList()))));
-        dbRecords.addAll(DataStorage.loadDbRecords()); // TODO catch here
+        notifyPreloader(PreloaderHandlerEvent.CHECKING_STAR_SURVEYS);
+        starSurveys.addListener((ListChangeListener<StarSurvey>) c -> Platform.runLater(() -> DataStorage.saveStarSurveys(new ArrayList<>(c.getList()))));
+        starSurveys.addAll(DataStorage.loadStarSurveys()); // TODO catch here
 
         notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
         PluginManager pluginManager = ApplicationContextHolder.getBean(PluginManager.class);
@@ -171,7 +172,7 @@ public class MainApp extends Application {
         if (availablePlugins == null || availablePlugins.isEmpty()) {
             initErrors.add("There are 0 plugins inside plugins folder.");
         } else {
-            for (DatabaseRecord record : dbRecords) {
+            for (StarSurvey record : starSurveys) {
                 if (!availablePlugins.contains(record.getPlugin())) {
                     initErrors.add(record.getPlugin().getName() + " is not available inside plugins folder.");
                     record.setPlugin(null);
@@ -196,8 +197,8 @@ public class MainApp extends Application {
         return plugins;
     }
 
-    public ObservableList<DatabaseRecord> getDbRecords() {
-        return dbRecords;
+    public ObservableList<StarSurvey> getStarSurveys() {
+        return starSurveys;
     }
 
     public static void main(String[] args) {

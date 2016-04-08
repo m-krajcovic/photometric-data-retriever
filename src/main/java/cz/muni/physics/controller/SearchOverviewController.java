@@ -2,8 +2,8 @@ package cz.muni.physics.controller;
 
 import cz.muni.physics.MainApp;
 import cz.muni.physics.java.PhotometricData;
-import cz.muni.physics.model.DatabaseRecord;
-import cz.muni.physics.service.DatabaseSearchService;
+import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.service.StarSurveySearchService;
 import cz.muni.physics.service.SesameService;
 import cz.muni.physics.sesame.SesameResult;
 import cz.muni.physics.utils.FXMLUtil;
@@ -30,7 +30,7 @@ public class SearchOverviewController {
     @Autowired
     SesameService sesameService;
     @Autowired
-    DatabaseSearchService databaseSearchService;
+    StarSurveySearchService starSurveySearchService;
 
     @FXML
     private SplitMenuButton searchButton;
@@ -45,10 +45,10 @@ public class SearchOverviewController {
     private void initialize() {
         sesameService.setOnSucceeded(e -> {
             SesameResult sesameResult = sesameService.getValue();
-            databaseSearchService.setSesameResult(sesameResult);
-            databaseSearchService.setDatabaseRecords(mainApp.getDbRecords());
+            starSurveySearchService.setSesameResult(sesameResult);
+            starSurveySearchService.setStarSurveys(mainApp.getStarSurveys());
 
-            databaseSearchService.start();
+            starSurveySearchService.start();
             sesameService.reset();
         });
         sesameService.setOnFailed(e -> {
@@ -58,22 +58,22 @@ public class SearchOverviewController {
             toggleElements(false);
         });
 
-        databaseSearchService.setOnSucceeded(e -> {
-            List<PhotometricData> data = databaseSearchService.getValue();
+        starSurveySearchService.setOnSucceeded(e -> {
+            List<PhotometricData> data = starSurveySearchService.getValue();
             if (data.size() == 0) {
                 FXMLUtil.showTooltip("No results found", searchButton.getScene().getWindow(), searchTextField);
             } else {
                 mainApp.showPhotometricDataOverview(data);
             }
-            databaseSearchService.reset();
+            starSurveySearchService.reset();
             toggleElements(false);
         });
-        databaseSearchService.setOnFailed(e -> {
+        starSurveySearchService.setOnFailed(e -> {
             logger.debug("Failed");
-            databaseSearchService.reset();
+            starSurveySearchService.reset();
             toggleElements(false);
         });
-        databaseSearchService.getDbRecordMap().addListener((MapChangeListener<DatabaseRecord, Boolean>) change -> {
+        starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurvey, Boolean>) change -> {
             if (change.wasAdded())
                 progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded());
         });

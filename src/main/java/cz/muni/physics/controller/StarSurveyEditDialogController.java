@@ -1,7 +1,7 @@
 package cz.muni.physics.controller;
 
 import cz.muni.physics.MainApp;
-import cz.muni.physics.model.DatabaseRecord;
+import cz.muni.physics.model.StarSurvey;
 import cz.muni.physics.model.Plugin;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @since 01/04/16
  */
-public class DatabaseEditDialogController {
+public class StarSurveyEditDialogController {
 
     private MainApp mainApp;
 
@@ -31,7 +31,7 @@ public class DatabaseEditDialogController {
     private TextArea urlTextArea;
 
     private Stage dialogStage;
-    private DatabaseRecord dbRecord;
+    private StarSurvey starSurvey;
     private boolean okClicked = false;
 
 
@@ -53,10 +53,10 @@ public class DatabaseEditDialogController {
     @FXML
     private void handleOk() {
         if (isInputValid()){
-            dbRecord.setName(nameTextField.getText());
-            dbRecord.setSesameAlias(sesameIdentifierTextArea.getText());
-            dbRecord.setURL(urlTextArea.getText());
-            dbRecord.setPlugin(pluginChoiceBox.getValue());
+            starSurvey.setName(nameTextField.getText());
+            starSurvey.setSesameAlias(sesameIdentifierTextArea.getText());
+            starSurvey.setURL(urlTextArea.getText());
+            starSurvey.setPlugin(pluginChoiceBox.getValue());
 
             okClicked = true;
             dialogStage.close();
@@ -74,12 +74,12 @@ public class DatabaseEditDialogController {
         dialogStage.close();
     }
 
-    public void setDbRecord(DatabaseRecord dbRecord) {
-        this.dbRecord = dbRecord;
-        nameTextField.setText(dbRecord.getName());
-        sesameIdentifierTextArea.setText(dbRecord.getSesameAlias());
-        urlTextArea.setText(dbRecord.getURL());
-        pluginChoiceBox.getSelectionModel().select(dbRecord.getPlugin());
+    public void setStarSurvey(StarSurvey starSurvey) {
+        this.starSurvey = starSurvey;
+        nameTextField.setText(starSurvey.getName());
+        sesameIdentifierTextArea.setText(starSurvey.getSesameAlias());
+        urlTextArea.setText(starSurvey.getURL());
+        pluginChoiceBox.getSelectionModel().select(starSurvey.getPlugin());
     }
 
     public boolean isOkClicked() {

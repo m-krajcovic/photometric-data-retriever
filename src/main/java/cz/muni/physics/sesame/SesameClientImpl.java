@@ -25,16 +25,19 @@ import java.util.List;
  * @since 24/03/16
  */
 public class SesameClientImpl implements SesameClient {
-    private final RestOperations restTemplate;
 
+    private RestOperations restTemplate;
+    private String resolverUrl;
+    private String testUrl;
 
-    public SesameClientImpl(RestOperations restTemplate) {
+    public SesameClientImpl(RestOperations restTemplate, String resolverUrl, String testUrl) {
         this.restTemplate = restTemplate;
+        this.resolverUrl = resolverUrl;
+        this.testUrl = testUrl;
     }
 
     public SesameResult getData(String name) throws XPathExpressionException, ResourceAccessException {
-        String sesameUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oIX/A?{name}";
-        String response = restTemplate.getForObject(sesameUrl, String.class, name); // TODO try catch something
+        String response = restTemplate.getForObject(resolverUrl, String.class, name); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
@@ -55,7 +58,6 @@ public class SesameClientImpl implements SesameClient {
 
     @Override
     public boolean isAvailable() {
-        String testUrl = "http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame";
         try {
             final URL url = new URL(testUrl);
             final URLConnection conn = url.openConnection();

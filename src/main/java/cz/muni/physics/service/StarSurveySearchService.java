@@ -1,7 +1,7 @@
 package cz.muni.physics.service;
 
 import cz.muni.physics.java.PhotometricData;
-import cz.muni.physics.model.DatabaseRecord;
+import cz.muni.physics.model.StarSurvey;
 import cz.muni.physics.plugin.StreamGobbler;
 import cz.muni.physics.sesame.SesameResult;
 import javafx.application.Platform;
@@ -28,18 +28,18 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 06/04/16
  */
-public class DatabaseSearchService extends Service<List<PhotometricData>> {
+public class StarSurveySearchService extends Service<List<PhotometricData>> {
 
-    private final static Logger logger = LogManager.getLogger(DatabaseSearchService.class);
+    private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
 
     private SesameResult sesameResult;
-    private List<DatabaseRecord> databaseRecords;
-    private ObservableMap<DatabaseRecord, Boolean> dbRecordMap = FXCollections.observableMap(new HashMap<>());
+    private List<StarSurvey> starSurveys;
+    private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Override
     public void reset() {
         super.reset();
-        dbRecordMap.clear();
+        starSurveysMap.clear();
     }
 
     @Override
@@ -49,21 +49,21 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
             protected List<PhotometricData> call() {
                 List<PhotometricData> result = Collections.synchronizedList(new ArrayList<>());
                 ExecutorService executor = Executors.newFixedThreadPool(6);
-                for (DatabaseRecord record : databaseRecords) {
-                    if (record.getPlugin() == null) {
-                        logger.debug("Plugin not found for db record: ", record.getName());
-                        updateDbRecords(record, false);
+                for (StarSurvey starSurvey : starSurveys) {
+                    if (starSurvey.getPlugin() == null) {
+                        logger.debug("Plugin not found for Star Survey: ", starSurvey.getName());
+                        updateStarSurveys(starSurvey, false);
                         continue;
                     }
-                    Map<String, String> urlVars = getUrlVars(sesameResult, record);
-                    String url = getUrl(record, urlVars);
+                    Map<String, String> urlVars = getUrlVars(sesameResult, starSurvey);
+                    String url = getUrl(starSurvey, urlVars);
                     Process process;
-                    String command = record.getPlugin().getFullCommand(url);
+                    String command = starSurvey.getPlugin().getFullCommand(url);
                     try {
                         process = Runtime.getRuntime().exec(command);
                     } catch (IOException e) {
                         logger.error("Failed to run {}", command);
-                        updateDbRecords(record, false);
+                        updateStarSurveys(starSurvey, false);
                         continue;
                     }
                     StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream());
@@ -75,8 +75,8 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
                             result.add(data);
                         }
                     });
-                    outputGobbler.setFinished(() -> updateDbRecords(record, true));
-                    outputGobbler.setFailed(() -> updateDbRecords(record, false));
+                    outputGobbler.setFinished(() -> updateStarSurveys(starSurvey, true));
+                    outputGobbler.setFailed(() -> updateStarSurveys(starSurvey, false));
                     executor.execute(errorGobbler);
                     executor.execute(outputGobbler);
                 }
@@ -91,17 +91,17 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
         };
     }
 
-    private void updateDbRecords(DatabaseRecord dbRecord, boolean succeeded) {
-        Platform.runLater(() -> dbRecordMap.put(dbRecord, succeeded));
+    private void updateStarSurveys(StarSurvey starSurvey, boolean succeeded) {
+        Platform.runLater(() -> starSurveysMap.put(starSurvey, succeeded));
     }
 
-    private String getUrl(DatabaseRecord record, Map<String, String> urlVars) {
+    private String getUrl(StarSurvey record, Map<String, String> urlVars) {
         UriTemplate uriTemplate = new UriTemplate(record.getURL());
         URI uri = uriTemplate.expand(urlVars); // TODO check variables -> show me something, log at least
         return uri.toString();
     }
 
-    private Map<String, String> getUrlVars(SesameResult sesameResult, DatabaseRecord record) {
+    private Map<String, String> getUrlVars(SesameResult sesameResult, StarSurvey record) {
         Map<String, String> urlVars = new HashMap<>();
         Set<String> groupNames = record.getSesameVariables();
         Pattern p = record.getSesamePattern();
@@ -128,19 +128,19 @@ public class DatabaseSearchService extends Service<List<PhotometricData>> {
         this.sesameResult = sesameResult;
     }
 
-    public List<DatabaseRecord> getDatabaseRecords() {
-        return databaseRecords;
+    public List<StarSurvey> getStarSurveys() {
+        return starSurveys;
     }
 
-    public void setDatabaseRecords(List<DatabaseRecord> databaseRecords) {
-        this.databaseRecords = databaseRecords;
+    public void setStarSurveys(List<StarSurvey> starSurveys) {
+        this.starSurveys = starSurveys;
     }
 
-    public ObservableMap<DatabaseRecord, Boolean> getDbRecordMap() {
-        return dbRecordMap;
+    public ObservableMap<StarSurvey, Boolean> getStarSurveysMap() {
+        return starSurveysMap;
     }
 
-    public void setDbRecordMap(ObservableMap<DatabaseRecord, Boolean> dbRecordMap) {
-        this.dbRecordMap = dbRecordMap;
+    public void setStarSurveysMap(ObservableMap<StarSurvey, Boolean> starSurveysMap) {
+        this.starSurveysMap = starSurveysMap;
     }
 }

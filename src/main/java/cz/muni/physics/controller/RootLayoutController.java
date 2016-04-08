@@ -22,7 +22,7 @@ public class RootLayoutController {
 
     @FXML
     private void handleDatabasesMenuItem(){
-        mainApp.showDatabaseOverview();
+        mainApp.showStarSurveyOverview();
     }
 
     public void setMainApp(MainApp mainApp) {

@@ -9,6 +9,11 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>NsvsPlugin</module>
+        <module>CrtsPlugin</module>
+    </modules>
+
     <properties>
         <java.version>1.8</java.version>
         <main.class></main.class>
