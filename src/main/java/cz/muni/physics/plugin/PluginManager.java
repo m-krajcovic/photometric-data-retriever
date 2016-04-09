@@ -2,7 +2,8 @@ package cz.muni.physics.plugin;
 
 import cz.muni.physics.model.Plugin;
 
-import java.util.Set;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Michal Krajčovič
@@ -10,5 +11,5 @@ import java.util.Set;
  * @since 21/03/16
  */
 public interface PluginManager {
-    Set<Plugin> getAvailablePlugins() throws PluginManagerException;
+    Process run(Plugin plugin, Map<String, String> params) throws IOException;
 }

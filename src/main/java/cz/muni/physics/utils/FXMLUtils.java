@@ -18,7 +18,7 @@ import java.io.StringWriter;
  * @version 1.0
  * @since 30/03/16
  */
-public class FXMLUtil {
+public class FXMLUtils {
 
     public static Stage createDialogStage(String title, Pane pane, Stage parent){
         Stage dialogStage = new Stage();

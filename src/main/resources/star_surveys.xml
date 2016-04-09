@@ -1,8 +1,8 @@
 <list>
-    <cz.muni.physics.model.StarSurvey name="NSVS" url="http://skydot.lanl.gov/nsvs/star.php?num={id}&amp;mask=32004" sesameAlias="NSVS\s(?&lt;id&gt;\d*)">
-        <plugin>NSVS,NsvsPlugin.jar,java -jar {0} {1}</plugin>
-    </cz.muni.physics.model.StarSurvey>
-    <cz.muni.physics.model.StarSurvey name="CRTS" url="http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&amp;Dec={dec}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot" sesameAlias="">
-        <plugin>CRTS,CrtsPlugin.jar,java -jar {0} {1}</plugin>
-    </cz.muni.physics.model.StarSurvey>
+    <starSurvey name="NSVS" url="http://skydot.lanl.gov/nsvs/star.php?num={id}&amp;mask=32004" sesameAlias="NSVS\s(?&lt;id&gt;\d*)">
+        <plugin name="NSVS" mainFile="NsvsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+    </starSurvey>
+    <starSurvey name="CRTS" url="http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&amp;Dec={dec}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot" sesameAlias="">
+        <plugin name="CRTS" mainFile="CrtsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+    </starSurvey>
 </list>

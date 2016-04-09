@@ -1,0 +1,5 @@
+.chart-symbol {
+    -fx-shape: "M0 3 L3 3 L3 0 L0 0 Z";
+    -fx-scale-shape: false;
+}
+

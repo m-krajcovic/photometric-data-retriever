@@ -5,12 +5,14 @@ import cz.muni.physics.sesame.SesameResult;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 06/04/16
  */
+@Component
 public class SesameService extends Service<SesameResult> {
 
     private String searchText;
@@ -23,7 +25,7 @@ public class SesameService extends Service<SesameResult> {
         return new Task<SesameResult>() {
 
             @Override
-            protected SesameResult call() throws Exception {
+            protected SesameResult call() throws Exception { //TODO
                 return sesameClient.getData(searchText);
             }
         };

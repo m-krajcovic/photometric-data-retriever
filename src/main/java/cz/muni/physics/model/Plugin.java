@@ -1,11 +1,7 @@
 package cz.muni.physics.model;
 
-import cz.muni.physics.storage.DataStorage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
-import java.io.File;
-import java.text.MessageFormat;
 
 /**
  * @author Michal Krajčovič
@@ -18,16 +14,15 @@ public class Plugin {
     private StringProperty command;
 
     public Plugin() {
+        this.name = new SimpleStringProperty();
+        this.mainFile = new SimpleStringProperty();
+        this.command = new SimpleStringProperty();
     }
 
     public Plugin(String name, String mainFile, String command) {
         this.name = new SimpleStringProperty(name);
         this.mainFile = new SimpleStringProperty(mainFile);
         this.command = new SimpleStringProperty(command);
-    }
-
-    public String getFullCommand(String url){
-        return MessageFormat.format(getCommand(), DataStorage.getPluginsDir().getAbsolutePath() + File.separator + getName() + File.separator + getMainFile(), url);
     }
 
     public String getName() {

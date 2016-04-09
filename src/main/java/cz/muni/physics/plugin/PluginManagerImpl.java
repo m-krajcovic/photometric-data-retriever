@@ -1,54 +1,43 @@
 package cz.muni.physics.plugin;
 
 import cz.muni.physics.model.Plugin;
-import cz.muni.physics.storage.DataStorage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
-import java.io.*;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
- * @since 01/04/16
+ * @since 08/04/16
  */
 public class PluginManagerImpl implements PluginManager {
 
-    private final static Logger logger = LogManager.getLogger(PluginManagerImpl.class);
+    private String pluginsDirPath;
 
-    public Set<Plugin> getAvailablePlugins() throws PluginManagerException {
-        Set<Plugin> result = new HashSet<>();
-        File dir = DataStorage.getPluginsDir();
-        String pluginsDirPath = dir.getAbsolutePath() + File.separator;
-        String[] dirs = dir.list((file, name) -> new File(file, name).isDirectory());
-        for (String pluginDirName : dirs) {
-            String pluginDirPath = pluginsDirPath + pluginDirName + File.separator;
-            File pluginProps = new File(pluginDirPath, "plugin.properties");
-            if (pluginProps.exists()) {
-                logger.debug("Found plugin properties in: " + pluginDirPath);
-                Properties props = new Properties();
-                try (InputStream is = new FileInputStream(pluginProps)) {
-                    props.load(is);
-                } catch (FileNotFoundException e) {
-                    throw new PluginManagerException("FileNotFoundException", e);
-                } catch (IOException e) {
-                    throw new PluginManagerException("IOException", e);
-                }
-                String name = props.getProperty("name");
-                String mainFile = props.getProperty("main.file");
-                String command = props.getProperty("command");
-                if (name == null || mainFile == null || command == null) {
-                    throw new PluginManagerException("There are some properties missing inside " + pluginDirPath + "plugin.properties");
-                }
-                Plugin plugin = new Plugin(name, mainFile, command);
-                result.add(plugin);
-            } else {
-                logger.debug("Plugin not found inside " + pluginDirPath);
-            }
-        }
-        return result;
+    public PluginManagerImpl(String pluginsDirPath) {
+        this.pluginsDirPath = pluginsDirPath;
+    }
+
+    @Override
+    public Process run(Plugin plugin, Map<String, String> params) throws IOException {
+        return Runtime.getRuntime().exec(resolveCommand(plugin, params));
+    }
+
+    /**
+     * java -jar ${mainFile} ${param1} ${param2} ${param3}
+     *
+     * @param plugin
+     * @param params
+     * @return
+     */
+    private String resolveCommand(Plugin plugin, Map<String, String> params) {
+        params.put("mainFile", resolveMainFilePath(plugin));
+        return StrSubstitutor.replace(plugin.getCommand(), params);
+    }
+
+    private String resolveMainFilePath(Plugin plugin) {
+        return pluginsDirPath + File.separator + plugin.getName() + File.separator + plugin.getMainFile();
     }
 }

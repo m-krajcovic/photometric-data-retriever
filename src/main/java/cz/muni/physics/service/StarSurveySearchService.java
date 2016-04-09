@@ -2,6 +2,7 @@ package cz.muni.physics.service;
 
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.plugin.PluginManager;
 import cz.muni.physics.plugin.StreamGobbler;
 import cz.muni.physics.sesame.SesameResult;
 import javafx.application.Platform;
@@ -12,6 +13,8 @@ import javafx.concurrent.Task;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriTemplate;
 
 import java.io.IOException;
@@ -28,9 +31,13 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 06/04/16
  */
-public class StarSurveySearchService extends Service<List<PhotometricData>> {
+@Component
+public class StarSurveySearchService extends Service<Map<StarSurvey, List<PhotometricData>>> {
 
     private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
+
+    @Autowired
+    private PluginManager pluginManager;
 
     private SesameResult sesameResult;
     private List<StarSurvey> starSurveys;
@@ -43,26 +50,26 @@ public class StarSurveySearchService extends Service<List<PhotometricData>> {
     }
 
     @Override
-    protected Task<List<PhotometricData>> createTask() {
-        return new Task<List<PhotometricData>>() {
+    protected Task<Map<StarSurvey, List<PhotometricData>>> createTask() {
+        return new Task<Map<StarSurvey, List<PhotometricData>>>() {
             @Override
-            protected List<PhotometricData> call() {
-                List<PhotometricData> result = Collections.synchronizedList(new ArrayList<>());
+            protected Map<StarSurvey, List<PhotometricData>> call() {
+                Map<StarSurvey, List<PhotometricData>> resultMap = Collections.synchronizedMap(new HashMap<>());
                 ExecutorService executor = Executors.newFixedThreadPool(6);
                 for (StarSurvey starSurvey : starSurveys) {
+                    List<PhotometricData> surveyData = new ArrayList<>();
                     if (starSurvey.getPlugin() == null) {
                         logger.debug("Plugin not found for Star Survey: ", starSurvey.getName());
                         updateStarSurveys(starSurvey, false);
                         continue;
                     }
                     Map<String, String> urlVars = getUrlVars(sesameResult, starSurvey);
-                    String url = getUrl(starSurvey, urlVars);
+                    urlVars.put("url",getUrl(starSurvey, urlVars));
                     Process process;
-                    String command = starSurvey.getPlugin().getFullCommand(url);
                     try {
-                        process = Runtime.getRuntime().exec(command);
+                        process = pluginManager.run(starSurvey.getPlugin(), urlVars);
                     } catch (IOException e) {
-                        logger.error("Failed to run {}", command);
+                        logger.error("Failed to run {}", starSurvey.getPlugin().getMainFile());
                         updateStarSurveys(starSurvey, false);
                         continue;
                     }
@@ -72,10 +79,13 @@ public class StarSurveySearchService extends Service<List<PhotometricData>> {
                         if (split.length >= 3 && NumberUtils.isParsable(split[0])
                                 && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
                             PhotometricData data = new PhotometricData(split[0], split[1], split[2]);
-                            result.add(data);
+                            surveyData.add(data);
                         }
                     });
-                    outputGobbler.setFinished(() -> updateStarSurveys(starSurvey, true));
+                    outputGobbler.setFinished(() -> {
+                        resultMap.put(starSurvey, surveyData);
+                        updateStarSurveys(starSurvey, true);
+                    });
                     outputGobbler.setFailed(() -> updateStarSurveys(starSurvey, false));
                     executor.execute(errorGobbler);
                     executor.execute(outputGobbler);
@@ -86,7 +96,7 @@ public class StarSurveySearchService extends Service<List<PhotometricData>> {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                return result;
+                return resultMap;
             }
         };
     }

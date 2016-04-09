@@ -7,13 +7,12 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import cz.muni.physics.model.StarSurvey;
 import cz.muni.physics.model.Plugin;
+import cz.muni.physics.model.StarSurvey;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,30 +27,26 @@ public class StarSurveyConverter implements Converter {
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         if (source == null) return;
-        StarSurvey record = (StarSurvey) source;
-        writer.addAttribute("name", record.getName());
-        writer.addAttribute("url", record.getURL());
-        writer.addAttribute("sesameAlias", record.getSesameAlias());
+        StarSurvey survey = (StarSurvey) source;
+        writer.addAttribute("name", survey.getName());
+        writer.addAttribute("url", survey.getURL());
+        writer.addAttribute("sesameAlias", survey.getSesameAlias());
         writer.startNode("plugin");
-        if (record.getPlugin() != null)
-            writer.setValue(MessageFormat.format("{0},{1},{2}", record.getPlugin().getName(),
-                    record.getPlugin().getMainFile(), record.getPlugin().getCommand()));
+        context.convertAnother(survey.getPlugin());
         writer.endNode();
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        String starSurveyName = reader.getAttribute("name");
-        String starSurveyUrl = reader.getAttribute("url");
-        String starSurveyAlias = reader.getAttribute("sesameAlias");
+        StarSurvey survey = new StarSurvey();
+        survey.setName(reader.getAttribute("name"));
+        survey.setURL(reader.getAttribute("url"));
+        survey.setSesameAlias(reader.getAttribute("sesameAlias"));
         reader.moveDown();
-        String pluginParts[] = reader.getValue().split(",");
-        Plugin plugin = null;
-        if (pluginParts.length == 3) {
-            plugin = new Plugin(pluginParts[0], pluginParts[1], pluginParts[2]);
-        }
+        Plugin plugin = (Plugin) context.convertAnother(survey, Plugin.class);
+        survey.setPlugin(plugin);
         reader.moveUp();
-        return new StarSurvey(starSurveyName, starSurveyUrl, plugin, starSurveyAlias);
+        return survey;
     }
 
     @Override
@@ -61,7 +56,9 @@ public class StarSurveyConverter implements Converter {
 
     public static void main(String[] args) {
         XStream xStream = new XStream(new DomDriver());
+        xStream.alias("starSurvey", StarSurvey.class);
         xStream.registerConverter(new StarSurveyConverter());
+        xStream.registerConverter(new PluginConverter());
 
         Plugin nsvsPlugin = new Plugin("NSVS", "NsvsPlugin.jar", "java -jar {0} {1}");
         Plugin crtsPlugin = new Plugin("CRTS", "CrtsPlugin.jar", "java -jar {0} {1}");
@@ -78,6 +75,9 @@ public class StarSurveyConverter implements Converter {
 
         System.out.println(x);
 
+        List<StarSurvey> outputList = (List<StarSurvey>) xStream.fromXML(x);
+
+        outputList.forEach(System.out::println);
 
         UriTemplate uriTemplate = new UriTemplate("{url} {sranda} {sranca}");
         String url = "hi";
@@ -87,7 +87,7 @@ public class StarSurveyConverter implements Converter {
         map.put("url", url);
         map.put("sranda", sranda);
         map.put("sranca", sranca);
-        URI uri = uriTemplate.expand(url,sranda,sranca);
+        URI uri = uriTemplate.expand(url, sranda, sranca);
         System.out.println(uri);
 
         StrSubstitutor strSubstitutor = new StrSubstitutor(map);

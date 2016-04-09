@@ -1,8 +1,8 @@
 package cz.muni.physics.controller;
 
-import cz.muni.physics.MainApp;
-import cz.muni.physics.model.StarSurvey;
 import cz.muni.physics.model.Plugin;
+import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.utils.AppConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -11,15 +11,19 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 01/04/16
  */
+@Component
 public class StarSurveyEditDialogController {
 
-    private MainApp mainApp;
+    @Autowired
+    private AppConfig app;
 
     @FXML
     private TextField nameTextField;
@@ -48,6 +52,7 @@ public class StarSurveyEditDialogController {
                 return null;
             }
         });
+        pluginChoiceBox.setItems(app.getPlugins());
     }
 
     @FXML
@@ -88,10 +93,5 @@ public class StarSurveyEditDialogController {
 
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-        pluginChoiceBox.setItems(mainApp.getPlugins());
     }
 }

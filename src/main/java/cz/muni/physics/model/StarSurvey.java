@@ -31,6 +31,10 @@ public class StarSurvey {
     }
 
     public StarSurvey() {
+        this.name = new SimpleStringProperty();
+        this.URL = new SimpleStringProperty();
+        this.plugin = new SimpleObjectProperty<>();
+        this.sesameAlias = new SimpleStringProperty();
     }
 
     private Set<String> findNamedGroups(){

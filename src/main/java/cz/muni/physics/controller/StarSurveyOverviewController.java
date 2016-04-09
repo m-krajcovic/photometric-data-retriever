@@ -1,56 +1,64 @@
 package cz.muni.physics.controller;
 
-import cz.muni.physics.MainApp;
 import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.utils.AppConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 31/03/16
  */
+@Component
 public class StarSurveyOverviewController {
 
-    private MainApp mainApp;
+    @Autowired
+    private AppConfig app;
 
     @FXML
-    private TableView<StarSurvey> starSurveyTableView;
+    private TableView<StarSurvey> starSurveys;
     @FXML
-    private TableColumn<StarSurvey, String> starSurveyName;
+    private TableColumn<StarSurvey, String> nameColumn;
     @FXML
-    private TableColumn<StarSurvey, String> starSurveySesameIdentifier;
+    private TableColumn<StarSurvey, String> sesameIdentifierColumn;
     @FXML
-    private TableColumn<StarSurvey, String> starSurveyURL;
+    private TableColumn<StarSurvey, String> urlColumn;
     @FXML
-    private TableColumn<StarSurvey, String> starSurveyPlugin;
+    private TableColumn<StarSurvey, String> pluginColumn;
     @FXML
     private Button button;
+
+    public StarSurveyOverviewController(){
+
+    }
 
     @FXML
     private void handleNewButton() {
         StarSurvey tempStarSurvey = new StarSurvey("", "", null, "");
-        boolean okClicked = mainApp.showStarSurveyEditDialog(tempStarSurvey);
+        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
-            mainApp.getStarSurveys().add(tempStarSurvey);
+            app.getStarSurveys().add(tempStarSurvey);
         }
     }
 
     @FXML
     private void handleEditButton() {
-        StarSurvey selectedRecord = starSurveyTableView.getSelectionModel().getSelectedItem();
+        StarSurvey selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
-            boolean okClicked = mainApp.showStarSurveyEditDialog(selectedRecord);
+            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord);
             if (okClicked) {
-                starSurveyTableView.refresh();
+                starSurveys.refresh();
             }
         } else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
+            alert.initOwner(app.getPrimaryStage());
             alert.setTitle("No Selection");
             alert.setHeaderText("No Database Record Selected");
             alert.setContentText("Please select a person in the table.");
@@ -66,15 +74,11 @@ public class StarSurveyOverviewController {
 
     @FXML
     private void initialize() {
-        starSurveyName.setCellValueFactory(cell -> cell.getValue().nameProperty());
-        starSurveySesameIdentifier.setCellValueFactory(cell -> cell.getValue().sesameAliasProperty());
-        starSurveyURL.setCellValueFactory(cell -> cell.getValue().URLProperty());
-        starSurveyPlugin.setCellValueFactory(cell -> cell.getValue().getPlugin().nameProperty());
+        nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
+        sesameIdentifierColumn.setCellValueFactory(cell -> cell.getValue().sesameAliasProperty());
+        urlColumn.setCellValueFactory(cell -> cell.getValue().URLProperty());
+        pluginColumn.setCellValueFactory(cell -> cell.getValue().getPlugin().nameProperty());
 
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-        starSurveyTableView.setItems(mainApp.getStarSurveys());
+        starSurveys.setItems(app.getStarSurveys());
     }
 }
