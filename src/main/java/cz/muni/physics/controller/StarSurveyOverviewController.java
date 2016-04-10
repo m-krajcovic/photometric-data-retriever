@@ -34,13 +34,13 @@ public class StarSurveyOverviewController {
     @FXML
     private Button button;
 
-    public StarSurveyOverviewController(){
+    public StarSurveyOverviewController() {
 
     }
 
     @FXML
     private void handleNewButton() {
-        StarSurvey tempStarSurvey = new StarSurvey("", "", null, "");
+        StarSurvey tempStarSurvey = new StarSurvey();
         boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
             app.getStarSurveys().add(tempStarSurvey);
@@ -60,7 +60,7 @@ public class StarSurveyOverviewController {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(app.getPrimaryStage());
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Database Record Selected");
+            alert.setHeaderText("No Star Survey Selected");
             alert.setContentText("Please select a person in the table.");
 
             alert.showAndWait();
@@ -75,8 +75,6 @@ public class StarSurveyOverviewController {
     @FXML
     private void initialize() {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
-        sesameIdentifierColumn.setCellValueFactory(cell -> cell.getValue().sesameAliasProperty());
-        urlColumn.setCellValueFactory(cell -> cell.getValue().URLProperty());
         pluginColumn.setCellValueFactory(cell -> cell.getValue().getPlugin().nameProperty());
 
         starSurveys.setItems(app.getStarSurveys());

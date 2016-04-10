@@ -50,7 +50,7 @@ public class MainPreloader extends Preloader {
 
     @Override
     public void handleApplicationNotification(PreloaderNotification info) {
-        if(info instanceof PreloaderHandlerEvent){
+        if (info instanceof PreloaderHandlerEvent) {
             infoLabel.setText(((PreloaderHandlerEvent) info).getMessage());
         }
     }

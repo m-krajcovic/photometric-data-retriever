@@ -3,18 +3,16 @@ package cz.muni.physics.utils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import cz.muni.physics.controller.PhotometricDataOverviewController;
-import cz.muni.physics.controller.RootLayoutController;
-import cz.muni.physics.controller.SearchOverviewController;
 import cz.muni.physics.controller.StarSurveyEditDialogController;
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.Plugin;
 import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.nameresolver.NameResolver;
+import cz.muni.physics.nameresolver.SesameNameResolver;
 import cz.muni.physics.plugin.PluginLoader;
 import cz.muni.physics.plugin.PluginLoaderImpl;
 import cz.muni.physics.plugin.PluginManager;
 import cz.muni.physics.plugin.PluginManagerImpl;
-import cz.muni.physics.sesame.SesameClient;
-import cz.muni.physics.sesame.SesameClientImpl;
 import cz.muni.physics.storage.DataStorage;
 import cz.muni.physics.storage.converter.PluginConverter;
 import cz.muni.physics.storage.converter.StarSurveyConverter;
@@ -32,7 +30,12 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +50,7 @@ import java.util.Map;
  */
 @Configuration
 @Lazy
-@ComponentScan(basePackages = { "cz.muni.physics.*" })
+@ComponentScan(basePackages = {"cz.muni.physics.*"})
 @PropertySource(value = "classpath:application.properties")
 public class AppConfig {
 
@@ -59,21 +62,25 @@ public class AppConfig {
     private ObservableList<StarSurvey> starSurveys;
     private ObservableList<Plugin> plugins;
 
-    public AppConfig(){
+    public AppConfig() {
         starSurveys = FXCollections.observableArrayList(new Callback<StarSurvey, Observable[]>() {
             @Override
             public Observable[] call(StarSurvey param) {
-                return new Observable[]{param.nameProperty(), param.sesameAliasProperty(), param.URLProperty(), param.pluginProperty()};
+                return new Observable[]{param.nameProperty(), param.pluginProperty()};
             }
         });
         starSurveys.addListener((ListChangeListener<StarSurvey>) c -> Platform.runLater(() -> dataStorage().saveStarSurveys(new ArrayList<>(c.getList()))));
         plugins = FXCollections.observableArrayList();
     }
 
-    public void initRootLayout(){
+    @Bean
+    public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+        return new PropertyPlaceholderConfigurer();
+    }
+
+    public void initRootLayout() {
         SpringFXMLLoader loader = fxmlLoader();
         rootLayout = loader.load("/view/RootLayout.fxml");
-        RootLayoutController controller = loader.getController();
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -82,7 +89,6 @@ public class AppConfig {
     public void showSearch() {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane searchView = loader.load("/view/SearchOverview.fxml");
-        SearchOverviewController controller = loader.getController();
         showScreen(searchView);
     }
 
@@ -133,7 +139,7 @@ public class AppConfig {
 
     @Bean
     @Scope("prototype")
-    public SpringFXMLLoader fxmlLoader(){
+    public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
     }
 
@@ -143,8 +149,8 @@ public class AppConfig {
     }
 
     @Bean
-    public SesameClient sesameClient() {
-        return new SesameClientImpl(new RestTemplate(),
+    public NameResolver sesameNameResolver() {
+        return new SesameNameResolver(new RestTemplate(),
                 environment.getProperty("sesame.resolver.url"),
                 environment.getProperty("sesame.test.url"));
     }
@@ -155,23 +161,18 @@ public class AppConfig {
     }
 
     @Bean
-    public PluginManager pluginManager(){
+    public PluginManager pluginManager() {
         return new PluginManagerImpl(System.getProperty("user.home") + environment.getProperty("plugins.dir.path"));
     }
 
     @Bean
-    public XStream xStream(){
+    public XStream xStream() {
         XStream xStream = new XStream(new DomDriver());
         xStream.alias("starSurvey", StarSurvey.class);
         xStream.alias("plugin", Plugin.class);
         xStream.registerConverter(new PluginConverter());
         xStream.registerConverter(new StarSurveyConverter());
         return xStream;
-    }
-
-    @Bean
-    public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-        return new PropertyPlaceholderConfigurer();
     }
 
     public Stage getPrimaryStage() {

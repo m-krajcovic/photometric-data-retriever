@@ -12,6 +12,7 @@ import java.util.Properties;
 public class PropUtils {
 
     private static final Properties props = new Properties();
+
     static {
         try {
             try (InputStream in = PropUtils.class.getResourceAsStream("/application.properties")) {

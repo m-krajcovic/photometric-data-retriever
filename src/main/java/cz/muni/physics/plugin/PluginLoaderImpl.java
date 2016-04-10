@@ -4,7 +4,11 @@ import cz.muni.physics.model.Plugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -20,7 +24,7 @@ public class PluginLoaderImpl implements PluginLoader {
 
     private String pluginsFolderPath;
 
-    public PluginLoaderImpl(String pluginsFolderPath){
+    public PluginLoaderImpl(String pluginsFolderPath) {
         this.pluginsFolderPath = pluginsFolderPath;
     }
 

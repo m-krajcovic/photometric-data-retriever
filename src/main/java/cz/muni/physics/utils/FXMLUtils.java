@@ -2,7 +2,11 @@ package cz.muni.physics.utils;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -20,7 +24,7 @@ import java.io.StringWriter;
  */
 public class FXMLUtils {
 
-    public static Stage createDialogStage(String title, Pane pane, Stage parent){
+    public static Stage createDialogStage(String title, Pane pane, Stage parent) {
         Stage dialogStage = new Stage();
         dialogStage.setTitle(title);
         dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -31,16 +35,16 @@ public class FXMLUtils {
         return dialogStage;
     }
 
-    public static void showTooltip(String text, Window window, Control control){
+    public static void showTooltip(String text, Window window, Control control) {
         Tooltip tooltip = new Tooltip(text);
         Point2D point = control.localToScene(0.0, 0.0);
         tooltip.setAutoHide(true);
         tooltip.show(window,
-                control.getWidth()/2 - text.length()*2.9 + control.getScene().getX() + window.getX() + point.getX(),
+                control.getWidth() / 2 - text.length() * 2.9 + control.getScene().getX() + window.getX() + point.getX(),
                 control.getHeight() - 5 + control.getScene().getY() + window.getY() + point.getY());
     }
 
-    public static void showAlert(String title, String header, String content, Alert.AlertType type){
+    public static void showAlert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
@@ -48,7 +52,7 @@ public class FXMLUtils {
         alert.showAndWait();
     }
 
-    public static void showExceptionAlert(String title, String header, String content, Exception exc){
+    public static void showExceptionAlert(String title, String header, String content, Exception exc) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(header);

@@ -8,7 +8,5 @@ import java.util.List;
  * @since 25/03/16
  */
 public interface Plugin {
-    PluginDescription getPluginDescription();
-
     List<PhotometricData> getDataFromUrl(String url);
 }

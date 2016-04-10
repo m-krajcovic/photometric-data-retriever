@@ -6,7 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +35,14 @@ public class DataStorage {
     @Autowired
     private XStream xStream;
 
-    public DataStorage(){
+    public DataStorage() {
         if (!dataDir.exists()) {
             dataDir.mkdir();
         }
         if (!starSurveysFile.exists()) {
             try (InputStream inputStream = DataStorage.class.getResourceAsStream("/star_surveys.xml");
                  OutputStream outputStream = new FileOutputStream(starSurveysFile)) {
-                int read = 0;
+                int read;
                 byte[] bytes = new byte[1024];
                 while ((read = inputStream.read(bytes)) != -1) {
                     outputStream.write(bytes, 0, read);

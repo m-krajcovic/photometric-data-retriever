@@ -22,14 +22,12 @@ import java.util.ResourceBundle;
  */
 public class SpringFXMLLoader {
 
+    private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
     @Autowired
     ApplicationContext context;
-
-    private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
-
     private FXMLLoader fxmlLoader = new FXMLLoader();
 
-    public SpringFXMLLoader(){
+    public SpringFXMLLoader() {
         fxmlLoader.setControllerFactory(aClass -> {
             logger.debug("Getting bean: " + aClass.getName());
             return context.getBean(aClass);
@@ -51,32 +49,44 @@ public class SpringFXMLLoader {
         return fxmlLoader;
     }
 
-    public <T> T getController(){
+    public <T> T getController() {
         return fxmlLoader.getController();
+    }
+
+    public void setController(Object controller) {
+        fxmlLoader.setController(controller);
     }
 
     public URL getLocation() {
         return fxmlLoader.getLocation();
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
-        fxmlLoader.setClassLoader(classLoader);
-    }
-
-    public void setResources(ResourceBundle resources) {
-        fxmlLoader.setResources(resources);
+    public void setLocation(URL location) {
+        fxmlLoader.setLocation(location);
     }
 
     public <T> T getRoot() {
         return fxmlLoader.getRoot();
     }
 
+    public void setRoot(Object root) {
+        fxmlLoader.setRoot(root);
+    }
+
     public ResourceBundle getResources() {
         return fxmlLoader.getResources();
     }
 
+    public void setResources(ResourceBundle resources) {
+        fxmlLoader.setResources(resources);
+    }
+
     public Callback<Class<?>, Object> getControllerFactory() {
         return fxmlLoader.getControllerFactory();
+    }
+
+    public void setControllerFactory(Callback<Class<?>, Object> controllerFactory) {
+        fxmlLoader.setControllerFactory(controllerFactory);
     }
 
     @CallerSensitive
@@ -88,6 +98,10 @@ public class SpringFXMLLoader {
         return fxmlLoader.getCharset();
     }
 
+    public void setCharset(Charset charset) {
+        fxmlLoader.setCharset(charset);
+    }
+
     public ObservableMap<String, Object> getNamespace() {
         return fxmlLoader.getNamespace();
     }
@@ -97,31 +111,15 @@ public class SpringFXMLLoader {
         return fxmlLoader.getClassLoader();
     }
 
+    public void setClassLoader(ClassLoader classLoader) {
+        fxmlLoader.setClassLoader(classLoader);
+    }
+
     public BuilderFactory getBuilderFactory() {
         return fxmlLoader.getBuilderFactory();
     }
 
     public void setBuilderFactory(BuilderFactory builderFactory) {
         fxmlLoader.setBuilderFactory(builderFactory);
-    }
-
-    public void setCharset(Charset charset) {
-        fxmlLoader.setCharset(charset);
-    }
-
-    public void setControllerFactory(Callback<Class<?>, Object> controllerFactory) {
-        fxmlLoader.setControllerFactory(controllerFactory);
-    }
-
-    public void setController(Object controller) {
-        fxmlLoader.setController(controller);
-    }
-
-    public void setRoot(Object root) {
-        fxmlLoader.setRoot(root);
-    }
-
-    public void setLocation(URL location) {
-        fxmlLoader.setLocation(location);
     }
 }

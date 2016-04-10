@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.XStreamException;
 import cz.muni.physics.javafx.PreloaderHandlerEvent;
 import cz.muni.physics.model.Plugin;
 import cz.muni.physics.model.StarSurvey;
+import cz.muni.physics.nameresolver.NameResolverManager;
 import cz.muni.physics.plugin.PluginLoader;
 import cz.muni.physics.plugin.PluginManagerException;
-import cz.muni.physics.sesame.SesameClient;
 import cz.muni.physics.storage.DataStorage;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
@@ -36,13 +36,13 @@ public class AppInitializer {
     @Autowired
     private PluginLoader pluginLoader;
     @Autowired
-    private SesameClient sesameClient;
+    private NameResolverManager nameResolverManager;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
 
 
-    public void initialize(Application mainApp){
+    public void initialize(Application mainApp) {
         logger.debug("Initializing mainApp.");
         File dir = dataStorage.getPluginsDir();
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
@@ -81,10 +81,13 @@ public class AppInitializer {
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
-        if (!sesameClient.isAvailable()) {
-            logger.debug("Sesame Name Resolver is not available.");
-            initErrors.add("Sesame Name Resolver is not available. Check your internet connection.");
-        }
+        nameResolverManager.getAvailableNameResolvers().forEach((resolver, available) -> {
+                    if (!available) {
+                        logger.debug(resolver.getClass().getCanonicalName() + " is not available.");
+                        initErrors.add(resolver.getClass().getCanonicalName() + " is not available. Check your internet connection.");
+                    }
+                }
+        );
     }
 
     public void showInitExceptions() {

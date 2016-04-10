@@ -2,7 +2,6 @@ package cz.muni.physics.nsvs;
 
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.java.Plugin;
-import cz.muni.physics.java.PluginDescription;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,14 +18,6 @@ import java.util.List;
  * @since 25/03/16
  */
 public class NsvsPlugin implements Plugin {
-    @Override
-    public PluginDescription getPluginDescription() {
-        return new PluginDescription(
-                "NSVS",
-                "http://skydot.lanl.gov/nsvs/nsvs.php",
-                ""
-        );
-    }
 
     @Override
     public List<PhotometricData> getDataFromUrl(String url) {
@@ -36,13 +27,13 @@ public class NsvsPlugin implements Plugin {
             Connection.Response res = Jsoup.connect(url).execute();
             doc = Jsoup.connect("http://skydot.lanl.gov/nsvs/print_light_curve.php").cookies(res.cookies()).get();
         } catch (IOException e) {
-            System.out.println("Shit happaned");
-            return null;
+            System.error.println("Shit happaned");
+            return Collections.
         }
         Elements trs = doc.getElementsByTag("tr");
         trs.remove(0);
         List<PhotometricData> result = new ArrayList<>(trs.size());
-        for(Element tr: trs){
+        for (Element tr : trs) {
             Double julianDate = Double.parseDouble(tr.child(0).text()) + 2450000.5;
             PhotometricData data = new PhotometricData(julianDate.toString(), tr.child(1).text(), tr.child(2).text());
             result.add(data);

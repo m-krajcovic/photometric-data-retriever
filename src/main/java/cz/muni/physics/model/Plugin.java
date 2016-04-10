@@ -29,38 +29,37 @@ public class Plugin {
         return name.get();
     }
 
-    public StringProperty nameProperty() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
     public String getMainFile() {
         return mainFile.get();
     }
 
-    public StringProperty mainFileProperty() {
-        return mainFile;
-    }
-
     public void setMainFile(String mainFile) {
         this.mainFile.set(mainFile);
+    }
+
+    public StringProperty mainFileProperty() {
+        return mainFile;
     }
 
     public String getCommand() {
         return command.get();
     }
 
-    public StringProperty commandProperty() {
-        return command;
-    }
-
     public void setCommand(String command) {
         this.command.set(command);
     }
 
+    public StringProperty commandProperty() {
+        return command;
+    }
 
     @Override
     public String toString() {
@@ -79,9 +78,7 @@ public class Plugin {
         Plugin plugin = (Plugin) o;
 
         if (getName() != null ? !getName().equals(plugin.getName()) : plugin.getName() != null) return false;
-        if (getMainFile() != null ? !getMainFile().equals(plugin.getMainFile()) : plugin.getMainFile() != null)
-            return false;
-        return getCommand() != null ? getCommand().equals(plugin.getCommand()) : plugin.getCommand() == null;
+        return getMainFile() != null ? getMainFile().equals(plugin.getMainFile()) : plugin.getMainFile() == null && (getCommand() != null ? getCommand().equals(plugin.getCommand()) : plugin.getCommand() == null);
     }
 
     @Override

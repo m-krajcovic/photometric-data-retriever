@@ -1,6 +1,5 @@
-package cz.muni.physics.sesame;
+package cz.muni.physics.nameresolver;
 
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestOperations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,35 +23,41 @@ import java.util.List;
  * @version 1.0
  * @since 24/03/16
  */
-public class SesameClientImpl implements SesameClient {
+public class SesameNameResolver implements NameResolver {
 
     private RestOperations restTemplate;
     private String resolverUrl;
     private String testUrl;
 
-    public SesameClientImpl(RestOperations restTemplate, String resolverUrl, String testUrl) {
+    public SesameNameResolver(RestOperations restTemplate, String resolverUrl, String testUrl) {
         this.restTemplate = restTemplate;
         this.resolverUrl = resolverUrl;
         this.testUrl = testUrl;
     }
 
-    public SesameResult getData(String name) throws XPathExpressionException, ResourceAccessException {
+    public NameResolverResult getResult(String name) {
         String response = restTemplate.getForObject(resolverUrl, String.class, name); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
-        SesameResult result = new SesameResult();
-        Document doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-        NodeList list= (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
-        List<String> names = new ArrayList<>(list.getLength());
-        for (int i = 0; i < list.getLength(); i++) {
-            Node node = list.item(i);
-            names.add(node.getTextContent());
+        NameResolverResult result = new NameResolverResult();
+        Document doc;
+        try {
+            doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
+
+            NodeList list = (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
+            List<String> names = new ArrayList<>(list.getLength());
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                names.add(node.getTextContent());
+            }
+            result.setNames(names);
+            result.setJpos(xpath.evaluate("//jpos[1]", doc)); // TODO check these somehow
+            result.setJraddeg(xpath.evaluate("//jradeg[1]", doc));
+            result.setJdedeg(xpath.evaluate("//jdedeg[1]", doc));
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
         }
-        result.setNames(names);
-        result.setJpos(xpath.evaluate("//jpos[1]", doc)); // TODO check these somehow
-        result.setJraddeg(xpath.evaluate("//jradeg[1]", doc));
-        result.setJdedeg(xpath.evaluate("//jdedeg[1]", doc));
         return result;
     }
 

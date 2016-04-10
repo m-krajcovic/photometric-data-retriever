@@ -1,6 +1,5 @@
 package cz.muni.physics.controller;
 
-import cz.muni.physics.MainApp;
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.StarSurvey;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -9,6 +8,7 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,9 +20,8 @@ import java.util.Map;
  * @since 01/04/16
  */
 @Component
+@Scope("prototype")
 public class PhotometricDataOverviewController {
-
-    private MainApp mainApp;
 
     @FXML
     private TableView<PhotometricData> photometricDataTableView;
@@ -55,9 +54,5 @@ public class PhotometricDataOverviewController {
             }
             chart.getData().add(series);
         }
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
     }
 }

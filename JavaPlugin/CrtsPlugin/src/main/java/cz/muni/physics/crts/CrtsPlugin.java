@@ -3,7 +3,6 @@ package cz.muni.physics.crts;
 import au.com.bytecode.opencsv.CSVReader;
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.java.Plugin;
-import cz.muni.physics.java.PluginDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,14 +21,6 @@ import java.util.List;
  * @since 25/03/16
  */
 public class CrtsPlugin implements Plugin {
-
-    public PluginDescription getPluginDescription() {
-        return new PluginDescription(
-                "CRTS",
-                "",
-                ""
-        );
-    }
 
     @Override
     public List<PhotometricData> getDataFromUrl(String url) {
@@ -56,7 +47,7 @@ public class CrtsPlugin implements Plugin {
         CSVReader reader = new CSVReader(in);
         List<PhotometricData> result = new ArrayList<>();
         try {
-            String [] nextLine = reader.readNext();
+            String[] nextLine = reader.readNext();
             if (nextLine == null) return null;
             while ((nextLine = reader.readNext()) != null) {
                 Double julianDate = Double.parseDouble(nextLine[5]) + 2400000.5;

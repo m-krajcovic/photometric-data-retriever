@@ -25,9 +25,11 @@ public class MainApp extends Application {
     private AppInitializer initializer;
 
     public MainApp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        app = context.getBean(AppConfig.class);
-        initializer = context.getBean(AppInitializer.class);
+
+    }
+
+    public static void main(String[] args) {
+        LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
     }
 
     @Override
@@ -43,14 +45,12 @@ public class MainApp extends Application {
         initializer.showInitErrors();
     }
 
-
-
     @Override
     public void init() throws InterruptedException {
-        initializer.initialize(this);
-    }
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        app = context.getBean(AppConfig.class);
+        initializer = context.getBean(AppInitializer.class);
 
-    public static void main(String[] args) {
-        LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
+        initializer.initialize(this);
     }
 }

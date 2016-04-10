@@ -40,7 +40,7 @@ public class StarSurveyEditDialogController {
 
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         pluginChoiceBox.setConverter(new StringConverter<Plugin>() {
             @Override
             public String toString(Plugin object) {
@@ -57,10 +57,8 @@ public class StarSurveyEditDialogController {
 
     @FXML
     private void handleOk() {
-        if (isInputValid()){
+        if (isInputValid()) {
             starSurvey.setName(nameTextField.getText());
-            starSurvey.setSesameAlias(sesameIdentifierTextArea.getText());
-            starSurvey.setURL(urlTextArea.getText());
             starSurvey.setPlugin(pluginChoiceBox.getValue());
 
             okClicked = true;
@@ -82,8 +80,6 @@ public class StarSurveyEditDialogController {
     public void setStarSurvey(StarSurvey starSurvey) {
         this.starSurvey = starSurvey;
         nameTextField.setText(starSurvey.getName());
-        sesameIdentifierTextArea.setText(starSurvey.getSesameAlias());
-        urlTextArea.setText(starSurvey.getURL());
         pluginChoiceBox.getSelectionModel().select(starSurvey.getPlugin());
     }
 

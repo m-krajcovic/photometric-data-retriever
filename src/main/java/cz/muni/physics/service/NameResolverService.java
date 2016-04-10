@@ -1,7 +1,7 @@
 package cz.muni.physics.service;
 
-import cz.muni.physics.sesame.SesameClient;
-import cz.muni.physics.sesame.SesameResult;
+import cz.muni.physics.nameresolver.NameResolverManager;
+import cz.muni.physics.nameresolver.NameResolverResult;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +13,20 @@ import org.springframework.stereotype.Component;
  * @since 06/04/16
  */
 @Component
-public class SesameService extends Service<SesameResult> {
+public class NameResolverService extends Service<NameResolverResult> {
 
     private String searchText;
 
     @Autowired
-    private SesameClient sesameClient;
+    private NameResolverManager nameResolverManager;
 
     @Override
-    protected Task<SesameResult> createTask() {
-        return new Task<SesameResult>() {
+    protected Task<NameResolverResult> createTask() {
+        return new Task<NameResolverResult>() {
 
             @Override
-            protected SesameResult call() throws Exception { //TODO
-                return sesameClient.getData(searchText);
+            protected NameResolverResult call() throws Exception { //TODO
+                return nameResolverManager.resolveFor(searchText);
             }
         };
     }

@@ -22,19 +22,9 @@ public class PluginManagerImpl implements PluginManager {
 
     @Override
     public Process run(Plugin plugin, Map<String, String> params) throws IOException {
-        return Runtime.getRuntime().exec(resolveCommand(plugin, params));
-    }
-
-    /**
-     * java -jar ${mainFile} ${param1} ${param2} ${param3}
-     *
-     * @param plugin
-     * @param params
-     * @return
-     */
-    private String resolveCommand(Plugin plugin, Map<String, String> params) {
         params.put("mainFile", resolveMainFilePath(plugin));
-        return StrSubstitutor.replace(plugin.getCommand(), params);
+        String command = StrSubstitutor.replace(plugin.getCommand(), params);
+        return Runtime.getRuntime().exec(command);
     }
 
     private String resolveMainFilePath(Plugin plugin) {

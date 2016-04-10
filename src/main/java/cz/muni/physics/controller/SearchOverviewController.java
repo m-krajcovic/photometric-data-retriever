@@ -2,14 +2,18 @@ package cz.muni.physics.controller;
 
 import cz.muni.physics.java.PhotometricData;
 import cz.muni.physics.model.StarSurvey;
-import cz.muni.physics.service.SesameService;
+import cz.muni.physics.nameresolver.NameResolverResult;
+import cz.muni.physics.service.NameResolverService;
 import cz.muni.physics.service.StarSurveySearchService;
-import cz.muni.physics.sesame.SesameResult;
 import cz.muni.physics.utils.AppConfig;
 import cz.muni.physics.utils.FXMLUtils;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +35,7 @@ public class SearchOverviewController {
     @Autowired
     private AppConfig app;
     @Autowired
-    private SesameService sesameService;
+    private NameResolverService nameResolverService;
     @Autowired
     private StarSurveySearchService starSurveySearchService;
 
@@ -46,21 +50,20 @@ public class SearchOverviewController {
 
     @FXML
     private void initialize() {
-        sesameService.setOnSucceeded(e -> {
-            SesameResult sesameResult = sesameService.getValue();
-            starSurveySearchService.setSesameResult(sesameResult);
+        nameResolverService.setOnSucceeded(e -> {
+            NameResolverResult nameResolverResult = nameResolverService.getValue();
+            starSurveySearchService.setNameResolverResult(nameResolverResult);
             starSurveySearchService.setStarSurveys(app.getStarSurveys());
 
             starSurveySearchService.start();
-            sesameService.reset();
+            nameResolverService.reset();
         });
-        sesameService.setOnFailed(e -> {
+        nameResolverService.setOnFailed(e -> {
             logger.error("Failed to get data from Sesame Name Resolver");
             FXMLUtils.showAlert("Error", null, "Failed to get data from Sesame Name Resolver", Alert.AlertType.ERROR);
-            sesameService.reset();
+            nameResolverService.reset();
             toggleElements(false);
         });
-
         starSurveySearchService.setOnSucceeded(e -> {
             Map<StarSurvey, List<PhotometricData>> data = starSurveySearchService.getValue();
             if (data.size() == 0) {
@@ -92,8 +95,8 @@ public class SearchOverviewController {
             toggleElements(false);
         } else {
             logger.debug("Handling search by name '{}'", searchTextField.getText());
-            sesameService.setSearchText(searchTextField.getText());
-            sesameService.start();
+            nameResolverService.setSearchText(searchTextField.getText());
+            nameResolverService.start();
         }
     }
 
@@ -102,7 +105,7 @@ public class SearchOverviewController {
         searchTextField.setDisable(disabled);
         searchProgressIndicator.setVisible(disabled);
         progressLabel.setVisible(disabled);
-        if(!disabled){
+        if (!disabled) {
             progressLabel.setText("");
         }
     }
