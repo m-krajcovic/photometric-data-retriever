@@ -6,18 +6,18 @@
 
     <parent>
         <groupId>cz.muni.physics.pdr</groupId>
-        <artifactId>plugins</artifactId>
+        <artifactId>star-survey-plugins</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>nsvs-plugin</artifactId>
+    <artifactId>crts-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <main.class>cz.muni.physics.pdr.nsvs.Main</main.class>
-        <plugin.folder>NSVS</plugin.folder>
-        <plugin.name>NsvsPlugin</plugin.name>
+        <main.class>cz.muni.physics.pdr.crts.Main</main.class>
+        <plugin.folder>CRTS</plugin.folder>
+        <plugin.name>CrtsPlugin</plugin.name>
     </properties>
 
     <dependencies>
@@ -26,6 +26,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>cz.muni.physics.pdr</groupId>
