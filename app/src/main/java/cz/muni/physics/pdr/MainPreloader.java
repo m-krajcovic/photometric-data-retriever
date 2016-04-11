@@ -30,7 +30,7 @@ public class MainPreloader extends Preloader {
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefWidth(240);
         loading.getChildren().add(progressBar);
-        infoLabel = new Label("Please wait...");
+        infoLabel = new Label("Initializing application...");
         loading.getChildren().add(infoLabel);
         BorderPane root = new BorderPane(loading);
         Scene scene = new Scene(root);

@@ -1,11 +1,23 @@
 <list>
-    <starSurvey name="NSVS" url="http://skydot.lanl.gov/nsvs/star.php?num={id}&amp;mask=32004"
-                sesameAlias="NSVS\s(?&lt;id&gt;\d*)">
+    <starSurvey name="NSVS">
         <plugin name="NSVS" mainFile="NsvsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+        <patterns>
+            <java.util.regex.Pattern>
+                <pattern>NSVS\s(?&lt;id&gt;\d*)</pattern>
+                <flags>0</flags>
+            </java.util.regex.Pattern>
+        </patterns>
+        <valueParams/>
+        <urls>
+            <string>http://skydot.lanl.gov/nsvs/star.php?num={id}&amp;mask=32004</string>
+        </urls>
     </starSurvey>
-    <starSurvey name="CRTS"
-                url="http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&amp;Dec={dec}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot"
-                sesameAlias="">
+    <starSurvey name="CRTS">
         <plugin name="CRTS" mainFile="CrtsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+        <patterns/>
+        <valueParams/>
+        <urls>
+            <string>http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&amp;Dec={dec}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot</string>
+        </urls>
     </starSurvey>
 </list>

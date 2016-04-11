@@ -11,8 +11,5 @@
     <modules>
         <module>app</module>
         <module>plugins</module>
-        <module>plugins/crts-plugin</module>
-        <module>plugins/java-plugin</module>
-        <module>plugins/nsvs-plugin</module>
     </modules>
 </project>

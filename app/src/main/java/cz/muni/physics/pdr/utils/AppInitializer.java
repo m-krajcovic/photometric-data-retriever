@@ -13,6 +13,7 @@ import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -37,14 +38,15 @@ public class AppInitializer {
     private PluginLoader pluginLoader;
     @Autowired
     private NameResolverManager nameResolverManager;
+    @Value("${user.home}${plugins.dir.path}")
+    private String pluginsDirPath;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
 
-
     public void initialize(Application mainApp) {
         logger.debug("Initializing mainApp.");
-        File dir = dataStorage.getPluginsDir();
+        File dir = new File(pluginsDirPath);
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         if (!dir.exists()) {
             logger.debug("Plugin folder not found, creating new one.");

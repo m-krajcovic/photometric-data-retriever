@@ -12,4 +12,5 @@ import java.util.Map;
  */
 public interface PluginManager {
     Process run(Plugin plugin, Map<String, String> params) throws IOException;
+    boolean preparePlugin(Plugin plugin, Map<String, String> params);
 }

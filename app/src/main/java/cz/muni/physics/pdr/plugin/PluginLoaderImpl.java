@@ -46,7 +46,7 @@ public class PluginLoaderImpl implements PluginLoader {
                     throw new PluginManagerException("IOException", e);
                 }
                 String name = props.getProperty("name");
-                String mainFile = props.getProperty("main.file");
+                String mainFile = props.getProperty("mainFile");
                 String command = props.getProperty("command");
                 if (name == null || mainFile == null || command == null) {
                     throw new PluginManagerException("There are some properties missing inside " + pluginDirPath + "plugin.properties");

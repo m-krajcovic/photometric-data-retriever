@@ -97,7 +97,6 @@ public class StarSurveyConverter implements Converter {
         System.out.println(strIsResolvable);
         System.out.println(str);
 
-
         String string = "RW Com \n" +
                 "SDSS J123300.24+264258.2\n" +
                 "HIP 061243\n" +
@@ -118,10 +117,34 @@ public class StarSurveyConverter implements Converter {
                 "188.2510315\n" +
                 "+26.7161768";
 
-        Pattern p = Pattern.compile("NSVS\\s(?<id>\\d*)");
+        String[] lines = string.split("\n");
 
-        Matcher m = p.matcher(string);
-        System.out.println(m.find());
+        System.out.println(lines.length);
+
+
+        Pattern p = Pattern.compile("NSVS\\s(?<id>\\d*)");
+        long start, end;
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            Matcher m = p.matcher(string);
+            if(m.find()) m.group("id");
+            //System.out.println(m.find() ? m.group("id") : "nope");
+        }
+        end = System.currentTimeMillis();
+        System.out.println("finished @" + (end-start) + "ms");
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            for (String line : lines) {
+                Matcher matcher = p.matcher(line);
+                if (matcher.find()) {
+                    matcher.group("id");
+                    //System.out.println(matcher.group("id"));
+                }
+            }
+        }
+        end = System.currentTimeMillis();
+        System.out.println("finished @" + (end-start) + "ms");
     }
 
     @Override

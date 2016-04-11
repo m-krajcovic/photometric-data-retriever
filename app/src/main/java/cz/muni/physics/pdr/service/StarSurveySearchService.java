@@ -5,6 +5,7 @@ import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.nameresolver.NameResolverResult;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.StreamGobbler;
+import cz.muni.physics.pdr.utils.ParameterUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -15,21 +16,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * TODO this class needs huge refactoring
@@ -70,9 +66,12 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
                         updateStarSurveys(starSurvey, false);
                         continue;
                     }
-                    Map<String, String> params = getParams(nameResolverResult, starSurvey);
-                    params = resolveValueParams(starSurvey, params);
-                    params = resolveUrl(starSurvey, params);
+                    Map<String, String> params = ParameterUtils.resolveParametersForSurvey(starSurvey, nameResolverResult);
+                    if(!pluginManager.preparePlugin(starSurvey.getPlugin(), params)){
+                        logger.debug("Plugin {} is not able to start due to missing parameters", starSurvey.getPlugin().getMainFile());
+                        updateStarSurveys(starSurvey, false);
+                        continue;
+                    }
                     Process process;
                     try {
                         process = pluginManager.run(starSurvey.getPlugin(), params);
@@ -113,87 +112,8 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         };
     }
 
-    private Map<String, String> resolveValueParams(StarSurvey starSurvey, Map<String, String> params) {
-        starSurvey.getValueParameters().forEach((key, value) -> {
-            Set<String> stringParameters = findParameters(value);
-            if (stringParameters.stream().allMatch(params::containsKey)) {
-                params.put(key, value);
-            }
-        });
-        return params;
-    }
-
     private void updateStarSurveys(StarSurvey starSurvey, boolean succeeded) {
         Platform.runLater(() -> starSurveysMap.put(starSurvey, succeeded));
-    }
-
-    private Map<String, String> resolveUrl(StarSurvey record, Map<String, String> params) {
-        for (String url : record.getUrls()) {
-            UriTemplate uriTemplate = new UriTemplate(url);
-            if (uriTemplate.getVariableNames().stream().allMatch(params::containsKey)) {
-                params.put("url", uriTemplate.expand(params).toString());
-                break;
-            }
-        }
-        return params;
-    }
-
-    private Map<String, String> getParams(NameResolverResult nameResolverResult, StarSurvey survey) {
-        Map<String, String> urlVars = new HashMap<>();
-        for (Pattern pattern : survey.getRegexPatterns()) {
-            Set<String> groups = findNamedGroups(pattern);
-            Matcher m = pattern.matcher(nameResolverResult.toLines());
-            if (m.find()) {
-                for (String group : groups) {
-                    urlVars.put(group, m.group(group));
-                }
-            }
-        }
-        urlVars.put("ra", nameResolverResult.getJraddeg());
-        urlVars.put("dec", nameResolverResult.getJdedeg());
-        return urlVars;
-    }
-
-    private Set<String> findParameters(String str) {
-        Set<String> params = new HashSet<>();
-        String param = "";
-        char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length - 2; i++) {
-            if (chars[i] == '$' && chars[i + 1] == '{') {
-                i += 2;
-                for (int j = i; j < chars.length; j++) {
-                    if (chars[j] == '}') {
-                        params.add(param);
-                        param = "";
-                        break;
-                    }
-                    param += chars[j];
-                    i++;
-                }
-            }
-        }
-        return params;
-    }
-
-    private Set<String> findNamedGroups(Pattern p) {
-        Set<String> namedGroups = new HashSet<>();
-        String groupName = "";
-        char[] chars = p.pattern().toCharArray();
-        for (int i = 0; i < chars.length - 2; i++) {
-            if (chars[i] == '(' && chars[i + 1] == '?' && chars[i + 2] == '<') {
-                i += 3;
-                for (int j = i; j < chars.length; j++) {
-                    if (chars[j] == '>') {
-                        namedGroups.add(groupName);
-                        groupName = "";
-                        break;
-                    }
-                    groupName += chars[j];
-                    i++;
-                }
-            }
-        }
-        return namedGroups;
     }
 
     public NameResolverResult getNameResolverResult() {

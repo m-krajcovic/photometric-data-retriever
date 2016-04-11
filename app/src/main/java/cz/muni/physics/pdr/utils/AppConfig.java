@@ -28,15 +28,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -51,11 +50,13 @@ import java.util.Map;
 @Configuration
 @Lazy
 @ComponentScan(basePackages = {"cz.muni.physics.*"})
-@PropertySource(value = "classpath:application.properties")
+@PropertySource("classpath:application.properties")
 public class AppConfig {
 
-    @Autowired
-    private Environment environment;
+    @Value("${app.name}")
+    private String name;
+    @Value("${app.icon.path}")
+    private String iconPath;
 
     private Stage primaryStage;
     private BorderPane rootLayout;
@@ -74,8 +75,8 @@ public class AppConfig {
     }
 
     @Bean
-    public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-        return new PropertyPlaceholderConfigurer();
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
     public void initRootLayout() {
@@ -149,20 +150,19 @@ public class AppConfig {
     }
 
     @Bean
-    public NameResolver sesameNameResolver() {
-        return new SesameNameResolver(new RestTemplate(),
-                environment.getProperty("sesame.resolver.url"),
-                environment.getProperty("sesame.test.url"));
+    public NameResolver sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
+                                           @Value("${sesame.test.url}") String testUrl) {
+        return new SesameNameResolver(new RestTemplate(), resolverUrl, testUrl);
     }
 
     @Bean
-    public PluginLoader pluginLoader() {
-        return new PluginLoaderImpl(System.getProperty("user.home") + environment.getProperty("plugins.dir.path"));
+    public PluginLoader pluginLoader(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath) {
+        return new PluginLoaderImpl(pluginsFolderPath);
     }
 
     @Bean
-    public PluginManager pluginManager() {
-        return new PluginManagerImpl(System.getProperty("user.home") + environment.getProperty("plugins.dir.path"));
+    public PluginManager pluginManager(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath) {
+        return new PluginManagerImpl(pluginsFolderPath);
     }
 
     @Bean
@@ -198,4 +198,10 @@ public class AppConfig {
     public void setPlugins(ObservableList<Plugin> plugins) {
         this.plugins = plugins;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getIconPath() {return iconPath;}
 }

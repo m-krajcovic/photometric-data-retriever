@@ -5,7 +5,9 @@ import cz.muni.physics.pdr.model.StarSurvey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -28,6 +30,9 @@ import java.util.List;
 public class DataStorage {
     private final static Logger logger = LogManager.getLogger(DataStorage.class);
 
+    @Value("${user.home}${app.data.dir.path}")
+    private String dataDirPath;
+
     private File dataDir = new File(System.getProperty("user.home"), ".pdr");
     private File starSurveysFile = new File(dataDir, "star_surveys.xml");
     private File pluginsDir = new File(dataDir, "plugins");
@@ -36,9 +41,7 @@ public class DataStorage {
     private XStream xStream;
 
     public DataStorage() {
-        if (!dataDir.exists()) {
-            dataDir.mkdir();
-        }
+
         if (!starSurveysFile.exists()) {
             try (InputStream inputStream = DataStorage.class.getResourceAsStream("/star_surveys.xml");
                  OutputStream outputStream = new FileOutputStream(starSurveysFile)) {
@@ -50,6 +53,14 @@ public class DataStorage {
             } catch (IOException e) {
                 e.printStackTrace(); // TODO
             }
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+        File dir = new File(dataDirPath);
+        if (!dir.exists()) {
+            dir.mkdir();
         }
     }
 

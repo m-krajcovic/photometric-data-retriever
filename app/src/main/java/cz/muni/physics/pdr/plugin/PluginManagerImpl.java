@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.plugin;
 
 import cz.muni.physics.pdr.model.Plugin;
+import cz.muni.physics.pdr.utils.ParameterUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
@@ -12,9 +13,10 @@ import java.util.Map;
  * @version 1.0
  * @since 08/04/16
  */
-public class PluginManagerImpl implements PluginManager {
+public class PluginManagerImpl implements PluginManager { // TODO make this into prototype, PluginStarter or whatever
 
     private String pluginsDirPath;
+    private boolean readyToRun = false;
 
     public PluginManagerImpl(String pluginsDirPath) {
         this.pluginsDirPath = pluginsDirPath;
@@ -22,9 +24,21 @@ public class PluginManagerImpl implements PluginManager {
 
     @Override
     public Process run(Plugin plugin, Map<String, String> params) throws IOException {
-        params.put("mainFile", resolveMainFilePath(plugin));
+        if(!readyToRun)
+            throw new IllegalStateException("Plugin must be prepared first by preparePlugin() method.");
+        readyToRun = false;
         String command = StrSubstitutor.replace(plugin.getCommand(), params);
         return Runtime.getRuntime().exec(command);
+    }
+
+    @Override
+    public boolean preparePlugin(Plugin plugin, Map<String, String> params) {
+        params.put("mainFile", resolveMainFilePath(plugin));
+        if (ParameterUtils.isResolvableWithParameters(plugin.getCommand(), params)){
+            readyToRun = true;
+            return true;
+        }
+        return false;
     }
 
     private String resolveMainFilePath(Plugin plugin) {
