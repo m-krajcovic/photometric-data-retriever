@@ -32,18 +32,26 @@ public class DataStorage {
 
     @Value("${user.home}${app.data.dir.path}")
     private String dataDirPath;
-
-    private File dataDir = new File(System.getProperty("user.home"), ".pdr");
-    private File starSurveysFile = new File(dataDir, "star_surveys.xml");
-    private File pluginsDir = new File(dataDir, "plugins");
+    @Value("${starsurvey.file.name}")
+    private String starSurveysFileName;
 
     @Autowired
     private XStream xStream;
 
     public DataStorage() {
 
+    }
+
+    @PostConstruct
+    public void init() {
+        File dir = new File(dataDirPath);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        File starSurveysFile = new File(dataDirPath, starSurveysFileName);
         if (!starSurveysFile.exists()) {
-            try (InputStream inputStream = DataStorage.class.getResourceAsStream("/star_surveys.xml");
+            try (InputStream inputStream = DataStorage.class.getResourceAsStream("/" + starSurveysFileName);
                  OutputStream outputStream = new FileOutputStream(starSurveysFile)) {
                 int read;
                 byte[] bytes = new byte[1024];
@@ -56,15 +64,8 @@ public class DataStorage {
         }
     }
 
-    @PostConstruct
-    public void init() {
-        File dir = new File(dataDirPath);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-    }
-
     public void saveStarSurveys(List<StarSurvey> records) {
+        File starSurveysFile = new File(dataDirPath, starSurveysFileName);
         try (Writer writer = new FileWriter(starSurveysFile)) {
             xStream.toXML(records, writer);
         } catch (IOException e) {
@@ -73,6 +74,7 @@ public class DataStorage {
     }
 
     public List<StarSurvey> loadStarSurveys() {
+        File starSurveysFile = new File(dataDirPath, starSurveysFileName);
         List<StarSurvey> result = new ArrayList<>();
         try (Reader reader = new FileReader(starSurveysFile)) {
             result.addAll((List<StarSurvey>) xStream.fromXML(reader));
@@ -80,17 +82,5 @@ public class DataStorage {
             e.printStackTrace(); // TODO
         }
         return result;
-    }
-
-    public File getDataDir() {
-        return dataDir;
-    }
-
-    public File getStarSurveysFile() {
-        return starSurveysFile;
-    }
-
-    public File getPluginsDir() {
-        return pluginsDir;
     }
 }
