@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import cz.muni.physics.pdr.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.controller.StarSurveyEditDialogController;
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.nameresolver.NameResolver;

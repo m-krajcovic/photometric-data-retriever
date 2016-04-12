@@ -1,10 +1,9 @@
 package cz.muni.physics.pdr.service;
 
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.nameresolver.NameResolverResult;
 import cz.muni.physics.pdr.plugin.PluginManager;
-import cz.muni.physics.pdr.plugin.PluginManagerException;
 import cz.muni.physics.pdr.utils.ParameterUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -24,7 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * TODO this class needs huge refactoring
  *
  * @author Michal Krajčovič
  * @version 1.0
@@ -50,34 +48,43 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
 
     @Override
     public Task<Map<StarSurvey, List<PhotometricData>>> createTask() {
+        if (nameResolverResult == null) {
+            throw new IllegalArgumentException("nameResolverResult is null.");
+        }
+        if (starSurveys == null) {
+            throw new IllegalArgumentException("starSurveys is null.");
+        }
+        if (starSurveysMap == null) {
+            throw new IllegalArgumentException("starSurveysMap is null.");
+        }
         return new Task<Map<StarSurvey, List<PhotometricData>>>() {
             @Override
             protected Map<StarSurvey, List<PhotometricData>> call() {
                 Map<StarSurvey, List<PhotometricData>> resultMap = Collections.synchronizedMap(new HashMap<>());
                 List<Future> futures = new ArrayList<>();
                 for (StarSurvey survey : starSurveys) {
-                    Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, nameResolverResult);
-                    try {
-                        futures.add(pluginManager.run(survey.getPlugin(), params)
-                                .thenAccept(data -> {
-                                    logger.debug("thenAccept() for {}", survey.getName());
-                                    if (!data.isEmpty()) {
-                                        resultMap.put(survey, data);
-                                        starSurveysMap.put(survey, true);
-                                    } else {
-                                        starSurveysMap.put(survey, false);
-                                    }
-                                }));
-                    } catch (PluginManagerException e) {
-                        logger.debug(e.getMessage(), e);
-                        starSurveysMap.put(survey, false);
+                    if (survey.getPlugin() == null || survey.getPlugin().getName().isEmpty()) {
+                        logger.debug("No plugin set for {} star survey, skipping", survey.getName());
+                        continue;
                     }
+                    Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, nameResolverResult);
+                    logger.debug("Starting task for {}", survey.getName());
+                    futures.add(pluginManager.run(survey.getPlugin(), params)
+                            .thenAccept(data -> {
+                                logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
+                                if (!data.isEmpty()) {
+                                    resultMap.put(survey, data);
+                                    starSurveysMap.put(survey, true);
+                                } else {
+                                    starSurveysMap.put(survey, false);
+                                }
+                            }));
                 }
                 futures.forEach(future -> {
                     try {
                         future.get();
                     } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace(); // TODO
+                        logger.error("Failed to wait for result for all star survey tasks.", e);
                     }
                 });
 

@@ -48,20 +48,23 @@ public class AppInitializer {
         logger.debug("Initializing mainApp.");
         File dir = new File(pluginsDirPath);
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
+        logger.debug("Checking if app data exists");
         if (!dir.exists()) {
             logger.debug("Plugin folder not found, creating new one.");
             dir.mkdir();
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_STAR_SURVEYS);
+        logger.debug("Loading star surveys.");
         try {
-            app.getStarSurveys().addAll(dataStorage.loadStarSurveys()); // TODO catch here
+            app.getStarSurveys().addAll(dataStorage.loadStarSurveys()); // TODO catch here // if this fails -> load default
         } catch (XStreamException exc) {
-            logger.error("Could not load star surveys from xml file");
+            logger.error("Could not load star surveys from xml file", exc);
             initExceptions.add(exc);
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
+        logger.debug("Loading plugins from {}", pluginsDirPath);
         Map<String, Plugin> availablePlugins = null;
         try {
             availablePlugins = pluginLoader.getAvailablePlugins();
@@ -74,7 +77,7 @@ public class AppInitializer {
             initErrors.add("There are 0 plugins inside plugins folder.");
         } else {
             for (StarSurvey record : app.getStarSurveys()) {
-                if(record.getPlugin() == null) continue;
+                if(record.getPlugin() == null || record.getPlugin().getName().isEmpty()) continue;
                 if (!availablePlugins.containsKey(record.getPlugin().getName())) {
                     initErrors.add(record.getPlugin().getName() + " is not available inside plugins folder.");
                     record.setPlugin(null);
@@ -88,7 +91,7 @@ public class AppInitializer {
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
         nameResolverManager.getAvailableNameResolvers().forEach((resolver, available) -> {
                     if (!available) {
-                        logger.debug(resolver.getClass().getCanonicalName() + " is not available.");
+                        logger.warn(resolver.getClass().getCanonicalName() + " is not available.");
                         initErrors.add(resolver.getClass().getCanonicalName() + " is not available. Check your internet connection.");
                     }
                 }

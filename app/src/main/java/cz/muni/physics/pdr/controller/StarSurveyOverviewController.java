@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.controller;
 
+import cz.muni.physics.pdr.javafx.PluginCellFactory;
+import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.utils.AppConfig;
 import javafx.fxml.FXML;
@@ -30,7 +32,7 @@ public class StarSurveyOverviewController {
     @FXML
     private TableColumn<StarSurvey, String> urlColumn;
     @FXML
-    private TableColumn<StarSurvey, String> pluginColumn;
+    private TableColumn<StarSurvey, Plugin> pluginColumn;
     @FXML
     private Button button;
 
@@ -75,7 +77,9 @@ public class StarSurveyOverviewController {
     @FXML
     private void initialize() {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
-        pluginColumn.setCellValueFactory(cell -> cell.getValue().getPlugin().nameProperty());
+        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
+
+        pluginColumn.setCellFactory(new PluginCellFactory());
 
         starSurveys.setItems(app.getStarSurveys());
     }

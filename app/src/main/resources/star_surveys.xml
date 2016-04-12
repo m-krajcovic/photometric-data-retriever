@@ -20,4 +20,12 @@
             <string>http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={ra}&amp;Dec={dec}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot</string>
         </urls>
     </starSurvey>
+    <starSurvey name="SWASP">
+        <plugin/>
+        <patterns/>
+        <valueParams/>
+        <urls>
+            <string>http://wasp.cerit-sc.cz/search?ra={ra}&amp;dec={dec}&amp;radius=1&amp;radiusUnit=min&amp;limit=1</string>
+        </urls>
+    </starSurvey>
 </list>

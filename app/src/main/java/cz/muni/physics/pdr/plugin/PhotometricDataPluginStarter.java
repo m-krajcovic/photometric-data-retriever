@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.plugin;
 
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.utils.ParameterUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -29,6 +29,13 @@ public class PhotometricDataPluginStarter implements PluginStarter<PhotometricDa
 
     @Override
     public boolean prepare(String command, Map<String, String> parameters) {
+        if (command == null) {
+            throw new IllegalArgumentException("command cannot be null.");
+        }
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters cannot be null.");
+        }
+        logger.debug("Preparing command {}", command);
         this.command = command;
         this.parameters = parameters;
         return (readyToRun = ParameterUtils.isResolvableWithParameters(command, parameters));
@@ -36,12 +43,11 @@ public class PhotometricDataPluginStarter implements PluginStarter<PhotometricDa
 
     @Override
     public Process run() throws IOException {
-        logger.debug("Started run() for ");
         if (!readyToRun)
             throw new IllegalStateException("Plugin must be prepared first by preparePlugin() method.");
-        readyToRun = false;
-        String resolvedCommand = StrSubstitutor.replace(command, parameters);
-        return Runtime.getRuntime().exec(resolvedCommand);
+        command = StrSubstitutor.replace(command, parameters);
+        logger.debug("Starting process by command '{}'", command);
+        return Runtime.getRuntime().exec(command);
     }
 
     @Override
@@ -51,7 +57,7 @@ public class PhotometricDataPluginStarter implements PluginStarter<PhotometricDa
         try {
             p = run();
         } catch (IOException e) {
-            e.printStackTrace(); // todo
+            logger.error("Failed to run process by command {}", command, e);
             return result;
         }
 
@@ -66,9 +72,9 @@ public class PhotometricDataPluginStarter implements PluginStarter<PhotometricDa
                 return null;
             })).get());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Process started by command {} was interrupted.", command, e);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            logger.error("Process started by command {} was aborted by exception.", command, e);
         }
         return result;
     }

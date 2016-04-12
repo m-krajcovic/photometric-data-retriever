@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.controller;
 
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.nameresolver.NameResolverResult;
 import cz.muni.physics.pdr.service.NameResolverService;

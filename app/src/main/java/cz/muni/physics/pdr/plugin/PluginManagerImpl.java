@@ -1,14 +1,13 @@
 package cz.muni.physics.pdr.plugin;
 
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.utils.AppConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -19,25 +18,26 @@ import java.util.concurrent.CompletableFuture;
  * @since 08/04/16
  */
 @Component
-public class PluginManagerImpl implements PluginManager<PhotometricData> { // TODO make this into prototype, PluginStarter or whatever
+public class PluginManagerImpl implements PluginManager<PhotometricData> {
 
     private final static Logger logger = LogManager.getLogger(PluginManagerImpl.class);
-
-    @Autowired
-    private AppConfig app;
 
     public PluginManagerImpl() {
     }
 
     @Async
     @Override
-    public CompletableFuture<List<PhotometricData>> run(Plugin plugin, Map<String, String> params) throws PluginManagerException {
+    public CompletableFuture<List<PhotometricData>> run(Plugin plugin, Map<String, String> params) {
         if (plugin == null) {
-            throw new PluginManagerException(""); // todo
+            throw new IllegalArgumentException("Plugin is null");
+        }
+        if (params == null) {
+            throw new IllegalArgumentException("params cannot be null.");
         }
         PluginStarter<PhotometricData> starter = new PhotometricDataPluginStarter();
         if (!starter.prepare(plugin.getCommand(), params)) {
-            throw new PluginManagerException(""); // todo
+            logger.debug("Not able to prepare {} plugin command", plugin.getName());
+            return CompletableFuture.completedFuture(Collections.emptyList());
         }
         return CompletableFuture.completedFuture(starter.runForResult());
     }

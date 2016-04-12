@@ -1,8 +1,7 @@
 package cz.muni.physics.pdr.controller;
 
-import cz.muni.physics.pdr.java.PhotometricData;
+import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.StarSurvey;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
@@ -36,9 +35,9 @@ public class PhotometricDataOverviewController {
 
     @FXML
     private void initialize() {
-        julianDate.setCellValueFactory(cell -> new SimpleDoubleProperty(cell.getValue().getJulianDate()));
-        magnitude.setCellValueFactory(cell -> new SimpleDoubleProperty(cell.getValue().getMagnitude()));
-        error.setCellValueFactory(cell -> new SimpleDoubleProperty(cell.getValue().getError()));
+        julianDate.setCellValueFactory(cell -> cell.getValue().julianDateProperty());
+        magnitude.setCellValueFactory(cell -> cell.getValue().magnitudeProperty());
+        error.setCellValueFactory(cell -> cell.getValue().errorProperty());
     }
 
     public void setData(Map<StarSurvey, List<PhotometricData>> data) {

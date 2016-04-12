@@ -22,10 +22,13 @@ public class NameResolverService extends Service<NameResolverResult> {
 
     @Override
     protected Task<NameResolverResult> createTask() {
+        if (searchText == null) {
+            throw new IllegalArgumentException("searchText cannot be null.");
+        }
         return new Task<NameResolverResult>() {
 
             @Override
-            protected NameResolverResult call() throws Exception { //TODO
+            protected NameResolverResult call() {
                 return nameResolverManager.resolveFor(searchText);
             }
         };

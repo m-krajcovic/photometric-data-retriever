@@ -18,11 +18,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>cz.muni.physics.pdr</groupId>
-            <artifactId>java-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
@@ -43,12 +38,12 @@
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <!--SPRING END -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.4</version>
         </dependency>
-        <!--SPRING END -->
     </dependencies>
 
     <pluginRepositories>

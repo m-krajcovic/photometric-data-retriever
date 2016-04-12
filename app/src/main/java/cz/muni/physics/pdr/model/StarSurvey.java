@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * @since 31/03/16
  */
 public class StarSurvey {
-    private StringProperty name = new SimpleStringProperty();
+    private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<Plugin> plugin = new SimpleObjectProperty<>();
 
     private ObservableList<Pattern> regexPatterns = FXCollections.observableArrayList(); // napr NSVS\s(?<id>\d*) ~> match on name/coord resolved results

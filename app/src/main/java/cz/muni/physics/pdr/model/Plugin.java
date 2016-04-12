@@ -9,20 +9,21 @@ import javafx.beans.property.StringProperty;
  * @since 29/03/16
  */
 public class Plugin {
-    private StringProperty name;
-    private StringProperty mainFile;
-    private StringProperty command;
+    private StringProperty name = new SimpleStringProperty("");
+    private StringProperty mainFile = new SimpleStringProperty("");
+    private StringProperty command = new SimpleStringProperty("");
 
     public Plugin() {
-        this.name = new SimpleStringProperty();
-        this.mainFile = new SimpleStringProperty();
-        this.command = new SimpleStringProperty();
     }
 
     public Plugin(String name, String mainFile, String command) {
-        this.name = new SimpleStringProperty(name);
-        this.mainFile = new SimpleStringProperty(mainFile);
-        this.command = new SimpleStringProperty(command);
+        this.name.setValue(name);
+        this.mainFile.setValue(mainFile);
+        this.command.setValue(command);
+    }
+
+    public Plugin(String pluginName) {
+        this.name.setValue(pluginName);
     }
 
     public String getName() {
