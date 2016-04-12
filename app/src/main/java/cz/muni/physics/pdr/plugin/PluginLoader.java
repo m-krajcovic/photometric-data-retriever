@@ -2,7 +2,7 @@ package cz.muni.physics.pdr.plugin;
 
 import cz.muni.physics.pdr.model.Plugin;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * @author Michal Krajčovič
@@ -10,5 +10,5 @@ import java.util.Set;
  * @since 21/03/16
  */
 public interface PluginLoader {
-    Set<Plugin> getAvailablePlugins() throws PluginManagerException;
+    Map<String, Plugin> getAvailablePlugins() throws PluginManagerException;
 }

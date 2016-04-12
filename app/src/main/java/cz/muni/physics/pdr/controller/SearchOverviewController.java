@@ -7,6 +7,7 @@ import cz.muni.physics.pdr.service.NameResolverService;
 import cz.muni.physics.pdr.service.StarSurveySearchService;
 import cz.muni.physics.pdr.utils.AppConfig;
 import cz.muni.physics.pdr.utils.FXMLUtils;
+import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -54,8 +55,8 @@ public class SearchOverviewController {
             NameResolverResult nameResolverResult = nameResolverService.getValue();
             starSurveySearchService.setNameResolverResult(nameResolverResult);
             starSurveySearchService.setStarSurveys(app.getStarSurveys());
-
             starSurveySearchService.start();
+
             nameResolverService.reset();
         });
         nameResolverService.setOnFailed(e -> {
@@ -76,13 +77,13 @@ public class SearchOverviewController {
             toggleElements(false);
         });
         starSurveySearchService.setOnFailed(e -> {
-            logger.debug("Failed"); // TODO any plugin can fail -> this shouldn't affect other plugins
+            logger.debug("Failed");
             starSurveySearchService.reset();
             toggleElements(false);
         });
         starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurvey, Boolean>) change -> {
             if (change.wasAdded())
-                progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded());
+                Platform.runLater(() -> progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded()));
         });
     }
 

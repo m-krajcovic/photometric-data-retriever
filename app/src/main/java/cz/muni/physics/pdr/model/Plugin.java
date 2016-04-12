@@ -8,18 +8,18 @@ import javafx.beans.property.StringProperty;
  * @version 1.0
  * @since 29/03/16
  */
-public class StarSurveyPlugin {
+public class Plugin {
     private StringProperty name;
     private StringProperty mainFile;
     private StringProperty command;
 
-    public StarSurveyPlugin() {
+    public Plugin() {
         this.name = new SimpleStringProperty();
         this.mainFile = new SimpleStringProperty();
         this.command = new SimpleStringProperty();
     }
 
-    public StarSurveyPlugin(String name, String mainFile, String command) {
+    public Plugin(String name, String mainFile, String command) {
         this.name = new SimpleStringProperty(name);
         this.mainFile = new SimpleStringProperty(mainFile);
         this.command = new SimpleStringProperty(command);
@@ -63,7 +63,7 @@ public class StarSurveyPlugin {
 
     @Override
     public String toString() {
-        return "StarSurveyPlugin{" +
+        return "Plugin{" +
                 "name=" + name +
                 ", mainFile=" + mainFile +
                 ", command=" + command +
@@ -75,10 +75,10 @@ public class StarSurveyPlugin {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StarSurveyPlugin starSurveyPlugin = (StarSurveyPlugin) o;
+        Plugin plugin = (Plugin) o;
 
-        if (getName() != null ? !getName().equals(starSurveyPlugin.getName()) : starSurveyPlugin.getName() != null) return false;
-        return getMainFile() != null ? getMainFile().equals(starSurveyPlugin.getMainFile()) : starSurveyPlugin.getMainFile() == null && (getCommand() != null ? getCommand().equals(starSurveyPlugin.getCommand()) : starSurveyPlugin.getCommand() == null);
+        if (getName() != null ? !getName().equals(plugin.getName()) : plugin.getName() != null) return false;
+        return getMainFile() != null ? getMainFile().equals(plugin.getMainFile()) : plugin.getMainFile() == null && (getCommand() != null ? getCommand().equals(plugin.getCommand()) : plugin.getCommand() == null);
     }
 
     @Override

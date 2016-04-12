@@ -24,6 +24,7 @@ public class ParameterUtils {
         resolveNameResolverParameters(resolverResult, params);
         resolveValueParameters(survey.getValueParameters(), params);
         resolveUrlParameter(survey.getUrls(), params);
+        params.put("mainFile", survey.getPlugin().getMainFile());
         return params;
     }
 

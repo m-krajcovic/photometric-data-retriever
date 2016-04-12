@@ -1,7 +1,5 @@
 package cz.muni.physics.pdr.nameresolver;
 
-import org.springframework.cache.annotation.Cacheable;
-
 import java.util.Map;
 
 /**
@@ -10,7 +8,6 @@ import java.util.Map;
  * @since 10/04/16
  */
 public interface NameResolverManager {
-    @Cacheable
     NameResolverResult resolveFor(String name);
 
     Map<NameResolver, Boolean> getAvailableNameResolvers();

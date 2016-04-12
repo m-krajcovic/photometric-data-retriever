@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.nameresolver;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class NameResolverManagerImpl implements NameResolverManager {
     private Set<NameResolver> nameResolvers;
 
     @Override
+    @Cacheable
     public NameResolverResult resolveFor(String name) {
         NameResolverResult result = new NameResolverResult();
         for (NameResolver nameResolver : nameResolvers) {

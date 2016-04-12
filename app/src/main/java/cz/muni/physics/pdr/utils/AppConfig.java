@@ -5,14 +5,16 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import cz.muni.physics.pdr.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.java.PhotometricData;
-import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.nameresolver.NameResolver;
 import cz.muni.physics.pdr.nameresolver.SesameNameResolver;
 import cz.muni.physics.pdr.plugin.PluginLoader;
 import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
+import cz.muni.physics.pdr.plugin.PluginStarter;
+import cz.muni.physics.pdr.plugin.PhotometricDataPluginStarter;
 import cz.muni.physics.pdr.storage.DataStorage;
 import cz.muni.physics.pdr.storage.converter.PluginConverter;
 import cz.muni.physics.pdr.storage.converter.StarSurveyConverter;
@@ -21,7 +23,6 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -32,10 +33,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -48,8 +50,8 @@ import java.util.Map;
  * @since 08/04/16
  */
 @Configuration
-@Lazy
-@ComponentScan(basePackages = {"cz.muni.physics.*"})
+@EnableAsync
+@ComponentScan(basePackages = {"cz.muni.physics.pdr.*"})
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 
@@ -74,10 +76,6 @@ public class AppConfig {
         plugins = FXCollections.observableArrayList();
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
     public void initRootLayout() {
         SpringFXMLLoader loader = fxmlLoader();
@@ -90,7 +88,7 @@ public class AppConfig {
     public void showSearch() {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane searchView = loader.load("/view/SearchOverview.fxml");
-        showScreen(searchView);
+        rootLayout.setCenter(searchView);
     }
 
     public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricData>> data) {
@@ -134,14 +132,26 @@ public class AppConfig {
         return controller.isOkClicked();
     }
 
-    public void showScreen(Parent screen) {
-        rootLayout.setCenter(screen);
+    @Bean
+    @Scope("prototype")
+    public PluginStarter<PhotometricData> photometricDataPluginStarter() {
+        return new PhotometricDataPluginStarter();
     }
 
     @Bean
     @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
+    }
+
+    @Bean
+    public ThreadPoolTaskExecutor searchServiceExecutor(){
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(5);
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(300);
+        return executor;
     }
 
     @Bean
@@ -156,13 +166,13 @@ public class AppConfig {
     }
 
     @Bean
-    public PluginLoader pluginLoader(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath) {
-        return new PluginLoaderImpl(pluginsFolderPath);
+    public PluginLoader pluginLoader() {
+        return new PluginLoaderImpl();
     }
 
     @Bean
-    public PluginManager pluginManager(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath) {
-        return new PluginManagerImpl(pluginsFolderPath);
+    public PluginManager pluginManager() {
+        return new PluginManagerImpl();
     }
 
     @Bean
@@ -173,6 +183,11 @@ public class AppConfig {
         xStream.registerConverter(new PluginConverter());
         xStream.registerConverter(new StarSurveyConverter());
         return xStream;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
     public Stage getPrimaryStage() {
@@ -203,5 +218,7 @@ public class AppConfig {
         return name;
     }
 
-    public String getIconPath() {return iconPath;}
+    public String getIconPath() {
+        return iconPath;
+    }
 }

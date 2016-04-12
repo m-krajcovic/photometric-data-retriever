@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * @author Michal Krajčovič
@@ -62,7 +62,7 @@ public class AppInitializer {
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.LOADING_PLUGINS);
-        Set<Plugin> availablePlugins = null;
+        Map<String, Plugin> availablePlugins = null;
         try {
             availablePlugins = pluginLoader.getAvailablePlugins();
         } catch (PluginManagerException e) {
@@ -74,12 +74,15 @@ public class AppInitializer {
             initErrors.add("There are 0 plugins inside plugins folder.");
         } else {
             for (StarSurvey record : app.getStarSurveys()) {
-                if (!availablePlugins.contains(record.getPlugin())) {
+                if(record.getPlugin() == null) continue;
+                if (!availablePlugins.containsKey(record.getPlugin().getName())) {
                     initErrors.add(record.getPlugin().getName() + " is not available inside plugins folder.");
                     record.setPlugin(null);
+                } else {
+                    record.setPlugin(availablePlugins.get(record.getPlugin().getName()));
                 }
             }
-            app.getPlugins().addAll(availablePlugins);
+            app.getPlugins().addAll(availablePlugins.values());
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);

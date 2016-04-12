@@ -2,15 +2,16 @@ package cz.muni.physics.pdr.plugin;
 
 import cz.muni.physics.pdr.model.Plugin;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 21/03/16
  */
-public interface PluginManager {
-    Process run(Plugin plugin, Map<String, String> params) throws IOException;
-    boolean preparePlugin(Plugin plugin, Map<String, String> params);
+public interface PluginManager<T> {
+    CompletableFuture<List<T>> run(Plugin plugin, Map<String, String> params) throws PluginManagerException;
+
 }

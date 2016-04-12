@@ -1,47 +1,45 @@
 package cz.muni.physics.pdr.plugin;
 
+import cz.muni.physics.pdr.java.PhotometricData;
 import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.utils.ParameterUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import cz.muni.physics.pdr.utils.AppConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 08/04/16
  */
-public class PluginManagerImpl implements PluginManager { // TODO make this into prototype, PluginStarter or whatever
+@Component
+public class PluginManagerImpl implements PluginManager<PhotometricData> { // TODO make this into prototype, PluginStarter or whatever
 
-    private String pluginsDirPath;
-    private boolean readyToRun = false;
+    private final static Logger logger = LogManager.getLogger(PluginManagerImpl.class);
 
-    public PluginManagerImpl(String pluginsDirPath) {
-        this.pluginsDirPath = pluginsDirPath;
+    @Autowired
+    private AppConfig app;
+
+    public PluginManagerImpl() {
     }
 
+    @Async
     @Override
-    public Process run(Plugin plugin, Map<String, String> params) throws IOException {
-        if(!readyToRun)
-            throw new IllegalStateException("Plugin must be prepared first by preparePlugin() method.");
-        readyToRun = false;
-        String command = StrSubstitutor.replace(plugin.getCommand(), params);
-        return Runtime.getRuntime().exec(command);
-    }
-
-    @Override
-    public boolean preparePlugin(Plugin plugin, Map<String, String> params) {
-        params.put("mainFile", resolveMainFilePath(plugin));
-        if (ParameterUtils.isResolvableWithParameters(plugin.getCommand(), params)){
-            readyToRun = true;
-            return true;
+    public CompletableFuture<List<PhotometricData>> run(Plugin plugin, Map<String, String> params) throws PluginManagerException {
+        if (plugin == null) {
+            throw new PluginManagerException(""); // todo
         }
-        return false;
+        PluginStarter<PhotometricData> starter = new PhotometricDataPluginStarter();
+        if (!starter.prepare(plugin.getCommand(), params)) {
+            throw new PluginManagerException(""); // todo
+        }
+        return CompletableFuture.completedFuture(starter.runForResult());
     }
 
-    private String resolveMainFilePath(Plugin plugin) {
-        return pluginsDirPath + File.separator + plugin.getName() + File.separator + plugin.getMainFile();
-    }
 }

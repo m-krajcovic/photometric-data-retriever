@@ -18,16 +18,18 @@ public class PluginConverter implements Converter {
         if (source == null) return;
         Plugin plugin = (Plugin) source;
         writer.addAttribute("name", plugin.getName());
-        writer.addAttribute("mainFile", plugin.getMainFile());
-        writer.addAttribute("command", plugin.getCommand());
+//        writer.addAttribute("mainFile", plugin.getMainFile());
+//        writer.addAttribute("command", plugin.getCommand());
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         String name = reader.getAttribute("name");
-        String mainFile = reader.getAttribute("mainFile");
-        String command = reader.getAttribute("command");
-        return new Plugin(name, mainFile, command);
+//        String mainFile = reader.getAttribute("mainFile");
+//        String command = reader.getAttribute("command");
+        Plugin p = new Plugin();
+        p.setName(name);
+        return p;
     }
 
     @Override

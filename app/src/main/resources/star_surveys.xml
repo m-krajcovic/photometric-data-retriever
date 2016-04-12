@@ -1,6 +1,6 @@
 <list>
     <starSurvey name="NSVS">
-        <plugin name="NSVS" mainFile="NsvsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+        <plugin name="NSVS"/>
         <patterns>
             <java.util.regex.Pattern>
                 <pattern>NSVS\s(?&lt;id&gt;\d*)</pattern>
@@ -13,7 +13,7 @@
         </urls>
     </starSurvey>
     <starSurvey name="CRTS">
-        <plugin name="CRTS" mainFile="CrtsPlugin.jar" command="java -jar ${mainFile} ${url}"/>
+        <plugin name="CRTS"/>
         <patterns/>
         <valueParams/>
         <urls>

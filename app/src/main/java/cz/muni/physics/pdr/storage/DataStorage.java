@@ -38,10 +38,6 @@ public class DataStorage {
     @Autowired
     private XStream xStream;
 
-    public DataStorage() {
-
-    }
-
     @PostConstruct
     public void init() {
         File dir = new File(dataDirPath);

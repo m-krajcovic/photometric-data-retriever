@@ -4,92 +4,56 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 05/04/16
  */
-public class StreamGobbler extends Thread {
+public class StreamGobbler<T> implements Supplier<List<T>> {
     private InputStream is;
-    private LineProcessor lineProcessor;
-    private Callback finished;
-    private Callback failed;
-
-    public StreamGobbler(String name, InputStream is, LineProcessor lineProcessor) {
-        super(name);
-        this.is = is;
-        this.lineProcessor = lineProcessor;
-    }
+    private Function<String, T> lineProcessor;
 
     public StreamGobbler(InputStream is) {
-        this(is, null);
+        this.is = is;
     }
 
-    public StreamGobbler(InputStream is, LineProcessor lineProcessor) {
+    public StreamGobbler(InputStream is, Function<String, T> lineProcessor) {
         this.is = is;
         this.lineProcessor = lineProcessor;
     }
 
-    public void run() {
+    @Override
+    public List<T> get() {
+        List<T> lines = new ArrayList<>();
         try {
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
-                if (lineProcessor == null) {
+                if(lineProcessor != null) {
+                    T obj = lineProcessor.apply(line);
+                    if (obj != null)
+                        lines.add(obj);
+                }else{
                     System.out.println(line);
-                } else {
-                    lineProcessor.call(line);
                 }
             }
         } catch (IOException ioe) {
-            if (failed != null) {
-                failed.call();
-            } else {
-                ioe.printStackTrace();
-            }
+            ioe.printStackTrace();
         }
-        if (finished != null) finished.call();
+        return lines;
     }
 
-    public InputStream getIs() {
-        return is;
-    }
-
-    public void setIs(InputStream is) {
-        this.is = is;
-    }
-
-    public LineProcessor getLineProcessor() {
+    public Function<String, T> getLineProcessor() {
         return lineProcessor;
     }
 
-    public void setLineProcessor(LineProcessor lineProcessor) {
+    public void setLineProcessor(Function<String, T> lineProcessor) {
         this.lineProcessor = lineProcessor;
-    }
-
-    public Callback getFinished() {
-        return finished;
-    }
-
-    public void setFinished(Callback finished) {
-        this.finished = finished;
-    }
-
-    public Callback getFailed() {
-        return failed;
-    }
-
-    public void setFailed(Callback failed) {
-        this.failed = failed;
-    }
-
-    public interface LineProcessor {
-        void call(String line);
-    }
-
-    public interface Callback {
-        void call();
     }
 }
