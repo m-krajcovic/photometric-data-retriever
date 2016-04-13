@@ -5,5 +5,8 @@ package cz.muni.physics.pdr.coordsresolver;
  * @version 1.0
  * @since 13/04/16
  */
-public class CoordsResolver {
+public interface CoordsResolver {
+    CoordsResolverResult getResult(String ra, String dec, String rad);
+
+    boolean isAvailable();
 }
