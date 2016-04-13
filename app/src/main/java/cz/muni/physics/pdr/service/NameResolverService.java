@@ -1,7 +1,8 @@
 package cz.muni.physics.pdr.service;
 
-import cz.muni.physics.pdr.nameresolver.NameResolverManager;
-import cz.muni.physics.pdr.nameresolver.NameResolverResult;
+import cz.muni.physics.pdr.resolver.StarName;
+import cz.muni.physics.pdr.resolver.StarResolverManager;
+import cz.muni.physics.pdr.resolver.StarResolverResult;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +14,23 @@ import org.springframework.stereotype.Component;
  * @since 06/04/16
  */
 @Component
-public class NameResolverService extends Service<NameResolverResult> {
+public class NameResolverService extends Service<StarResolverResult> {
 
     private String searchText;
 
     @Autowired
-    private NameResolverManager nameResolverManager;
+    private StarResolverManager<StarName> nameResolverManager;
 
     @Override
-    protected Task<NameResolverResult> createTask() {
+    protected Task<StarResolverResult> createTask() {
         if (searchText == null) {
             throw new IllegalArgumentException("searchText cannot be null.");
         }
-        return new Task<NameResolverResult>() {
+        return new Task<StarResolverResult>() {
 
             @Override
-            protected NameResolverResult call() {
-                return nameResolverManager.resolveFor(searchText);
+            protected StarResolverResult call() {
+                return nameResolverManager.resolveFor(new StarName(searchText));
             }
         };
     }

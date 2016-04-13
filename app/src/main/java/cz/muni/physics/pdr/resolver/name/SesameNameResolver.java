@@ -1,5 +1,8 @@
-package cz.muni.physics.pdr.nameresolver;
+package cz.muni.physics.pdr.resolver.name;
 
+import cz.muni.physics.pdr.resolver.StarName;
+import cz.muni.physics.pdr.resolver.StarResolver;
+import cz.muni.physics.pdr.resolver.StarResolverResult;
 import org.springframework.web.client.RestOperations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -23,7 +26,7 @@ import java.util.List;
  * @version 1.0
  * @since 24/03/16
  */
-public class SesameNameResolver implements NameResolver {
+public class SesameNameResolver implements StarResolver<StarName> {
 
     private RestOperations restTemplate;
     private String resolverUrl;
@@ -35,12 +38,12 @@ public class SesameNameResolver implements NameResolver {
         this.testUrl = testUrl;
     }
 
-    public NameResolverResult getResult(String name) {
-        String response = restTemplate.getForObject(resolverUrl, String.class, name); // TODO try catch something
+    public StarResolverResult getResult(StarName name) {
+        String response = restTemplate.getForObject(resolverUrl, String.class, name.getValue()); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
-        NameResolverResult result = new NameResolverResult();
+        StarResolverResult result = new StarResolverResult();
         Document doc;
         try {
             doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);

@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.utils;
 
 import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.nameresolver.NameResolverResult;
+import cz.muni.physics.pdr.resolver.StarResolverResult;
 import org.springframework.web.util.UriTemplate;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class ParameterUtils {
 
-    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, NameResolverResult resolverResult) {
+    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StarResolverResult resolverResult) {
         Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
         resolveNameResolverParameters(resolverResult, params);
         resolveValueParameters(survey.getValueParameters(), params);
@@ -42,7 +42,7 @@ public class ParameterUtils {
         return params;
     }
 
-    public static Map<String, String> resolveNameResolverParameters(NameResolverResult result, Map<String, String> params) {
+    public static Map<String, String> resolveNameResolverParameters(StarResolverResult result, Map<String, String> params) {
         params.put("ra", result.getJraddeg());
         params.put("dec", result.getJdedeg());
         return params;

@@ -5,16 +5,17 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import cz.muni.physics.pdr.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.model.PhotometricData;
-import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.nameresolver.NameResolver;
-import cz.muni.physics.pdr.nameresolver.SesameNameResolver;
+import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
 import cz.muni.physics.pdr.plugin.PluginLoader;
 import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
 import cz.muni.physics.pdr.plugin.ProcessStarter;
-import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
+import cz.muni.physics.pdr.resolver.StarName;
+import cz.muni.physics.pdr.resolver.StarResolver;
+import cz.muni.physics.pdr.resolver.name.SesameNameResolver;
 import cz.muni.physics.pdr.service.StarSurveySearchService;
 import cz.muni.physics.pdr.storage.DataStorage;
 import cz.muni.physics.pdr.storage.converter.PluginConverter;
@@ -168,8 +169,8 @@ public class AppConfig {
     }
 
     @Bean
-    public NameResolver sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
-                                           @Value("${sesame.test.url}") String testUrl) {
+    public StarResolver<StarName> sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
+                                                     @Value("${sesame.test.url}") String testUrl) {
         return new SesameNameResolver(new RestTemplate(), resolverUrl, testUrl);
     }
 

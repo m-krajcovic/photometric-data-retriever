@@ -2,9 +2,9 @@ package cz.muni.physics.pdr.controller;
 
 import cz.muni.physics.pdr.model.PhotometricData;
 import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.nameresolver.NameResolverResult;
 import cz.muni.physics.pdr.service.NameResolverService;
 import cz.muni.physics.pdr.service.StarSurveySearchService;
+import cz.muni.physics.pdr.resolver.StarResolverResult;
 import cz.muni.physics.pdr.utils.AppConfig;
 import cz.muni.physics.pdr.utils.FXMLUtils;
 import javafx.application.Platform;
@@ -40,7 +40,7 @@ public class SearchOverviewController {
     @Autowired
     private StarSurveySearchService starSurveySearchService;
 
-    private NameResolverResult resolverResult = new NameResolverResult();
+    private StarResolverResult resolverResult = new StarResolverResult();
 
     @FXML
     private SplitMenuButton searchButton;

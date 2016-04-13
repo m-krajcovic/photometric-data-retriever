@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.coordsresolver;
+package cz.muni.physics.pdr.resolver.coords;
 
 /**
  * @author Michal Krajčovič

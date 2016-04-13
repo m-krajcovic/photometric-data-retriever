@@ -4,9 +4,10 @@ import com.thoughtworks.xstream.XStreamException;
 import cz.muni.physics.pdr.javafx.PreloaderHandlerEvent;
 import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.nameresolver.NameResolverManager;
 import cz.muni.physics.pdr.plugin.PluginLoader;
 import cz.muni.physics.pdr.plugin.PluginManagerException;
+import cz.muni.physics.pdr.resolver.StarName;
+import cz.muni.physics.pdr.resolver.StarResolverManager;
 import cz.muni.physics.pdr.storage.DataStorage;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
@@ -37,7 +38,7 @@ public class AppInitializer {
     @Autowired
     private PluginLoader pluginLoader;
     @Autowired
-    private NameResolverManager nameResolverManager;
+    private StarResolverManager<StarName> nameResolverManager;
     @Value("${user.home}${plugins.dir.path}")
     private String pluginsDirPath;
 
@@ -89,7 +90,7 @@ public class AppInitializer {
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
-        nameResolverManager.getAvailableNameResolvers().forEach((resolver, available) -> {
+        nameResolverManager.getAvailableStarResolvers().forEach((resolver, available) -> {
                     if (!available) {
                         logger.warn(resolver.getClass().getCanonicalName() + " is not available.");
                         initErrors.add(resolver.getClass().getCanonicalName() + " is not available. Check your internet connection.");
