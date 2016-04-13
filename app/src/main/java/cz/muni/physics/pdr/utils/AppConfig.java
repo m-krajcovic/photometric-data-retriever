@@ -15,6 +15,7 @@ import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
 import cz.muni.physics.pdr.plugin.ProcessStarter;
 import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
+import cz.muni.physics.pdr.service.StarSurveySearchService;
 import cz.muni.physics.pdr.storage.DataStorage;
 import cz.muni.physics.pdr.storage.converter.PluginConverter;
 import cz.muni.physics.pdr.storage.converter.StarSurveyConverter;
@@ -142,6 +143,13 @@ public class AppConfig {
     @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
+    }
+
+    @Bean
+    public StarSurveySearchService starSurveySearchService(){
+        StarSurveySearchService service = new StarSurveySearchService();
+        service.setStarSurveys(starSurveys);
+        return service;
     }
 
     @Bean

@@ -47,7 +47,6 @@ public class MainApp extends Application {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         app = context.getBean(AppConfig.class);
         initializer = context.getBean(AppInitializer.class);
-
         initializer.initialize(this);
     }
 }

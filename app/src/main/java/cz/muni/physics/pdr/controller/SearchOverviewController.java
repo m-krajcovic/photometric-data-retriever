@@ -40,6 +40,8 @@ public class SearchOverviewController {
     @Autowired
     private StarSurveySearchService starSurveySearchService;
 
+    private NameResolverResult resolverResult = new NameResolverResult();
+
     @FXML
     private SplitMenuButton searchButton;
     @FXML
@@ -52,9 +54,8 @@ public class SearchOverviewController {
     @FXML
     private void initialize() {
         nameResolverService.setOnSucceeded(e -> {
-            NameResolverResult nameResolverResult = nameResolverService.getValue();
-            starSurveySearchService.setNameResolverResult(nameResolverResult);
-            starSurveySearchService.setStarSurveys(app.getStarSurveys());
+            resolverResult.merge(nameResolverService.getValue());
+            starSurveySearchService.setNameResolverResult(resolverResult);
             starSurveySearchService.start();
 
             nameResolverService.reset();
