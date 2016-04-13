@@ -20,9 +20,9 @@ import java.util.concurrent.ExecutionException;
  * @version 1.0
  * @since 11/04/16
  */
-public class PhotometricDataPluginStarter implements PluginStarter<PhotometricData> {
+public class PhotometricDataProcessStarter implements ProcessStarter<PhotometricData> {
 
-    private final static Logger logger = LogManager.getLogger(PhotometricDataPluginStarter.class);
+    private final static Logger logger = LogManager.getLogger(PhotometricDataProcessStarter.class);
 
     private String command;
     private Map<String, String> parameters;

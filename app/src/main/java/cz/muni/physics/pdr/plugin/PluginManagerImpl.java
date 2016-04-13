@@ -34,7 +34,7 @@ public class PluginManagerImpl implements PluginManager<PhotometricData> {
         if (params == null) {
             throw new IllegalArgumentException("params cannot be null.");
         }
-        PluginStarter<PhotometricData> starter = new PhotometricDataPluginStarter();
+        ProcessStarter<PhotometricData> starter = new PhotometricDataProcessStarter();
         if (!starter.prepare(plugin.getCommands(), params)) {
             logger.debug("Not able to prepare {} plugin command", plugin.getName());
             return CompletableFuture.completedFuture(Collections.emptyList());

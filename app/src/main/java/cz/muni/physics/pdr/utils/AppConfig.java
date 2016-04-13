@@ -13,8 +13,8 @@ import cz.muni.physics.pdr.plugin.PluginLoader;
 import cz.muni.physics.pdr.plugin.PropertiesPluginLoader;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
-import cz.muni.physics.pdr.plugin.PluginStarter;
-import cz.muni.physics.pdr.plugin.PhotometricDataPluginStarter;
+import cz.muni.physics.pdr.plugin.ProcessStarter;
+import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
 import cz.muni.physics.pdr.storage.DataStorage;
 import cz.muni.physics.pdr.storage.converter.PluginConverter;
 import cz.muni.physics.pdr.storage.converter.StarSurveyConverter;
@@ -134,8 +134,8 @@ public class AppConfig {
 
     @Bean
     @Scope("prototype")
-    public PluginStarter<PhotometricData> photometricDataPluginStarter() {
-        return new PhotometricDataPluginStarter();
+    public ProcessStarter<PhotometricData> photometricDataPluginStarter() {
+        return new PhotometricDataProcessStarter();
     }
 
     @Bean

@@ -9,8 +9,9 @@ import java.util.Map;
  * @version 1.0
  * @since 11/04/16
  */
-public interface PluginStarter<T> {
+public interface ProcessStarter<T> {
     boolean prepare(String command, Map<String, String> parameters);
+
     boolean prepare(List<String> commands, Map<String, String> parameters);
 
     Process run() throws IOException;
