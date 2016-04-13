@@ -10,7 +10,7 @@ import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.nameresolver.NameResolver;
 import cz.muni.physics.pdr.nameresolver.SesameNameResolver;
 import cz.muni.physics.pdr.plugin.PluginLoader;
-import cz.muni.physics.pdr.plugin.PropertiesPluginLoader;
+import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
 import cz.muni.physics.pdr.plugin.ProcessStarter;
@@ -167,7 +167,7 @@ public class AppConfig {
 
     @Bean
     public PluginLoader pluginLoader() {
-        return new PropertiesPluginLoader();
+        return new PluginLoaderImpl();
     }
 
     @Bean
