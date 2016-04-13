@@ -35,11 +35,10 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
-                if(lineProcessor != null) {
-                    T obj = lineProcessor.apply(line);
-                    if (obj != null)
-                        lines.add(obj);
-                }else{
+                T obj;
+                if (lineProcessor != null && (obj = lineProcessor.apply(line)) != null) {
+                    lines.add(obj);
+                } else {
                     System.out.println(line);
                 }
             }

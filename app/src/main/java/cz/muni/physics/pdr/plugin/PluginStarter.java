@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public interface PluginStarter<T> {
     boolean prepare(String command, Map<String, String> parameters);
+    boolean prepare(List<String> commands, Map<String, String> parameters);
 
     Process run() throws IOException;
 

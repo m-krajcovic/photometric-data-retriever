@@ -10,7 +10,7 @@ import cz.muni.physics.pdr.model.Plugin;
 import cz.muni.physics.pdr.nameresolver.NameResolver;
 import cz.muni.physics.pdr.nameresolver.SesameNameResolver;
 import cz.muni.physics.pdr.plugin.PluginLoader;
-import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
+import cz.muni.physics.pdr.plugin.PropertiesPluginLoader;
 import cz.muni.physics.pdr.plugin.PluginManager;
 import cz.muni.physics.pdr.plugin.PluginManagerImpl;
 import cz.muni.physics.pdr.plugin.PluginStarter;
@@ -95,7 +95,6 @@ public class AppConfig {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
-        controller.setData(data);
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Search result");
         dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -103,6 +102,7 @@ public class AppConfig {
         Scene scene = new Scene(photometricDataOverview);
         dialogStage.setScene(scene);
         dialogStage.show();
+        controller.setData(data);
     }
 
     public void showStarSurveyOverview() {
@@ -167,7 +167,7 @@ public class AppConfig {
 
     @Bean
     public PluginLoader pluginLoader() {
-        return new PluginLoaderImpl();
+        return new PropertiesPluginLoader();
     }
 
     @Bean
@@ -196,6 +196,7 @@ public class AppConfig {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        primaryStage.setOnCloseRequest(v -> searchServiceExecutor().shutdown());
     }
 
     public ObservableList<StarSurvey> getStarSurveys() {

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -35,19 +36,39 @@ public class PhotometricDataPluginStarter implements PluginStarter<PhotometricDa
         if (parameters == null) {
             throw new IllegalArgumentException("parameters cannot be null.");
         }
-        logger.debug("Preparing command {}", command);
+        logger.debug("Preparing command '{}'", command);
         this.command = command;
         this.parameters = parameters;
         return (readyToRun = ParameterUtils.isResolvableWithParameters(command, parameters));
     }
 
     @Override
+    public boolean prepare(List<String> commands, Map<String, String> parameters) {
+        if (commands == null) {
+            throw new IllegalArgumentException("commands cannot be null.");
+        }
+        if (commands.isEmpty()) {
+            throw new IllegalArgumentException("commands cannot be empty.");
+        }
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters cannot be null.");
+        }
+        logger.debug("Searching for resolvable command from {}", commands);
+        Optional<String> possibleCommand = commands.stream().filter(c -> ParameterUtils.isResolvableWithParameters(c, parameters)).findFirst();
+        return possibleCommand.isPresent() && prepare(possibleCommand.get(), parameters);
+    }
+
+    @Override
     public Process run() throws IOException {
         if (!readyToRun)
             throw new IllegalStateException("Plugin must be prepared first by preparePlugin() method.");
-        command = StrSubstitutor.replace(command, parameters);
-        logger.debug("Starting process by command '{}'", command);
-        return Runtime.getRuntime().exec(command);
+
+        String[] commandSplit = command.split(" ");
+        for (int i = 0; i < commandSplit.length; i++) {
+            commandSplit[i] = StrSubstitutor.replace(commandSplit[i], parameters);
+        }
+        logger.debug("Starting process by command '{}'", (Object) commandSplit);
+        return Runtime.getRuntime().exec(commandSplit);
     }
 
     @Override

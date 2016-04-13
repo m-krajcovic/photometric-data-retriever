@@ -13,6 +13,7 @@
         <module>crts-plugin</module>
         <module>nsvs-plugin</module>
         <module>java-plugin</module>
+        <module>swasp-plugin</module>
     </modules>
 
     <properties>

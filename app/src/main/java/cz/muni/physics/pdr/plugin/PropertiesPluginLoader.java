@@ -21,14 +21,14 @@ import java.util.Set;
  * @version 1.0
  * @since 01/04/16
  */
-public class PluginLoaderImpl implements PluginLoader {
+public class PropertiesPluginLoader implements PluginLoader {
 
-    private final static Logger logger = LogManager.getLogger(PluginLoaderImpl.class);
+    private final static Logger logger = LogManager.getLogger(PropertiesPluginLoader.class);
 
     @Value("${user.home}${plugins.dir.path}")
     private String pluginsFolderPath;
 
-    public PluginLoaderImpl() {
+    public PropertiesPluginLoader() {
     }
 
     public Map<String, Plugin> getAvailablePlugins() throws PluginManagerException {
@@ -49,16 +49,16 @@ public class PluginLoaderImpl implements PluginLoader {
                 } catch (IOException e) {
                     throw new PluginManagerException("IOException", e);
                 }
-                String command = props.getProperty("command");
+                String commands = props.getProperty("command");
                 String mainFileName = props.getProperty("mainFile");
-                if (mainFileName == null || command == null) {
+                if (mainFileName == null || commands == null) {
                     throw new PluginManagerException("There are some properties missing inside " + pluginDirPath + "plugin.properties");
                 }
                 File mainFile = new File(pluginDirPath, mainFileName);
                 if (!mainFile.exists()) {
                     throw new PluginManagerException("Main file " + mainFileName + " was not found.");
                 }
-                Plugin plugin = new Plugin(pluginDirName, mainFile.getPath(), command);
+                Plugin plugin = new Plugin(pluginDirName, mainFile.getPath(), commands.split(";"));
                 result.add(plugin);
                 resultMap.put(pluginDirName, plugin);
             } else {

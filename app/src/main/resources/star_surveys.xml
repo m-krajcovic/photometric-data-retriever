@@ -22,9 +22,15 @@
     </starSurvey>
     <starSurvey name="SWASP">
         <plugin/>
-        <patterns/>
+        <patterns>
+            <java.util.regex.Pattern>
+                <pattern>(?&lt;obj&gt;1SWASP\s(?&lt;id&gt;J.*))</pattern>
+                <flags>0</flags>
+            </java.util.regex.Pattern>
+        </patterns>
         <valueParams/>
         <urls>
+            <string>http://wasp.cerit-sc.cz/json?type=CSV&amp;object={obj}</string>
             <string>http://wasp.cerit-sc.cz/search?ra={ra}&amp;dec={dec}&amp;radius=1&amp;radiusUnit=min&amp;limit=1</string>
         </urls>
     </starSurvey>

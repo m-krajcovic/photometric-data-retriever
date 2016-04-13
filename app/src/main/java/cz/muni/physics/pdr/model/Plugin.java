@@ -2,6 +2,8 @@ package cz.muni.physics.pdr.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * @author Michal Krajčovič
@@ -12,6 +14,7 @@ public class Plugin {
     private StringProperty name = new SimpleStringProperty("");
     private StringProperty mainFile = new SimpleStringProperty("");
     private StringProperty command = new SimpleStringProperty("");
+    private ObservableList<String> commands = FXCollections.observableArrayList();
 
     public Plugin() {
     }
@@ -19,7 +22,13 @@ public class Plugin {
     public Plugin(String name, String mainFile, String command) {
         this.name.setValue(name);
         this.mainFile.setValue(mainFile);
-        this.command.setValue(command);
+        this.commands.add(command);
+    }
+
+    public Plugin(String name, String mainFile, String... commands) {
+        this.name.setValue(name);
+        this.mainFile.setValue(mainFile);
+        this.commands.addAll(commands);
     }
 
     public Plugin(String pluginName) {
@@ -62,6 +71,14 @@ public class Plugin {
         return command;
     }
 
+    public ObservableList<String> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(ObservableList<String> commands) {
+        this.commands = commands;
+    }
+
     @Override
     public String toString() {
         return "Plugin{" +
@@ -69,24 +86,5 @@ public class Plugin {
                 ", mainFile=" + mainFile +
                 ", command=" + command +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Plugin plugin = (Plugin) o;
-
-        if (getName() != null ? !getName().equals(plugin.getName()) : plugin.getName() != null) return false;
-        return getMainFile() != null ? getMainFile().equals(plugin.getMainFile()) : plugin.getMainFile() == null && (getCommand() != null ? getCommand().equals(plugin.getCommand()) : plugin.getCommand() == null);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + (getMainFile() != null ? getMainFile().hashCode() : 0);
-        result = 31 * result + (getCommand() != null ? getCommand().hashCode() : 0);
-        return result;
     }
 }

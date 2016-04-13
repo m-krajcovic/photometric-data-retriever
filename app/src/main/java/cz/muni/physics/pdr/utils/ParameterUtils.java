@@ -68,7 +68,7 @@ public class ParameterUtils {
         return params;
     }
 
-    public static boolean isResolvableWithParameters(String string, Map<String, String> params){
+    public static boolean isResolvableWithParameters(String string, Map<String, String> params) {
         Set<String> stringParameters = findParameterNames(string);
         return stringParameters.stream().allMatch(params::containsKey);
     }
@@ -113,5 +113,39 @@ public class ParameterUtils {
             }
         }
         return params;
+    }
+
+    private static final String SINGLE_QUOTE = "\'";
+    private static final String DOUBLE_QUOTE = "\"";
+    private static final char SLASH_CHAR = '/';
+    private static final char BACKSLASH_CHAR = '\\';
+
+
+    public static String quoteArgument(String argument) {
+        String cleanedArgument = argument.trim();
+
+        while (cleanedArgument.startsWith(SINGLE_QUOTE) || cleanedArgument.startsWith(DOUBLE_QUOTE)) {
+            cleanedArgument = cleanedArgument.substring(1);
+        }
+        while (cleanedArgument.endsWith(SINGLE_QUOTE) || cleanedArgument.endsWith(DOUBLE_QUOTE)) {
+            cleanedArgument = cleanedArgument.substring(0, cleanedArgument.length() - 1);
+        }
+
+        final StringBuilder buf = new StringBuilder();
+        if (cleanedArgument.contains(DOUBLE_QUOTE)) {
+            if (cleanedArgument.contains(SINGLE_QUOTE)) {
+                throw new IllegalArgumentException(
+                        "Can't handle single and double quotes in same argument");
+            } else {
+                return buf.append(SINGLE_QUOTE).append(cleanedArgument).append(
+                        SINGLE_QUOTE).toString();
+            }
+        } else if (cleanedArgument.contains(SINGLE_QUOTE)
+                || cleanedArgument.contains(" ")) {
+            return buf.append(DOUBLE_QUOTE).append(cleanedArgument).append(
+                    DOUBLE_QUOTE).toString();
+        } else {
+            return cleanedArgument;
+        }
     }
 }
