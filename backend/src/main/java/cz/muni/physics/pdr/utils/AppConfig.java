@@ -6,15 +6,10 @@ import cz.muni.physics.pdr.entity.PhotometricData;
 import cz.muni.physics.pdr.entity.Plugin;
 import cz.muni.physics.pdr.entity.StarSurvey;
 import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
-import cz.muni.physics.pdr.plugin.PluginLoader;
-import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
-import cz.muni.physics.pdr.plugin.PluginManager;
-import cz.muni.physics.pdr.plugin.PluginManagerImpl;
 import cz.muni.physics.pdr.plugin.ProcessStarter;
 import cz.muni.physics.pdr.resolver.StarName;
 import cz.muni.physics.pdr.resolver.StarResolver;
 import cz.muni.physics.pdr.resolver.name.SesameNameResolver;
-import cz.muni.physics.pdr.storage.DataStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -54,24 +49,9 @@ public class AppConfig {
     }
 
     @Bean
-    public DataStorage dataStorage() {
-        return new DataStorage();
-    }
-
-    @Bean
     public StarResolver<StarName> sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
                                                      @Value("${sesame.test.url}") String testUrl) {
         return new SesameNameResolver(new RestTemplate(), resolverUrl, testUrl);
-    }
-
-    @Bean
-    public PluginLoader pluginLoader() {
-        return new PluginLoaderImpl();
-    }
-
-    @Bean
-    public PluginManager pluginManager() {
-        return new PluginManagerImpl();
     }
 
     @Bean

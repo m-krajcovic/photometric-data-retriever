@@ -18,11 +18,11 @@ import java.util.concurrent.CompletableFuture;
  * @since 08/04/16
  */
 @Component
-public class PluginManagerImpl implements PluginManager<PhotometricData> {
+public class PluginStarterImpl implements PluginStarter<PhotometricData> {
 
-    private final static Logger logger = LogManager.getLogger(PluginManagerImpl.class);
+    private final static Logger logger = LogManager.getLogger(PluginStarterImpl.class);
 
-    public PluginManagerImpl() {
+    public PluginStarterImpl() {
     }
 
     @Async

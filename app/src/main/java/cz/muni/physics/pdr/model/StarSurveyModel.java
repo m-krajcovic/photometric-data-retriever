@@ -24,6 +24,13 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
     private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap(); // napr. <"radec", "${ra};${dec}"> ~> 188.7;+25.3
     private ObservableList<String> urls = FXCollections.observableArrayList(); // napr. <1, "www.google.com?query={radec}">, <2, "www.google.com?id={id}&ra={ra}"> -> get first where all \{.*\} exists in parameter map
 
+    public StarSurveyModel(StarSurvey survey){
+        this(survey.getName(), new PluginModel(survey.getPlugin()));
+        regexPatterns.addAll(survey.getRegexPatterns());
+        valueParameters.putAll(survey.getValueParameters());
+        urls.addAll(survey.getUrls());
+    }
+
     public StarSurveyModel(String name, PluginModel plugin) {
         this.name.setValue(name);
         this.plugin.setValue(plugin);

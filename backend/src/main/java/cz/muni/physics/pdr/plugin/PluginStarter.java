@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0
  * @since 21/03/16
  */
-public interface PluginManager<T> {
+public interface PluginStarter<T> {
     CompletableFuture<List<T>> run(Plugin plugin, Map<String, String> params);
 
 }

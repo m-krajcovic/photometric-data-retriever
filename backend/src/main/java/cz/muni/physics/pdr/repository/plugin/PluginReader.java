@@ -1,6 +1,7 @@
-package cz.muni.physics.pdr.plugin;
+package cz.muni.physics.pdr.repository.plugin;
 
 import cz.muni.physics.pdr.entity.Plugin;
+import cz.muni.physics.pdr.plugin.PluginManagerException;
 
 import java.io.File;
 

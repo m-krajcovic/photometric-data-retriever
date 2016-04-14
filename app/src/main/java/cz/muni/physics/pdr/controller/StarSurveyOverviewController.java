@@ -1,9 +1,12 @@
 package cz.muni.physics.pdr.controller;
 
 import cz.muni.physics.pdr.javafx.PluginCellFactory;
+import cz.muni.physics.pdr.manager.StarSurveyManager;
 import cz.muni.physics.pdr.model.PluginModel;
 import cz.muni.physics.pdr.model.StarSurveyModel;
 import cz.muni.physics.pdr.utils.ScreenConfig;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -22,6 +25,8 @@ public class StarSurveyOverviewController {
 
     @Autowired
     private ScreenConfig app;
+    @Autowired
+    private StarSurveyManager starSurveyManager;
 
     @FXML
     private TableView<StarSurveyModel> starSurveys;
@@ -45,7 +50,8 @@ public class StarSurveyOverviewController {
         StarSurveyModel tempStarSurvey = new StarSurveyModel();
         boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
-            app.getStarSurveyModels().add(tempStarSurvey);
+            //app.getStarSurveyModels().add(tempStarSurvey);
+            starSurveyManager.insert(tempStarSurvey.toEntity());
         }
     }
 
@@ -81,6 +87,9 @@ public class StarSurveyOverviewController {
 
         pluginColumn.setCellFactory(new PluginCellFactory());
 
-        starSurveys.setItems(app.getStarSurveyModels());
+        ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
+//        app.getStarSurveys().forEach(s -> list.add(new StarSurveyModel(s)));
+        starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+        starSurveys.setItems(list);
     }
 }

@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.plugin;
+package cz.muni.physics.pdr.repository.plugin;
 
 import java.io.File;
 import java.util.HashMap;

@@ -19,6 +19,12 @@ public class PluginModel implements EntityModel<Plugin>{
     public PluginModel() {
     }
 
+    public PluginModel(Plugin plugin){
+        setName(plugin.getName());
+        setMainFile(plugin.getMainFile());
+        commands.addAll(plugin.getCommands());
+    }
+
     public PluginModel(String name, String mainFile, String command) {
         this.name.setValue(name);
         this.mainFile.setValue(mainFile);

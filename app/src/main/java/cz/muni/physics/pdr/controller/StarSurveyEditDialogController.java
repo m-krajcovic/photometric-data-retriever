@@ -1,8 +1,10 @@
 package cz.muni.physics.pdr.controller;
 
+import cz.muni.physics.pdr.manager.PluginManager;
 import cz.muni.physics.pdr.model.PluginModel;
 import cz.muni.physics.pdr.model.StarSurveyModel;
-import cz.muni.physics.pdr.utils.ScreenConfig;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -23,7 +25,7 @@ import org.springframework.stereotype.Component;
 public class StarSurveyEditDialogController {
 
     @Autowired
-    private ScreenConfig app;
+    private PluginManager pluginManager;
 
     @FXML
     private TextField nameTextField;
@@ -52,7 +54,9 @@ public class StarSurveyEditDialogController {
                 return null;
             }
         });
-        pluginChoiceBox.setItems(app.getPluginModels());
+        ObservableList<PluginModel> list = FXCollections.observableArrayList();
+        pluginManager.getAll().forEach(p -> list.add(new PluginModel(p)));
+        pluginChoiceBox.setItems(list);
     }
 
     @FXML
