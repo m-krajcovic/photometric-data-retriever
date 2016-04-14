@@ -11,5 +11,6 @@
     <modules>
         <module>app</module>
         <module>star-survey-plugins</module>
+        <module>backend</module>
     </modules>
 </project>

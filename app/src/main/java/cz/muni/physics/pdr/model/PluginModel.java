@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.model;
 
+import cz.muni.physics.pdr.entity.Plugin;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -10,28 +11,27 @@ import javafx.collections.ObservableList;
  * @version 1.0
  * @since 29/03/16
  */
-public class Plugin {
+public class PluginModel implements EntityModel<Plugin>{
     private StringProperty name = new SimpleStringProperty("");
     private StringProperty mainFile = new SimpleStringProperty("");
-    private StringProperty command = new SimpleStringProperty("");
     private ObservableList<String> commands = FXCollections.observableArrayList();
 
-    public Plugin() {
+    public PluginModel() {
     }
 
-    public Plugin(String name, String mainFile, String command) {
+    public PluginModel(String name, String mainFile, String command) {
         this.name.setValue(name);
         this.mainFile.setValue(mainFile);
         this.commands.add(command);
     }
 
-    public Plugin(String name, String mainFile, String... commands) {
+    public PluginModel(String name, String mainFile, String... commands) {
         this.name.setValue(name);
         this.mainFile.setValue(mainFile);
         this.commands.addAll(commands);
     }
 
-    public Plugin(String pluginName) {
+    public PluginModel(String pluginName) {
         this.name.setValue(pluginName);
     }
 
@@ -59,18 +59,6 @@ public class Plugin {
         return mainFile;
     }
 
-    public String getCommand() {
-        return command.get();
-    }
-
-    public void setCommand(String command) {
-        this.command.set(command);
-    }
-
-    public StringProperty commandProperty() {
-        return command;
-    }
-
     public ObservableList<String> getCommands() {
         return commands;
     }
@@ -81,10 +69,14 @@ public class Plugin {
 
     @Override
     public String toString() {
-        return "Plugin{" +
+        return "PluginModel{" +
                 "name=" + name +
                 ", mainFile=" + mainFile +
-                ", command=" + command +
                 '}';
+    }
+
+    @Override
+    public Plugin toEntity() {
+        return new Plugin(getName(), getMainFile(), getCommands());
     }
 }

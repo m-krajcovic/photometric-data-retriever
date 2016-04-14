@@ -1,29 +1,15 @@
 package cz.muni.physics.pdr.utils;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import cz.muni.physics.pdr.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.controller.StarSurveyEditDialogController;
-import cz.muni.physics.pdr.model.PhotometricData;
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.plugin.PhotometricDataProcessStarter;
-import cz.muni.physics.pdr.plugin.PluginLoader;
-import cz.muni.physics.pdr.plugin.PluginLoaderImpl;
-import cz.muni.physics.pdr.plugin.PluginManager;
-import cz.muni.physics.pdr.plugin.PluginManagerImpl;
-import cz.muni.physics.pdr.plugin.ProcessStarter;
-import cz.muni.physics.pdr.resolver.StarName;
-import cz.muni.physics.pdr.resolver.StarResolver;
-import cz.muni.physics.pdr.resolver.name.SesameNameResolver;
-import cz.muni.physics.pdr.service.StarSurveySearchService;
-import cz.muni.physics.pdr.storage.DataStorage;
-import cz.muni.physics.pdr.storage.converter.PluginConverter;
-import cz.muni.physics.pdr.storage.converter.StarSurveyConverter;
-import javafx.application.Platform;
+import cz.muni.physics.pdr.entity.Plugin;
+import cz.muni.physics.pdr.entity.StarSurvey;
+import cz.muni.physics.pdr.javafx.service.StarSurveySearchService;
+import cz.muni.physics.pdr.model.PhotometricDataModel;
+import cz.muni.physics.pdr.model.PluginModel;
+import cz.muni.physics.pdr.model.StarSurveyModel;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -31,16 +17,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +41,11 @@ import java.util.Map;
 @EnableAsync
 @ComponentScan(basePackages = {"cz.muni.physics.pdr.*"})
 @PropertySource("classpath:application.properties")
-public class AppConfig {
+@Import(AppConfig.class)
+public class ScreenConfig {
+
+    @Autowired
+    private AppConfig backend;
 
     @Value("${app.name}")
     private String name;
@@ -64,18 +54,22 @@ public class AppConfig {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private ObservableList<StarSurvey> starSurveys;
-    private ObservableList<Plugin> plugins;
 
-    public AppConfig() {
-        starSurveys = FXCollections.observableArrayList(new Callback<StarSurvey, Observable[]>() {
+    private List<Plugin> plugins = new ArrayList<>();
+    private List<StarSurvey> starSurveys = new ArrayList<>();
+
+    private ObservableList<StarSurveyModel> starSurveyModels;
+    private ObservableList<PluginModel> pluginModels;
+
+    public ScreenConfig() {
+        starSurveyModels = FXCollections.observableArrayList(new Callback<StarSurveyModel, Observable[]>() {
             @Override
-            public Observable[] call(StarSurvey param) {
+            public Observable[] call(StarSurveyModel param) {
                 return new Observable[]{param.nameProperty(), param.pluginProperty()};
             }
         });
-        starSurveys.addListener((ListChangeListener<StarSurvey>) c -> Platform.runLater(() -> dataStorage().saveStarSurveys(new ArrayList<>(c.getList()))));
-        plugins = FXCollections.observableArrayList();
+//        starSurveyModels.addListener((ListChangeListener<StarSurveyModel>) c -> Platform.runLater(() -> backend.dataStorage().saveStarSurveys(new ArrayList<>(c.getList()))));
+        pluginModels = FXCollections.observableArrayList();
     }
 
 
@@ -93,7 +87,7 @@ public class AppConfig {
         rootLayout.setCenter(searchView);
     }
 
-    public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricData>> data) {
+    public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricDataModel>> data) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
@@ -118,7 +112,7 @@ public class AppConfig {
         dialogStage.show();
     }
 
-    public boolean showStarSurveyEditDialog(StarSurvey record) {
+    public boolean showStarSurveyEditDialog(StarSurveyModel record) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane starSurveyDialog = loader.load("/view/StarSurveyEditDialog.fxml");
         StarSurveyEditDialogController controller = loader.getController();
@@ -136,12 +130,6 @@ public class AppConfig {
 
     @Bean
     @Scope("prototype")
-    public ProcessStarter<PhotometricData> photometricDataPluginStarter() {
-        return new PhotometricDataProcessStarter();
-    }
-
-    @Bean
-    @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
     }
@@ -151,47 +139,6 @@ public class AppConfig {
         StarSurveySearchService service = new StarSurveySearchService();
         service.setStarSurveys(starSurveys);
         return service;
-    }
-
-    @Bean
-    public ThreadPoolTaskExecutor searchServiceExecutor(){
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setMaxPoolSize(10);
-        executor.setCorePoolSize(5);
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(300);
-        return executor;
-    }
-
-    @Bean
-    public DataStorage dataStorage() {
-        return new DataStorage();
-    }
-
-    @Bean
-    public StarResolver<StarName> sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
-                                                     @Value("${sesame.test.url}") String testUrl) {
-        return new SesameNameResolver(new RestTemplate(), resolverUrl, testUrl);
-    }
-
-    @Bean
-    public PluginLoader pluginLoader() {
-        return new PluginLoaderImpl();
-    }
-
-    @Bean
-    public PluginManager pluginManager() {
-        return new PluginManagerImpl();
-    }
-
-    @Bean
-    public XStream xStream() {
-        XStream xStream = new XStream(new DomDriver());
-        xStream.alias("starSurvey", StarSurvey.class);
-        xStream.alias("plugin", Plugin.class);
-        xStream.registerConverter(new PluginConverter());
-        xStream.registerConverter(new StarSurveyConverter());
-        return xStream;
     }
 
     @Bean
@@ -205,23 +152,39 @@ public class AppConfig {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        primaryStage.setOnCloseRequest(v -> searchServiceExecutor().shutdown());
+        primaryStage.setOnCloseRequest(v -> backend.searchServiceExecutor().shutdown());
     }
 
-    public ObservableList<StarSurvey> getStarSurveys() {
-        return starSurveys;
+    public ObservableList<StarSurveyModel> getStarSurveyModels() {
+        return starSurveyModels;
     }
 
-    public void setStarSurveys(ObservableList<StarSurvey> starSurveys) {
-        this.starSurveys = starSurveys;
+    public void setStarSurveyModels(ObservableList<StarSurveyModel> starSurveyModels) {
+        this.starSurveyModels = starSurveyModels;
     }
 
-    public ObservableList<Plugin> getPlugins() {
+    public ObservableList<PluginModel> getPluginModels() {
+        return pluginModels;
+    }
+
+    public void setPluginModels(ObservableList<PluginModel> pluginModels) {
+        this.pluginModels = pluginModels;
+    }
+
+    public List<Plugin> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(ObservableList<Plugin> plugins) {
+    public void setPlugins(List<Plugin> plugins) {
         this.plugins = plugins;
+    }
+
+    public List<StarSurvey> getStarSurveys() {
+        return starSurveys;
+    }
+
+    public void setStarSurveys(List<StarSurvey> starSurveys) {
+        this.starSurveys = starSurveys;
     }
 
     public String getName() {

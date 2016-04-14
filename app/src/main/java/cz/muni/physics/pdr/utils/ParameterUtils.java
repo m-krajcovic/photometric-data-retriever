@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.utils;
 
-import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.entity.StarSurvey;
+import cz.muni.physics.pdr.model.StarSurveyModel;
 import cz.muni.physics.pdr.resolver.StarResolverResult;
 import org.springframework.web.util.UriTemplate;
 
@@ -18,6 +19,15 @@ import java.util.regex.Pattern;
  * @since 11/04/16
  */
 public class ParameterUtils {
+
+    public static Map<String, String> resolveParametersForSurvey(StarSurveyModel survey, StarResolverResult resolverResult) {
+        Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
+        resolveNameResolverParameters(resolverResult, params);
+        resolveValueParameters(survey.getValueParameters(), params);
+        resolveUrlParameter(survey.getUrls(), params);
+        params.put("mainFile", survey.getPlugin().getMainFile());
+        return params;
+    }
 
     public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StarResolverResult resolverResult) {
         Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
@@ -113,39 +123,5 @@ public class ParameterUtils {
             }
         }
         return params;
-    }
-
-    private static final String SINGLE_QUOTE = "\'";
-    private static final String DOUBLE_QUOTE = "\"";
-    private static final char SLASH_CHAR = '/';
-    private static final char BACKSLASH_CHAR = '\\';
-
-
-    public static String quoteArgument(String argument) {
-        String cleanedArgument = argument.trim();
-
-        while (cleanedArgument.startsWith(SINGLE_QUOTE) || cleanedArgument.startsWith(DOUBLE_QUOTE)) {
-            cleanedArgument = cleanedArgument.substring(1);
-        }
-        while (cleanedArgument.endsWith(SINGLE_QUOTE) || cleanedArgument.endsWith(DOUBLE_QUOTE)) {
-            cleanedArgument = cleanedArgument.substring(0, cleanedArgument.length() - 1);
-        }
-
-        final StringBuilder buf = new StringBuilder();
-        if (cleanedArgument.contains(DOUBLE_QUOTE)) {
-            if (cleanedArgument.contains(SINGLE_QUOTE)) {
-                throw new IllegalArgumentException(
-                        "Can't handle single and double quotes in same argument");
-            } else {
-                return buf.append(SINGLE_QUOTE).append(cleanedArgument).append(
-                        SINGLE_QUOTE).toString();
-            }
-        } else if (cleanedArgument.contains(SINGLE_QUOTE)
-                || cleanedArgument.contains(" ")) {
-            return buf.append(DOUBLE_QUOTE).append(cleanedArgument).append(
-                    DOUBLE_QUOTE).toString();
-        } else {
-            return cleanedArgument;
-        }
     }
 }

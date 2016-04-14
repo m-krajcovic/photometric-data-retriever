@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import cz.muni.physics.pdr.model.Plugin;
+import cz.muni.physics.pdr.entity.Plugin;
 
 /**
  * @author Michal Krajčovič
@@ -27,9 +27,7 @@ public class PluginConverter implements Converter {
         String name = reader.getAttribute("name");
 //        String mainFile = reader.getAttribute("mainFile");
 //        String command = reader.getAttribute("command");
-        Plugin p = new Plugin();
-        p.setName(name);
-        return p;
+        return new Plugin(name);
     }
 
     @Override

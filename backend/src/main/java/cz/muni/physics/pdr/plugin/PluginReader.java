@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.plugin;
 
-import cz.muni.physics.pdr.model.Plugin;
+import cz.muni.physics.pdr.entity.Plugin;
 
 import java.io.File;
 

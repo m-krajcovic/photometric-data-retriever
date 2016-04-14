@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.utils;
 
 import com.thoughtworks.xstream.XStreamException;
+import cz.muni.physics.pdr.entity.Plugin;
+import cz.muni.physics.pdr.entity.StarSurvey;
 import cz.muni.physics.pdr.javafx.PreloaderHandlerEvent;
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
 import cz.muni.physics.pdr.plugin.PluginLoader;
 import cz.muni.physics.pdr.plugin.PluginManagerException;
 import cz.muni.physics.pdr.resolver.StarName;
@@ -32,7 +32,7 @@ public class AppInitializer {
     private final static Logger logger = LogManager.getLogger(AppInitializer.class);
 
     @Autowired
-    private AppConfig app;
+    private ScreenConfig app;
     @Autowired
     private DataStorage dataStorage;
     @Autowired
@@ -51,7 +51,7 @@ public class AppInitializer {
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         logger.debug("Checking if app data exists");
         if (!dir.exists()) {
-            logger.debug("Plugin folder not found, creating new one.");
+            logger.debug("PluginModel folder not found, creating new one.");
             dir.mkdir();
         }
 

@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.storage;
 
 import com.thoughtworks.xstream.XStream;
-import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.entity.StarSurvey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class DataStorage {
         }
     }
 
-    public void saveStarSurveys(List<StarSurvey> records) {
+    public synchronized void saveStarSurveys(List<StarSurvey> records) {
         File starSurveysFile = new File(dataDirPath, starSurveysFileName);
         try (Writer writer = new FileWriter(starSurveysFile)) {
             xStream.toXML(records, writer);

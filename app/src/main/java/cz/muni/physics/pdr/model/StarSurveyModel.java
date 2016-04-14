@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.model;
 
+import cz.muni.physics.pdr.entity.StarSurvey;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,20 +16,20 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 31/03/16
  */
-public class StarSurvey {
+public class StarSurveyModel implements EntityModel<StarSurvey> {
     private StringProperty name = new SimpleStringProperty("");
-    private ObjectProperty<Plugin> plugin = new SimpleObjectProperty<>();
+    private ObjectProperty<PluginModel> plugin = new SimpleObjectProperty<>();
 
     private ObservableList<Pattern> regexPatterns = FXCollections.observableArrayList(); // napr NSVS\s(?<id>\d*) ~> match on name/coord resolved results
     private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap(); // napr. <"radec", "${ra};${dec}"> ~> 188.7;+25.3
     private ObservableList<String> urls = FXCollections.observableArrayList(); // napr. <1, "www.google.com?query={radec}">, <2, "www.google.com?id={id}&ra={ra}"> -> get first where all \{.*\} exists in parameter map
 
-    public StarSurvey(String name, Plugin plugin) {
+    public StarSurveyModel(String name, PluginModel plugin) {
         this.name.setValue(name);
         this.plugin.setValue(plugin);
     }
 
-    public StarSurvey() {
+    public StarSurveyModel() {
     }
 
     public String getName() {
@@ -43,15 +44,15 @@ public class StarSurvey {
         return name;
     }
 
-    public Plugin getPlugin() {
+    public PluginModel getPlugin() {
         return plugin.get();
     }
 
-    public void setPlugin(Plugin plugin) {
+    public void setPlugin(PluginModel plugin) {
         this.plugin.set(plugin);
     }
 
-    public ObjectProperty<Plugin> pluginProperty() {
+    public ObjectProperty<PluginModel> pluginProperty() {
         return plugin;
     }
 
@@ -79,9 +80,19 @@ public class StarSurvey {
         this.urls = urls;
     }
 
+    public StarSurvey toEntity() {
+        StarSurvey survey = new StarSurvey();
+        survey.setName(getName());
+        survey.setPlugin(getPlugin().toEntity());
+        survey.setRegexPatterns(getRegexPatterns());
+        survey.setValueParameters(getValueParameters());
+        survey.setUrls(getUrls());
+        return survey;
+    }
+
     @Override
     public String toString() {
-        return "StarSurvey{" +
+        return "StarSurveyModel{" +
                 "name=" + name +
                 ", plugin=" + plugin +
                 '}';

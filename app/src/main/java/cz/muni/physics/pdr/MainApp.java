@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr;
 
 import com.sun.javafx.application.LauncherImpl;
-import cz.muni.physics.pdr.utils.AppConfig;
+import cz.muni.physics.pdr.utils.ScreenConfig;
 import cz.muni.physics.pdr.utils.AppInitializer;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -20,7 +20,7 @@ public class MainApp extends Application {
 
     private final static Logger logger = LogManager.getLogger(MainApp.class);
 
-    private AppConfig app;
+    private ScreenConfig app;
     private AppInitializer initializer;
 
     public MainApp() {}
@@ -44,8 +44,8 @@ public class MainApp extends Application {
 
     @Override
     public void init() throws InterruptedException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        app = context.getBean(AppConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(ScreenConfig.class);
+        app = context.getBean(ScreenConfig.class);
         initializer = context.getBean(AppInitializer.class);
         initializer.initialize(this);
     }

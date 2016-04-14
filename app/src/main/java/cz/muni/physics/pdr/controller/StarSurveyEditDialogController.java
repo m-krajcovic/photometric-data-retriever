@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.controller;
 
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.utils.AppConfig;
+import cz.muni.physics.pdr.model.PluginModel;
+import cz.muni.physics.pdr.model.StarSurveyModel;
+import cz.muni.physics.pdr.utils.ScreenConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -23,36 +23,36 @@ import org.springframework.stereotype.Component;
 public class StarSurveyEditDialogController {
 
     @Autowired
-    private AppConfig app;
+    private ScreenConfig app;
 
     @FXML
     private TextField nameTextField;
     @FXML
-    private ChoiceBox<Plugin> pluginChoiceBox;
+    private ChoiceBox<PluginModel> pluginChoiceBox;
     @FXML
     private TextArea sesameIdentifierTextArea;
     @FXML
     private TextArea urlTextArea;
 
     private Stage dialogStage;
-    private StarSurvey starSurvey;
+    private StarSurveyModel starSurvey;
     private boolean okClicked = false;
 
 
     @FXML
     private void initialize() {
-        pluginChoiceBox.setConverter(new StringConverter<Plugin>() {
+        pluginChoiceBox.setConverter(new StringConverter<PluginModel>() {
             @Override
-            public String toString(Plugin object) {
+            public String toString(PluginModel object) {
                 return object.getName();
             }
 
             @Override
-            public Plugin fromString(String string) {
+            public PluginModel fromString(String string) {
                 return null;
             }
         });
-        pluginChoiceBox.setItems(app.getPlugins());
+        pluginChoiceBox.setItems(app.getPluginModels());
     }
 
     @FXML
@@ -77,7 +77,7 @@ public class StarSurveyEditDialogController {
         dialogStage.close();
     }
 
-    public void setStarSurvey(StarSurvey starSurvey) {
+    public void setStarSurvey(StarSurveyModel starSurvey) {
         this.starSurvey = starSurvey;
         nameTextField.setText(starSurvey.getName());
         pluginChoiceBox.getSelectionModel().select(starSurvey.getPlugin());

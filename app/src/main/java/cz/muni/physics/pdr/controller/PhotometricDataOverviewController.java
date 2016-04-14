@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.controller;
 
-import cz.muni.physics.pdr.model.PhotometricData;
-import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.entity.StarSurvey;
+import cz.muni.physics.pdr.model.PhotometricDataModel;
 import javafx.fxml.FXML;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
@@ -23,13 +23,13 @@ import java.util.Map;
 public class PhotometricDataOverviewController {
 
     @FXML
-    private TableView<PhotometricData> photometricDataTableView;
+    private TableView<PhotometricDataModel> photometricDataTableView;
     @FXML
-    private TableColumn<PhotometricData, Number> julianDate;
+    private TableColumn<PhotometricDataModel, Number> julianDate;
     @FXML
-    private TableColumn<PhotometricData, Number> magnitude;
+    private TableColumn<PhotometricDataModel, Number> magnitude;
     @FXML
-    private TableColumn<PhotometricData, Number> error;
+    private TableColumn<PhotometricDataModel, Number> error;
     @FXML
     private ScatterChart<Number, Number> chart;
 
@@ -40,14 +40,14 @@ public class PhotometricDataOverviewController {
         error.setCellValueFactory(cell -> cell.getValue().errorProperty());
     }
 
-    public void setData(Map<StarSurvey, List<PhotometricData>> data) {
+    public void setData(Map<StarSurvey, List<PhotometricDataModel>> data) {
         photometricDataTableView.getItems().clear();
         chart.getData().clear();
-        for (Map.Entry<StarSurvey, List<PhotometricData>> entry : data.entrySet()) {
+        for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
             photometricDataTableView.getItems().addAll(entry.getValue());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             series.setName(entry.getKey().getName());
-            for (PhotometricData d : entry.getValue()) {
+            for (PhotometricDataModel d : entry.getValue()) {
                 XYChart.Data<Number, Number> e = new XYChart.Data<>(d.getJulianDate(), d.getMagnitude());
                 series.getData().add(e);
             }

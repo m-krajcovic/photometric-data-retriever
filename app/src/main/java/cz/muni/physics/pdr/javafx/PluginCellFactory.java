@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.javafx;
 
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.model.PluginModel;
+import cz.muni.physics.pdr.model.StarSurveyModel;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
@@ -11,12 +11,12 @@ import javafx.util.Callback;
  * @version 1.0
  * @since 12/04/16
  */
-public class PluginCellFactory implements Callback<TableColumn<StarSurvey, Plugin>, TableCell<StarSurvey, Plugin>> {
+public class PluginCellFactory implements Callback<TableColumn<StarSurveyModel, PluginModel>, TableCell<StarSurveyModel, PluginModel>> {
     @Override
-    public TableCell<StarSurvey, Plugin> call(TableColumn<StarSurvey, Plugin> param) {
-        return new TableCell<StarSurvey, Plugin>() {
+    public TableCell<StarSurveyModel, PluginModel> call(TableColumn<StarSurveyModel, PluginModel> param) {
+        return new TableCell<StarSurveyModel, PluginModel>() {
             @Override
-            protected void updateItem(Plugin item, boolean empty) {
+            protected void updateItem(PluginModel item, boolean empty) {
                 if (item != null) {
                     setText(item.getName());
                 }

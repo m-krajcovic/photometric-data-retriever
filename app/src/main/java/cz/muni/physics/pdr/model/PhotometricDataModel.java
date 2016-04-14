@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.model;
 
+import cz.muni.physics.pdr.entity.PhotometricData;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
@@ -8,21 +9,23 @@ import javafx.beans.property.SimpleDoubleProperty;
  * @version 1.0
  * @since 25/03/16
  */
-public class PhotometricData {
+public class PhotometricDataModel implements EntityModel<PhotometricData> {
     private DoubleProperty julianDate = new SimpleDoubleProperty();
     private DoubleProperty magnitude = new SimpleDoubleProperty();
     private DoubleProperty error = new SimpleDoubleProperty();
 
-    public PhotometricData() {
+    public PhotometricDataModel() {
     }
 
-    public PhotometricData(String julianDate, String magnitude, String error) {
-        this.julianDate.setValue(Double.parseDouble(julianDate));
-        this.magnitude.setValue(Double.parseDouble(magnitude));
-        this.error.setValue(Double.parseDouble(error));
+    public PhotometricDataModel(PhotometricData data) {
+        this(data.getJulianDate(), data.getMagnitude(), data.getError());
     }
 
-    public PhotometricData(Double julianDate, Double magnitude, Double error) {
+    public PhotometricDataModel(String julianDate, String magnitude, String error) {
+        this(Double.parseDouble(julianDate), Double.parseDouble(magnitude), Double.parseDouble(error));
+    }
+
+    public PhotometricDataModel(Double julianDate, Double magnitude, Double error) {
         this.julianDate.setValue(julianDate);
         this.magnitude.setValue(magnitude);
         this.error.setValue(error);
@@ -66,7 +69,7 @@ public class PhotometricData {
 
     @Override
     public String toString() {
-        return "PhotometricData{" +
+        return "PhotometricDataModel{" +
                 "julianDate='" + julianDate + '\'' +
                 ", magnitude='" + magnitude + '\'' +
                 ", error='" + error + '\'' +
@@ -78,7 +81,7 @@ public class PhotometricData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PhotometricData that = (PhotometricData) o;
+        PhotometricDataModel that = (PhotometricDataModel) o;
 
         if (julianDate != null ? !julianDate.equals(that.julianDate) : that.julianDate != null) return false;
         if (magnitude != null ? !magnitude.equals(that.magnitude) : that.magnitude != null) return false;
@@ -92,5 +95,10 @@ public class PhotometricData {
         result = 31 * result + (magnitude != null ? magnitude.hashCode() : 0);
         result = 31 * result + (error != null ? error.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public PhotometricData toEntity() {
+        return new PhotometricData(getJulianDate(), getMagnitude(), getError());
     }
 }

@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.plugin;
 
-import cz.muni.physics.pdr.model.Plugin;
+import cz.muni.physics.pdr.entity.Plugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;

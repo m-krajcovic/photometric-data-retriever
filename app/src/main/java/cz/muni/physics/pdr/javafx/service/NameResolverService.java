@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.service;
+package cz.muni.physics.pdr.javafx.service;
 
 import cz.muni.physics.pdr.resolver.StarName;
 import cz.muni.physics.pdr.resolver.StarResolverManager;

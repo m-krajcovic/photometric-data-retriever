@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.plugin;
 
-import cz.muni.physics.pdr.model.PhotometricData;
-import cz.muni.physics.pdr.model.Plugin;
+import cz.muni.physics.pdr.entity.PhotometricData;
+import cz.muni.physics.pdr.entity.Plugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;

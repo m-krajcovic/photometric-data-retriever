@@ -1,12 +1,12 @@
 package cz.muni.physics.pdr.controller;
 
-import cz.muni.physics.pdr.model.PhotometricData;
-import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.service.NameResolverService;
-import cz.muni.physics.pdr.service.StarSurveySearchService;
+import cz.muni.physics.pdr.entity.StarSurvey;
+import cz.muni.physics.pdr.model.PhotometricDataModel;
 import cz.muni.physics.pdr.resolver.StarResolverResult;
-import cz.muni.physics.pdr.utils.AppConfig;
+import cz.muni.physics.pdr.javafx.service.NameResolverService;
+import cz.muni.physics.pdr.javafx.service.StarSurveySearchService;
 import cz.muni.physics.pdr.utils.FXMLUtils;
+import cz.muni.physics.pdr.utils.ScreenConfig;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
@@ -34,7 +34,7 @@ public class SearchOverviewController {
     private final static Logger logger = LogManager.getLogger(SearchOverviewController.class);
 
     @Autowired
-    private AppConfig app;
+    private ScreenConfig app;
     @Autowired
     private NameResolverService nameResolverService;
     @Autowired
@@ -67,7 +67,7 @@ public class SearchOverviewController {
             toggleElements(false);
         });
         starSurveySearchService.setOnSucceeded(e -> {
-            Map<StarSurvey, List<PhotometricData>> data = starSurveySearchService.getValue();
+            Map<StarSurvey, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
             if (data.size() == 0) {
                 logger.debug("No results found for '{}'", searchTextField.getText());
                 FXMLUtils.showTooltip("No results found", searchButton.getScene().getWindow(), searchTextField);

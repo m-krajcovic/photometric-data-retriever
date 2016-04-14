@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.controller;
 
 import cz.muni.physics.pdr.javafx.PluginCellFactory;
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
-import cz.muni.physics.pdr.utils.AppConfig;
+import cz.muni.physics.pdr.model.PluginModel;
+import cz.muni.physics.pdr.model.StarSurveyModel;
+import cz.muni.physics.pdr.utils.ScreenConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -21,18 +21,18 @@ import org.springframework.stereotype.Component;
 public class StarSurveyOverviewController {
 
     @Autowired
-    private AppConfig app;
+    private ScreenConfig app;
 
     @FXML
-    private TableView<StarSurvey> starSurveys;
+    private TableView<StarSurveyModel> starSurveys;
     @FXML
-    private TableColumn<StarSurvey, String> nameColumn;
+    private TableColumn<StarSurveyModel, String> nameColumn;
     @FXML
-    private TableColumn<StarSurvey, String> sesameIdentifierColumn;
+    private TableColumn<StarSurveyModel, String> sesameIdentifierColumn;
     @FXML
-    private TableColumn<StarSurvey, String> urlColumn;
+    private TableColumn<StarSurveyModel, String> urlColumn;
     @FXML
-    private TableColumn<StarSurvey, Plugin> pluginColumn;
+    private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
     @FXML
     private Button button;
 
@@ -42,16 +42,16 @@ public class StarSurveyOverviewController {
 
     @FXML
     private void handleNewButton() {
-        StarSurvey tempStarSurvey = new StarSurvey();
+        StarSurveyModel tempStarSurvey = new StarSurveyModel();
         boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
-            app.getStarSurveys().add(tempStarSurvey);
+            app.getStarSurveyModels().add(tempStarSurvey);
         }
     }
 
     @FXML
     private void handleEditButton() {
-        StarSurvey selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
+        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
             boolean okClicked = app.showStarSurveyEditDialog(selectedRecord);
             if (okClicked) {
@@ -81,6 +81,6 @@ public class StarSurveyOverviewController {
 
         pluginColumn.setCellFactory(new PluginCellFactory());
 
-        starSurveys.setItems(app.getStarSurveys());
+        starSurveys.setItems(app.getStarSurveyModels());
     }
 }

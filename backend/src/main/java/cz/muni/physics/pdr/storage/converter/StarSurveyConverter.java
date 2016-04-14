@@ -5,8 +5,8 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import cz.muni.physics.pdr.model.Plugin;
-import cz.muni.physics.pdr.model.StarSurvey;
+import cz.muni.physics.pdr.entity.Plugin;
+import cz.muni.physics.pdr.entity.StarSurvey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
