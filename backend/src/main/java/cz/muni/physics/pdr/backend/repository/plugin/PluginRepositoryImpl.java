@@ -56,7 +56,7 @@ public class PluginRepositoryImpl implements PluginRepository {
                 }
             }
         }
-        List<Plugin> newList = new ArrayList<>();
+        List<Plugin> newList = new ArrayList<>(plugins.size());
         plugins.forEach(plugin -> newList.add(new Plugin(plugin)));
         return newList;
     }
@@ -69,7 +69,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public Plugin searchFor(Predicate<Plugin> predicate) {
         Optional<Plugin> optional = getAll().stream().filter(predicate).findFirst();
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             return new Plugin(optional.get());
         }
         return null;
@@ -78,7 +78,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) {
         List<Plugin> result = this.plugins.stream().filter(predicate).collect(Collectors.toList());
-        List<Plugin> newList = new ArrayList<>();
+        List<Plugin> newList = new ArrayList<>(result.size());
         result.forEach(plugin -> newList.add(new Plugin(plugin)));
         return newList;
     }

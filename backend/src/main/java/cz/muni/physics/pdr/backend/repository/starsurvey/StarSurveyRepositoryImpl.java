@@ -47,7 +47,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
 
     @PostConstruct
-    private void initialize() {
+    private void initialize() { // todo something here
         File dir = new File(dataDirPath);
         if (!dir.exists()) {
             dir.mkdir();
@@ -93,7 +93,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
                 e.printStackTrace(); // TODO
             }
         }
-        List<StarSurvey> newList = new ArrayList<>();
+        List<StarSurvey> newList = new ArrayList<>(starSurveys);
         starSurveys.forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
         return newList;
     }
@@ -106,7 +106,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     @Override
     public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
         Optional<StarSurvey> optional = getAll().stream().filter(predicate).findFirst();
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             return new StarSurvey(optional.get());
         }
         return null;
@@ -115,7 +115,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     @Override
     public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) {
         List<StarSurvey> result = starSurveys.stream().filter(predicate).collect(Collectors.toList());
-        List<StarSurvey> newList = new ArrayList<>();
+        List<StarSurvey> newList = new ArrayList<>(result.size());
         result.forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
         return newList;
     }
