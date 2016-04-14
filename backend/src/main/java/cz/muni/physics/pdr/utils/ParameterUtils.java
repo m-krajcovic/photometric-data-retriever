@@ -1,7 +1,6 @@
 package cz.muni.physics.pdr.utils;
 
 import cz.muni.physics.pdr.entity.StarSurvey;
-import cz.muni.physics.pdr.model.StarSurveyModel;
 import cz.muni.physics.pdr.resolver.StarResolverResult;
 import org.springframework.web.util.UriTemplate;
 
@@ -19,15 +18,6 @@ import java.util.regex.Pattern;
  * @since 11/04/16
  */
 public class ParameterUtils {
-
-    public static Map<String, String> resolveParametersForSurvey(StarSurveyModel survey, StarResolverResult resolverResult) {
-        Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
-        resolveNameResolverParameters(resolverResult, params);
-        resolveValueParameters(survey.getValueParameters(), params);
-        resolveUrlParameter(survey.getUrls(), params);
-        params.put("mainFile", survey.getPlugin().getMainFile());
-        return params;
-    }
 
     public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StarResolverResult resolverResult) {
         Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());

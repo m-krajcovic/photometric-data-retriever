@@ -1,12 +1,9 @@
 package cz.muni.physics.pdr.javafx.service;
 
-import cz.muni.physics.pdr.entity.PhotometricData;
 import cz.muni.physics.pdr.entity.StarSurvey;
-import cz.muni.physics.pdr.manager.StarSurveyManager;
 import cz.muni.physics.pdr.model.PhotometricDataModel;
-import cz.muni.physics.pdr.plugin.PluginStarter;
+import cz.muni.physics.pdr.plugin.StarSurveyPluginStarter;
 import cz.muni.physics.pdr.resolver.StarResolverResult;
-import cz.muni.physics.pdr.utils.ParameterUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;
@@ -16,14 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * @author Michal Krajčovič
@@ -36,12 +29,9 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
     private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
 
     @Autowired
-    private PluginStarter<PhotometricData> pluginStarter;
-    @Autowired
-    private StarSurveyManager starSurveyManager;
+    private StarSurveyPluginStarter pluginStarter;
 
-    private StarResolverResult nameResolverResult;
-    private List<StarSurvey> starSurveys;
+    private StarResolverResult resolverResult;
     private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Override
@@ -50,18 +40,10 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         starSurveysMap.clear();
     }
 
-    @PostConstruct
-    private void initialize() {
-        starSurveys = new ArrayList<>(starSurveyManager.getAll());
-    }
-
     @Override
     public Task<Map<StarSurvey, List<PhotometricDataModel>>> createTask() {
-        if (nameResolverResult == null) {
-            throw new IllegalArgumentException("nameResolverResult is null.");
-        }
-        if (starSurveys == null) {
-            throw new IllegalArgumentException("starSurveys is null.");
+        if (resolverResult == null) {
+            throw new IllegalArgumentException("resolverResult is null.");
         }
         if (starSurveysMap == null) {
             throw new IllegalArgumentException("starSurveysMap is null.");
@@ -69,47 +51,25 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         return new Task<Map<StarSurvey, List<PhotometricDataModel>>>() {
             @Override
             protected Map<StarSurvey, List<PhotometricDataModel>> call() {
-                Map<StarSurvey, List<PhotometricDataModel>> resultMap = Collections.synchronizedMap(new HashMap<>());
-                List<Future> futures = new ArrayList<>();
-                for (StarSurvey survey : starSurveys) {
-                    if (survey.getPlugin() == null || survey.getPlugin().getName().isEmpty()) {
-                        logger.debug("No plugin set for {} star survey, skipping", survey.getName());
-                        continue;
-                    }
-                    Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, nameResolverResult);
-                    logger.debug("Starting task for {}", survey.getName());
-                    futures.add(pluginStarter.run(survey.getPlugin(), params)
-                            .thenAccept(data -> {
-                                logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
-                                if (!data.isEmpty()) {
-                                    List<PhotometricDataModel> models = new ArrayList<>();
-                                    data.forEach(d -> models.add(new PhotometricDataModel(d)));
-                                    resultMap.put(survey, models);
-                                    starSurveysMap.put(survey, true);
-                                } else {
-                                    starSurveysMap.put(survey, false);
-                                }
-                            }));
-                }
-                futures.forEach(future -> {
-                    try {
-                        future.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        logger.error("Failed to wait for result for all star survey tasks.", e);
-                    }
+                pluginStarter.setOnNoResultsFound(s -> starSurveysMap.put(s, false));
+                pluginStarter.setOnNoResultsFound(s -> starSurveysMap.put(s, true));
+                Map<StarSurvey, List<PhotometricDataModel>> resultMap = new HashMap<>();
+                pluginStarter.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
+                    List<PhotometricDataModel> list = new ArrayList<>();
+                    photometricDatas.forEach(d -> list.add(new PhotometricDataModel(d)));
+                    resultMap.put(starSurvey, list);
                 });
-
                 return resultMap;
             }
         };
     }
 
-    public StarResolverResult getNameResolverResult() {
-        return nameResolverResult;
+    public StarResolverResult getResolverResult() {
+        return resolverResult;
     }
 
-    public void setNameResolverResult(StarResolverResult nameResolverResult) {
-        this.nameResolverResult = nameResolverResult;
+    public void setResolverResult(StarResolverResult resolverResult) {
+        this.resolverResult = resolverResult;
     }
 
     public ObservableMap<StarSurvey, Boolean> getStarSurveysMap() {

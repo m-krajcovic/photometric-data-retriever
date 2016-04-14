@@ -3,6 +3,7 @@ package cz.muni.physics.pdr.plugin;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * @author Michal Krajčovič
@@ -16,5 +17,5 @@ public interface ProcessStarter<T> {
 
     Process run() throws IOException;
 
-    List<T> runForResult();
+    List<T> runForResult(Executor executor);
 }

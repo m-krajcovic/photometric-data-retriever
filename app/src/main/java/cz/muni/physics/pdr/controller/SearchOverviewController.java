@@ -55,7 +55,7 @@ public class SearchOverviewController {
     private void initialize() {
         nameResolverService.setOnSucceeded(e -> {
             resolverResult.merge(nameResolverService.getValue());
-            starSurveySearchService.setNameResolverResult(resolverResult);
+            starSurveySearchService.setResolverResult(resolverResult);
             starSurveySearchService.start();
 
             nameResolverService.reset();

@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.plugin;
 
 import cz.muni.physics.pdr.entity.PhotometricData;
+import cz.muni.physics.pdr.utils.ParameterUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.logging.log4j.LogManager;
@@ -8,13 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * @author Michal Krajčovič
@@ -40,7 +40,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         logger.debug("Preparing command '{}'", command);
         this.command = command;
         this.parameters = parameters;
-        return (readyToRun = isResolvableWithParameters(command, parameters));
+        return (readyToRun = ParameterUtils.isResolvableWithParameters(command, parameters));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
             throw new IllegalArgumentException("parameters cannot be null.");
         }
         logger.debug("Searching for resolvable command from {}", commands);
-        Optional<String> possibleCommand = commands.stream().filter(c -> isResolvableWithParameters(c, parameters)).findFirst();
+        Optional<String> possibleCommand = commands.stream().filter(c -> ParameterUtils.isResolvableWithParameters(c, parameters)).findFirst();
         return possibleCommand.isPresent() && prepare(possibleCommand.get(), parameters);
     }
 
@@ -73,7 +73,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
     }
 
     @Override
-    public List<PhotometricData> runForResult() {
+    public List<PhotometricData> runForResult(Executor executor) {
         List<PhotometricData> result = new ArrayList<>();
         Process p;
         try {
@@ -84,7 +84,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         }
 
         try {
-            CompletableFuture.supplyAsync(new StreamGobbler(p.getErrorStream()));
+            CompletableFuture.supplyAsync(new StreamGobbler(p.getErrorStream()), executor);
             result.addAll(CompletableFuture.supplyAsync(new StreamGobbler<>(p.getInputStream(), line -> {
                 String[] split = line.split(",");
                 if (split.length >= 3 && NumberUtils.isParsable(split[0])
@@ -92,7 +92,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
                     return new PhotometricData(split[0], split[1], split[2]);
                 }
                 return null;
-            })).get());
+            }), executor).get());
         } catch (InterruptedException e) {
             logger.error("Process started by command {} was interrupted.", command, e);
         } catch (ExecutionException e) {
@@ -100,32 +100,4 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         }
         return result;
     }
-
-    private boolean isResolvableWithParameters(String string, Map<String, String> params) {
-        Set<String> stringParameters = findParameterNames(string);
-        return stringParameters.stream().allMatch(params::containsKey);
-    }
-
-    private Set<String> findParameterNames(String str) {
-        Set<String> params = new HashSet<>();
-        String param = "";
-        char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length - 2; i++) {
-            if (chars[i] == '$' && chars[i + 1] == '{') {
-                i += 2;
-                for (int j = i; j < chars.length; j++) {
-                    if (chars[j] == '}') {
-                        params.add(param);
-                        param = "";
-                        break;
-                    }
-                    param += chars[j];
-                    i++;
-                }
-            }
-        }
-        return params;
-    }
-
-
 }
