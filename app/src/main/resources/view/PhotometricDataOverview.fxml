@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css"
             xmlns="http://javafx.com/javafx/8.0.65"
-            fx:controller="cz.muni.physics.pdr.controller.PhotometricDataOverviewController">
+            fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
     <children>
         <TableView fx:id="photometricDataTableView" editable="true" maxHeight="-Infinity" maxWidth="601.0"
                    minHeight="-Infinity" minWidth="600" prefHeight="255.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0"

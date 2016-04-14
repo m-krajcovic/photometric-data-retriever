@@ -82,8 +82,8 @@
                     <bundleArguments>
                         <runtime/>
                     </bundleArguments>
-                    <mainClass>cz.muni.physics.pdr.MainApp</mainClass>
-                    <preLoader>cz.muni.physics.pdr.MainPreloader</preLoader>
+                    <mainClass>cz.muni.physics.pdr.app.MainApp</mainClass>
+                    <preLoader>cz.muni.physics.pdr.app.MainPreloader</preLoader>
                     <vendor>Masaryk University</vendor>
                     <appName>PDR</appName>
                 </configuration>

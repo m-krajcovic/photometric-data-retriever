@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"
-            fx:controller="cz.muni.physics.pdr.controller.SearchOverviewController">
+            fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
         <TextField fx:id="searchTextField" layoutX="149.0" layoutY="258.0" onAction="#handleSearchButtonAction"
                    prefHeight="27.0" prefWidth="214.0" promptText="Search by star name"/>
