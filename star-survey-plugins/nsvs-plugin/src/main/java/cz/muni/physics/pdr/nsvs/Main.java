@@ -12,5 +12,6 @@ public class Main {
         String url = args[0];
         Plugin plugin = new NsvsPlugin();
         plugin.getDataFromUrl(url).forEach(d -> System.out.println(d.getJulianDate() + "," + d.getMagnitude() + "," + d.getError()));
+        System.err.println("Finished NSVS");
     }
 }
