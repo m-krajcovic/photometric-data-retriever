@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 public class StreamGobbler<T> implements Supplier<List<T>> {
     private InputStream is;
     private Function<String, T> lineProcessor;
+    private boolean sout = false;
 
     public StreamGobbler(InputStream is) {
         this.is = is;
@@ -38,7 +39,7 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
                 T obj;
                 if (lineProcessor != null && (obj = lineProcessor.apply(line)) != null) {
                     lines.add(obj);
-                } else {
+                } else if (sout){
                     System.out.println(line);
                 }
             }
@@ -54,5 +55,21 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
 
     public void setLineProcessor(Function<String, T> lineProcessor) {
         this.lineProcessor = lineProcessor;
+    }
+
+    public InputStream getIs() {
+        return is;
+    }
+
+    public void setIs(InputStream is) {
+        this.is = is;
+    }
+
+    public boolean isSout() {
+        return sout;
+    }
+
+    public void setSout(boolean sout) {
+        this.sout = sout;
     }
 }

@@ -3,8 +3,8 @@ package cz.muni.physics.pdr.app.controller;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
-import cz.muni.physics.pdr.app.javafx.service.NameResolverService;
-import cz.muni.physics.pdr.app.javafx.service.StarSurveySearchService;
+import cz.muni.physics.pdr.app.controller.service.NameResolverService;
+import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import javafx.application.Platform;
@@ -60,6 +60,7 @@ public class SearchOverviewController {
 //            resolverResult.merge(nameResolverService.getValue());
             logger.debug("Succeeded in retrieving star resolver data.");
             starSurveySearchService.setResolverResult(nameResolverService.getValue());
+            System.out.println(nameResolverService.getValue());
             starSurveySearchService.start();
 
             nameResolverService.reset();

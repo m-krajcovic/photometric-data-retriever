@@ -18,7 +18,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -31,19 +33,23 @@ import java.util.stream.Collectors;
 @Component
 public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
-    @Value("${user.home}${app.data.dir.path}")
     private String dataDirPath;
-    @Value("${starsurvey.file.name}")
     private String starSurveysFileName;
-
-    @Autowired
-    XStream xStream;
-
-    List<StarSurvey> starSurveys;
+    private XStream xStream;
+    private Map<String, StarSurvey> starSurveys;
 
     /*
      * TODO : file watcher -> load new on event
      */
+
+    @Autowired
+    public StarSurveyRepositoryImpl(XStream xStream,
+                                    @Value("${starsurvey.file.name}") String starSurveysFileName,
+                                    @Value("${user.home}${app.data.dir.path}") String dataDirPath) {
+        this.xStream = xStream;
+        this.starSurveysFileName = starSurveysFileName;
+        this.dataDirPath = dataDirPath;
+    }
 
 
     @PostConstruct
@@ -70,42 +76,36 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
     @Override
     public void insert(StarSurvey entity) {
-        Collection<StarSurvey> allEntities = getAll();
-        allEntities.add(entity);
-        saveFile(allEntities);
+        starSurveys.put(entity.getName(), new StarSurvey(entity));
+        saveToFile(starSurveys.values());
     }
 
     @Override
     public void delete(StarSurvey entity) {
-        Collection<StarSurvey> allEntities = getAll();
-        allEntities.remove(entity);
-        saveFile(allEntities);
+        if (starSurveys.containsKey(entity.getName())) {
+            starSurveys.remove(entity.getName());
+            saveToFile(starSurveys.values());
+        }
     }
 
     @Override
     public Collection<StarSurvey> getAll() {
-        if (starSurveys == null) {
-            File starSurveysFile = new File(dataDirPath, starSurveysFileName);
-            starSurveys = new ArrayList<>();
-            try (Reader reader = new FileReader(starSurveysFile)) {
-                starSurveys.addAll((List<StarSurvey>) xStream.fromXML(reader));
-            } catch (IOException e) {
-                e.printStackTrace(); // TODO
-            }
-        }
-        List<StarSurvey> newList = new ArrayList<>(starSurveys);
-        starSurveys.forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
+        loadSurveys(false);
+        List<StarSurvey> newList = new ArrayList<>(starSurveys.values().size());
+        starSurveys.values().forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
         return newList;
     }
 
     @Override
     public StarSurvey getById(String s) {
-        return searchFor(survey -> survey.getName().equalsIgnoreCase(s));
+        loadSurveys(false);
+        return new StarSurvey(starSurveys.get(s));
     }
 
     @Override
     public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
-        Optional<StarSurvey> optional = getAll().stream().filter(predicate).findFirst();
+        loadSurveys(false);
+        Optional<StarSurvey> optional = starSurveys.values().stream().filter(predicate).findFirst();
         if (optional.isPresent()) {
             return new StarSurvey(optional.get());
         }
@@ -114,13 +114,30 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
     @Override
     public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) {
-        List<StarSurvey> result = starSurveys.stream().filter(predicate).collect(Collectors.toList());
+        loadSurveys(false);
+        List<StarSurvey> result = starSurveys.values().stream().filter(predicate).collect(Collectors.toList());
         List<StarSurvey> newList = new ArrayList<>(result.size());
         result.forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
         return newList;
     }
 
-    private void saveFile(Collection<StarSurvey> allEntities) {
+    private synchronized void loadSurveys(boolean force) {
+        if (starSurveys == null || force) {
+            File starSurveysFile = new File(dataDirPath, starSurveysFileName);
+            try (Reader reader = new FileReader(starSurveysFile)) {
+                Map<String, StarSurvey> tempSurveys = new HashMap<>();
+                List<StarSurvey> fromXML = ((List<StarSurvey>) xStream.fromXML(reader));
+                for (StarSurvey starSurvey : fromXML) {
+                    tempSurveys.put(starSurvey.getName(), starSurvey);
+                }
+                starSurveys = new HashMap<>(tempSurveys);
+            } catch (IOException e) {
+                e.printStackTrace(); // TODO
+            }
+        }
+    }
+
+    private synchronized void saveToFile(Collection<StarSurvey> allEntities) {
         File starSurveysFile = new File(dataDirPath, starSurveysFileName);
         try (Writer writer = new FileWriter(starSurveysFile)) {
             xStream.toXML(allEntities, writer);

@@ -61,6 +61,7 @@ public class StarSurveyOverviewController {
         if (selectedRecord != null) {
             boolean okClicked = app.showStarSurveyEditDialog(selectedRecord);
             if (okClicked) {
+                starSurveyManager.insert(selectedRecord.toEntity());
                 starSurveys.refresh();
             }
         } else {

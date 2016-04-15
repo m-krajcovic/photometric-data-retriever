@@ -3,6 +3,9 @@ package cz.muni.physics.pdr.backend.resolver.name;
 import cz.muni.physics.pdr.backend.resolver.StarName;
 import cz.muni.physics.pdr.backend.resolver.StarResolver;
 import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -26,16 +29,25 @@ import java.util.List;
  * @version 1.0
  * @since 24/03/16
  */
+@Component
 public class SesameNameResolver implements StarResolver<StarName> {
 
     private RestOperations restTemplate;
     private String resolverUrl;
     private String testUrl;
 
-    public SesameNameResolver(RestOperations restTemplate, String resolverUrl, String testUrl) {
+    @Autowired
+    public SesameNameResolver(RestOperations restTemplate,
+                              @Value("${sesame.resolver.url}") String resolverUrl,
+                              @Value("${sesame.test.url}") String testUrl) {
         this.restTemplate = restTemplate;
         this.resolverUrl = resolverUrl;
         this.testUrl = testUrl;
+    }
+
+    @Override
+    public List<StarResolverResult> getResults(StarName param) {
+        return new ArrayList<>();
     }
 
     public StarResolverResult getResult(StarName name) {

@@ -24,18 +24,18 @@ public class SpringFXMLLoader {
 
     private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
     @Autowired
-    ApplicationContext context;
+    private ApplicationContext context;
     private FXMLLoader fxmlLoader = new FXMLLoader();
 
     public SpringFXMLLoader() {
         fxmlLoader.setControllerFactory(aClass -> {
-            logger.debug("Getting bean: " + aClass.getName());
+            logger.debug("Loading {} from Application Context: ", aClass.getName());
             return context.getBean(aClass);
         });
     }
 
     public <T> T load(String url) {
-        logger.debug("Loading resource: " + url);
+        logger.debug("Loading fxml resource: {}", url);
         try {
             URL fxml = SpringFXMLLoader.class.getResource(url);
             fxmlLoader.setLocation(fxml);

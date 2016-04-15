@@ -7,10 +7,6 @@ import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.plugin.PhotometricDataProcessStarter;
 import cz.muni.physics.pdr.backend.plugin.ProcessStarter;
-import cz.muni.physics.pdr.backend.resolver.StarName;
-import cz.muni.physics.pdr.backend.resolver.StarResolver;
-import cz.muni.physics.pdr.backend.resolver.name.SesameNameResolver;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -47,16 +44,15 @@ public class AppConfig {
     }
 
     @Bean
-    public StarResolver<StarName> sesameNameResolver(@Value("${sesame.resolver.url}") String resolverUrl,
-                                                     @Value("${sesame.test.url}") String testUrl) {
-        return new SesameNameResolver(new RestTemplate(), resolverUrl, testUrl);
-    }
-
-    @Bean
     public XStream xStream() {
         XStream xStream = new XStream(new DomDriver());
         xStream.processAnnotations(new Class[]{StarSurvey.class, Plugin.class});
         return xStream;
+    }
+    
+    @Bean
+    public RestOperations restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean

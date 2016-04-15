@@ -2,13 +2,16 @@ package cz.muni.physics.pdr.backend.repository.plugin;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.plugin.PluginManagerException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -21,10 +24,13 @@ import java.util.stream.Collectors;
 @Component
 public class PluginRepositoryImpl implements PluginRepository {
 
-    @Value("${user.home}${plugins.dir.path}")
     private String pluginsFolderPath;
+    private Map<String, Plugin> plugins;
 
-    List<Plugin> plugins;
+    @Autowired
+    public PluginRepositoryImpl(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath){
+        this.pluginsFolderPath = pluginsFolderPath;
+    }
 
     @Override
     public void insert(Plugin entity) {
@@ -38,8 +44,40 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     @Override
     public Collection<Plugin> getAll() {
-        if (plugins == null) {
-            plugins = new ArrayList<>();
+        loadPlugins(false);
+        List<Plugin> newList = new ArrayList<>(plugins.values().size());
+        plugins.values().forEach(plugin -> newList.add(new Plugin(plugin)));
+        return newList;
+    }
+
+    @Override
+    public Plugin getById(String s) {
+        loadPlugins(false);
+        return new Plugin(plugins.get(s));
+    }
+
+    @Override
+    public Plugin searchFor(Predicate<Plugin> predicate) {
+        loadPlugins(false);
+        Optional<Plugin> optional = plugins.values().stream().filter(predicate).findFirst();
+        if (optional.isPresent()) {
+            return new Plugin(optional.get());
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) {
+        loadPlugins(false);
+        List<Plugin> result = plugins.values().stream().filter(predicate).collect(Collectors.toList());
+        List<Plugin> newList = new ArrayList<>(result.size());
+        result.forEach(plugin -> newList.add(new Plugin(plugin)));
+        return newList;
+    }
+
+    private void loadPlugins(boolean force) {
+        if (plugins == null || force) {
+            Map<String,Plugin> tempPlugins = new HashMap<>();
             File dir = new File(pluginsFolderPath);
             String[] dirs = dir.list((file, name) -> new File(file, name).isDirectory());
             for (String pluginDirName : dirs) {
@@ -50,36 +88,13 @@ public class PluginRepositoryImpl implements PluginRepository {
                     try {
                         plugin = reader.readPlugin();
                     } catch (PluginManagerException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(); // todo
                     }
-                    plugins.add(plugin);
+                    if (plugin != null)
+                        tempPlugins.put(plugin.getName(), plugin);
                 }
             }
+            plugins = new HashMap<>(tempPlugins);
         }
-        List<Plugin> newList = new ArrayList<>(plugins.size());
-        plugins.forEach(plugin -> newList.add(new Plugin(plugin)));
-        return newList;
-    }
-
-    @Override
-    public Plugin getById(String s) {
-        return searchFor(p -> p.getName().equalsIgnoreCase(s));
-    }
-
-    @Override
-    public Plugin searchFor(Predicate<Plugin> predicate) {
-        Optional<Plugin> optional = getAll().stream().filter(predicate).findFirst();
-        if (optional.isPresent()) {
-            return new Plugin(optional.get());
-        }
-        return null;
-    }
-
-    @Override
-    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) {
-        List<Plugin> result = this.plugins.stream().filter(predicate).collect(Collectors.toList());
-        List<Plugin> newList = new ArrayList<>(result.size());
-        result.forEach(plugin -> newList.add(new Plugin(plugin)));
-        return newList;
     }
 }

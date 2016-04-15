@@ -14,7 +14,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class StarSurveyPluginStarterImpl implements StarSurveyPluginStarter {
         ProcessStarter<PhotometricData> starter = new PhotometricDataProcessStarter();
         if (!starter.prepare(plugin.getCommands(), params)) {
             logger.debug("Not able to prepare {} plugin command", plugin.getName());
-            return CompletableFuture.completedFuture(Collections.emptyList());
+            return CompletableFuture.completedFuture(new ArrayList<>());
         }
         return CompletableFuture.supplyAsync(() -> starter.runForResult(searchServiceExecutor), searchServiceExecutor);
     }
