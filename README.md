@@ -1,12 +1,11 @@
-# Nástroj pro vyhledání fotometrických dat stelárních objektů
+# A tool for retrieving photometric data of stellar objects
 
-Cílem práce je pro Ústav Teoretické Fyziky a Astrofyziky PřF MU vytvořit nástroj usnadňující získávání fotometrických dat (tj. údajů o naměřené světelnosti) proměnných hvězd z on-line databází.
+Goal of this thesis is to create a tool for the Department of Theoretical Physics and Astrophysics of the Faculty of Science, MU, which would help with obtaining photometric data, i.e. entries of measured brightness, from online databases.
 
-V současné době astronomové ručně vyhledají hvězdu v databázi VSX (https://www.aavso.org/vsx/), ze které vedou odkazy do zhruba dvaceti jiných databází poskytujících data ve formě tabulek obsahujících čas, naměřenou světelnost a další údaje. Každá z těchto databází ale má trochu jiný formát tabulky, takže data je třeba vždy upravit postupem specifickým pro každou databázi.
+Astronomers currently use a VSX database (https://www.aavso.org/vsx/) to search for a star manually. Numerous links lead from there to circa twenty different databases that provide data in a form of charts which include time, measured brightness and other statistics. However, each of these databases has a slightly different chart format, therefore, the data has to be edited by using a method specific for every database.
 
-Požadovaný nástroj zadaný objekt vyhledá ve všech dostupných databázích, a provede převedení dat na jednotný textový formát se sloupci oddělenými mezerami, ve kterém v prvním sloupci bude čas (HJD - Heliocentric Julian Day), ve druhém sloupci hvězdná magnituda, a případně v dalších sloupcích doplňující údaje. Volitelně pak sjednocená data nahraje do systému pro vedení pozorovacích deníků MECA.
+This tool finds the specified object in every available database and transfers the data into a singular text format which takes a form of columns each divided from one another; the first column shows the time (HJD – Heliocentric Julian Day), the second one shows the stellar magnitude, and the other columns provide supplementary info. If chosen, this unified data is recorded into the system for managing an observation journal i.e. MECA.
 
-Přidání dalších on-line databází musí být jednoduché, proto součástí zadání je vytvoření systému pluginů implementujících přístup do jednotlivých databází a programovatelnou úpravu dat. Plugin pro další databázi by mělo být možné implementovat v libovolném programovacím jazyku, zejména v Pythonu, který astronomové umí a snadno se v něm zpracovávají textová data.
+It should be easy to add other databases, thus, part of the assignment is to create a system of plugins allowing access to individual databases and programmable data editing. It should be possible to implement a plugin for another database in any programming language, especially in Python that is known by astronomers and is easy to use for text data processing.
 
-Při vývoji použijte iterativní přístup, při kterém budete často konzultovat postup práce se zadavatelem. Důležité kritérium pro hodnocení bude spokojenost zadavatele s výslednou aplikací.
-
+Throughout the development you ought to use iterative approach during which you will consult your work with your supervisor. Supervisor’s overall satisfaction with a finished application will be an important criteria of evaluation.
