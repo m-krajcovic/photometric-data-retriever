@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.app.controller.service;
 
-import cz.muni.physics.pdr.backend.resolver.StarName;
+import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -16,26 +16,26 @@ import org.springframework.stereotype.Component;
  * @since 06/04/16
  */
 @Component
-public class NameResolverService extends Service<StarResolverResult> {
+public class NameSearchService extends Service<StellarObject> {
 
-    private final static Logger logger = LogManager.getLogger(NameResolverService.class);
+    private final static Logger logger = LogManager.getLogger(NameSearchService.class);
 
     private String searchText;
 
     @Autowired
-    private StarResolverManager<StarName> nameResolverManager;
+    private StarResolverManager<StellarObjectName> nameResolverManager;
 
     @Override
-    protected Task<StarResolverResult> createTask() {
+    protected Task<StellarObject> createTask() {
         if (searchText == null) {
             throw new IllegalArgumentException("searchText cannot be null.");
         }
-        return new Task<StarResolverResult>() {
+        return new Task<StellarObject>() {
 
             @Override
-            protected StarResolverResult call() {
-                logger.debug("Trying to get StarResolverResult.");
-                return nameResolverManager.resolveFor(new StarName(searchText));
+            protected StellarObject call() {
+                logger.debug("Trying to get StellarObject.");
+                return nameResolverManager.resolveFor(new StellarObjectName(searchText));
             }
         };
     }

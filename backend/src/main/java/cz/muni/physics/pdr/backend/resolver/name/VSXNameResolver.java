@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.backend.resolver.name;
 
-import cz.muni.physics.pdr.backend.resolver.StarName;
+import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.VSXResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 13/04/16
  */
 @Component
-public class VSXNameResolver extends VSXResolver<StarName> {
+public class VSXNameResolver extends VSXResolver<StellarObjectName> {
 
     @Autowired
     public VSXNameResolver(@Value("${user.home}${app.data.dir.path}") String dataDir,

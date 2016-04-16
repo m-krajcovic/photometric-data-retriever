@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.backend.resolver;
 
+import cz.muni.physics.pdr.backend.entity.StellarObject;
+
 import java.util.Map;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Map;
  * @since 13/04/16
  */
 public interface StarResolverManager<T> {
-    StarResolverResult resolveFor(T param);
+    StellarObject resolveFor(T param);
 
     Map<StarResolver<T>, Boolean> getAvailableStarResolvers();
 }

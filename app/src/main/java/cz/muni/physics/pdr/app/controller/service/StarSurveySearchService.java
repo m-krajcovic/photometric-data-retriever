@@ -3,7 +3,7 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.backend.plugin.StarSurveyPluginStarter;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;
@@ -31,13 +31,13 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
     @Autowired
     private StarSurveyPluginStarter pluginStarter;
 
-    private StarResolverResult resolverResult;
+    private StellarObject resolverResult;
     private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Override
     public void reset() {
         super.reset();
-        resolverResult = new StarResolverResult();
+        resolverResult = new StellarObject();
         starSurveysMap.clear();
     }
 
@@ -66,11 +66,11 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         };
     }
 
-    public StarResolverResult getResolverResult() {
+    public StellarObject getResolverResult() {
         return resolverResult;
     }
 
-    public void setResolverResult(StarResolverResult resolverResult) {
+    public void setResolverResult(StellarObject resolverResult) {
         this.resolverResult = resolverResult;
     }
 

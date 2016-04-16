@@ -1,14 +1,14 @@
-package cz.muni.physics.pdr.backend.resolver;
+package cz.muni.physics.pdr.backend.entity;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 13/04/16
  */
-public class StarName {
+public class StellarObjectName {
     private String value;
 
-    public StarName(String value) {
+    public StellarObjectName(String value) {
         this.value = value;
     }
 
@@ -30,9 +30,9 @@ public class StarName {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StarName starName = (StarName) o;
+        StellarObjectName stellarObjectName = (StellarObjectName) o;
 
-        return getValue() != null ? getValue().equals(starName.getValue()) : starName.getValue() == null;
+        return getValue() != null ? getValue().equals(stellarObjectName.getValue()) : stellarObjectName.getValue() == null;
 
     }
 

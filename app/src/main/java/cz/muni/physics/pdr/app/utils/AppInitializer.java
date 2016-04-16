@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
-import cz.muni.physics.pdr.backend.resolver.StarName;
+import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
@@ -27,7 +27,7 @@ public class AppInitializer {
     @Autowired
     private ScreenConfig app;
     @Autowired
-    private StarResolverManager<StarName> nameResolverManager;
+    private StarResolverManager<StellarObjectName> nameResolverManager;
     @Value("${user.home}${plugins.dir.path}")
     private String pluginsDirPath;
 
@@ -78,13 +78,17 @@ public class AppInitializer {
 //            app.getPlugins().addAll(availablePlugins.values());
 //        }
 
+        // TODO checkc vsx dat file
+
         mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
         nameResolverManager.getAvailableStarResolvers().forEach((resolver, available) -> {
                     if (!available) {
                         logger.warn(resolver.getClass().getCanonicalName() + " is not available.");
-                        initErrors.add(resolver.getClass().getCanonicalName() + " is not available. Check your internet connection.");
+                        initErrors.add(resolver.getClass().getCanonicalName() + " is not available.");
                     }
                 }
+
+
         );
     }
 

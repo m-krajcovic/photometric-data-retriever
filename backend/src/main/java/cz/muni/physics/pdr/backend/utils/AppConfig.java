@@ -39,6 +39,7 @@ public class AppConfig {
     public ThreadPoolTaskExecutor searchServiceExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(6);
+        executor.setDaemon(true);
         executor.setThreadNamePrefix("Backend Thread-");
         return executor;
     }

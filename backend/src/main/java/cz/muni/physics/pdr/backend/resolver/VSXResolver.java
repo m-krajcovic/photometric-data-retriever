@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.backend.resolver;
 
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.plugin.StreamGobbler;
 
 import java.io.File;
@@ -20,18 +21,18 @@ public abstract class VSXResolver<T> implements StarResolver<T> {
 
     private String dataDir;
     private String vsxDatFile;
-    private BiPredicate<StarResolverResult, T> condition;
+    private BiPredicate<StellarObject, T> condition;
 
-    protected VSXResolver(String dataDir, String vsxDatFile, BiPredicate<StarResolverResult, T> condition) {
+    protected VSXResolver(String dataDir, String vsxDatFile, BiPredicate<StellarObject, T> condition) {
         this.dataDir = dataDir;
         this.vsxDatFile = vsxDatFile;
         this.condition = condition;
     }
 
     @Override
-    public List<StarResolverResult> getResults(T param) {
+    public List<StellarObject> getResults(T param) {
         try (FileInputStream fis = new FileInputStream(new File(dataDir, vsxDatFile))) {
-            StreamGobbler<StarResolverResult> gobbler = new StreamGobbler<>(fis,
+            StreamGobbler<StellarObject> gobbler = new StreamGobbler<>(fis,
                     s -> {
                         String oid = s.substring(0, 6).trim();
                         String name = s.substring(8, 37).trim();
@@ -45,10 +46,11 @@ public abstract class VSXResolver<T> implements StarResolver<T> {
                                 period = s.substring(139, s.length() >= 154 ? 154 : s.length()).trim();
                             }
                         }
-                        StarResolverResult result = new StarResolverResult();
+                        StellarObject result = new StellarObject();
+                        result.getIds().put("vsx", oid);
                         result.setNames(Arrays.asList(name));
-                        result.setJdedeg(DEdeg);
-                        result.setJraddeg(RAdeg);
+                        result.setDeclination(Double.parseDouble(DEdeg));
+                        result.setRightAscension(Double.parseDouble(RAdeg));
                         result.setEpoch(epoch);
                         result.setPeriod(period);
                         if (condition.test(result, param)) {
@@ -58,16 +60,16 @@ public abstract class VSXResolver<T> implements StarResolver<T> {
                     });
             return gobbler.get();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         }
         return new ArrayList<>();
     }
 
     @Override
-    public StarResolverResult getResult(T param) {
-        List<StarResolverResult> results = getResults(param);
+    public StellarObject getResult(T param) {
+        List<StellarObject> results = getResults(param);
         return results.isEmpty() ? null : results.get(0);
     }
 

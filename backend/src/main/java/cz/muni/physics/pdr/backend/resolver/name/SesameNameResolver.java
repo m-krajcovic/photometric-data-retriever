@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.backend.resolver.name;
 
-import cz.muni.physics.pdr.backend.resolver.StarName;
+import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolver;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ import java.util.List;
  * @since 24/03/16
  */
 @Component
-public class SesameNameResolver implements StarResolver<StarName> {
+public class SesameNameResolver implements StarResolver<StellarObjectName> {
 
     private RestOperations restTemplate;
     private String resolverUrl;
@@ -46,16 +47,16 @@ public class SesameNameResolver implements StarResolver<StarName> {
     }
 
     @Override
-    public List<StarResolverResult> getResults(StarName param) {
-        return new ArrayList<>();
+    public List<StellarObject> getResults(StellarObjectName param) {
+        return Collections.singletonList(getResult(param));
     }
 
-    public StarResolverResult getResult(StarName name) {
+    public StellarObject getResult(StellarObjectName name) {
         String response = restTemplate.getForObject(resolverUrl, String.class, name.getValue()); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
-        StarResolverResult result = new StarResolverResult();
+        StellarObject result = new StellarObject();
         Document doc;
         try {
             doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
@@ -68,8 +69,8 @@ public class SesameNameResolver implements StarResolver<StarName> {
             }
             result.setNames(names);
             result.setJpos(xpath.evaluate("//jpos[1]", doc)); // TODO check these somehow
-            result.setJraddeg(xpath.evaluate("//jradeg[1]", doc));
-            result.setJdedeg(xpath.evaluate("//jdedeg[1]", doc));
+            result.setRightAscension(Double.parseDouble(xpath.evaluate("//jradeg[1]", doc)));
+            result.setDeclination(Double.parseDouble(xpath.evaluate("//jdedeg[1]", doc)));
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         }

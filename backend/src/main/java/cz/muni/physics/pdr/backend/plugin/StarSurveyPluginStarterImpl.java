@@ -4,7 +4,7 @@ import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.utils.ParameterUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +41,7 @@ public class StarSurveyPluginStarterImpl implements StarSurveyPluginStarter {
     private Consumer<StarSurvey> onNoResultsFound;
     private Consumer<StarSurvey> onResultsFound;
 
-    public Map<StarSurvey, List<PhotometricData>> runAll(StarResolverResult resolverResult) {
+    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         List<Future> futures = new ArrayList<>();
         for (StarSurvey survey : starSurveyManager.getAll()) {

@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.backend.resolver;
 
+import cz.muni.physics.pdr.backend.entity.StellarObject;
+
 import java.util.List;
 
 /**
@@ -9,9 +11,9 @@ import java.util.List;
  */
 public interface StarResolver<T> {
 
-    List<StarResolverResult> getResults(T param);
+    List<StellarObject> getResults(T param);
 
-    StarResolverResult getResult(T param);
+    StellarObject getResult(T param);
 
     boolean isAvailable();
 }

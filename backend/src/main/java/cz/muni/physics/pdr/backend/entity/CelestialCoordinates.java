@@ -1,17 +1,17 @@
-package cz.muni.physics.pdr.backend.resolver;
+package cz.muni.physics.pdr.backend.entity;
 
 /**
  * @author Michal Krajčovič
  * @version 1.0
  * @since 13/04/16
  */
-public class StarCoordinates {
+public class CelestialCoordinates {
 
     private double rightAscension;
     private double declination;
     private double radius;
 
-    public StarCoordinates(double rightAscension, double declination, double radius) {
+    public CelestialCoordinates(double rightAscension, double declination, double radius) {
         this.rightAscension = rightAscension;
         this.declination = declination;
         this.radius = radius;
@@ -47,7 +47,7 @@ public class StarCoordinates {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StarCoordinates that = (StarCoordinates) o;
+        CelestialCoordinates that = (CelestialCoordinates) o;
 
         if (Double.compare(that.getRightAscension(), getRightAscension()) != 0) return false;
         if (Double.compare(that.getDeclination(), getDeclination()) != 0) return false;

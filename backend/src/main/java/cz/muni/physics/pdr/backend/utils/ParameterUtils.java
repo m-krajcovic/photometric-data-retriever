@@ -1,7 +1,8 @@
 package cz.muni.physics.pdr.backend.utils;
 
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriTemplate;
 
 import java.util.HashMap;
@@ -19,12 +20,13 @@ import java.util.regex.Pattern;
  */
 public class ParameterUtils {
 
-    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StarResolverResult resolverResult) {
+    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult) {
         Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
-        resolveNameResolverParameters(resolverResult, params);
+        resolveStarResolverParameters(resolverResult, params);
         resolveValueParameters(survey.getValueParameters(), params);
         resolveUrlParameter(survey.getUrls(), params);
-        if (survey.getPlugin().getMainFile() != null && !survey.getPlugin().getMainFile().trim().isEmpty()) params.put("mainFile", survey.getPlugin().getMainFile());
+        if (survey.getPlugin().getMainFile() != null && !survey.getPlugin().getMainFile().trim().isEmpty())
+            params.put("mainFile", survey.getPlugin().getMainFile());
         return params;
     }
 
@@ -42,9 +44,12 @@ public class ParameterUtils {
         return params;
     }
 
-    public static Map<String, String> resolveNameResolverParameters(StarResolverResult result, Map<String, String> params) {
-        if(result.getJraddeg() != null && !result.getJraddeg().trim().isEmpty()) params.put("ra", result.getJraddeg());
-        if(result.getJdedeg() != null && !result.getJdedeg().trim().isEmpty()) params.put("dec", result.getJdedeg());
+    public static Map<String, String> resolveStarResolverParameters(StellarObject result, Map<String, String> params) {
+        if (result.getRightAscension() != null) params.put("ra", result.getRightAscension().toString());
+        if (result.getDeclination() != null) params.put("dec", result.getDeclination().toString());
+        if (StringUtils.isNotBlank(result.getPeriod())) params.put("period", result.getPeriod());
+        if (StringUtils.isNotBlank(result.getEpoch())) params.put("epoch", result.getEpoch());
+        params.putAll(result.getIds());
         return params;
     }
 

@@ -2,15 +2,19 @@ package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
+import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.utils.AppConfig;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -101,6 +105,23 @@ public class ScreenConfig {
         return controller.isOkClicked();
     }
 
+    public StellarObjectModel showStellarObjects(List<StellarObjectModel> stellarObjects, EventHandler<WindowEvent> onClose) {
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane stellarObjectDialog = loader.load("/view/StellarObjectOverview.fxml");
+        StellarObjectOverviewController controller = loader.getController();
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Edit Star Survey");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        Scene scene = new Scene(stellarObjectDialog);
+        dialogStage.setScene(scene);
+        controller.setDialogStage(dialogStage);
+        controller.setItems(stellarObjects);
+        dialogStage.setOnCloseRequest(onClose);
+        dialogStage.showAndWait();
+        return controller.getSelected();
+    }
+
     @Bean
     @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
@@ -118,7 +139,6 @@ public class ScreenConfig {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        primaryStage.setOnCloseRequest(v -> backend.searchServiceExecutor().shutdown());
     }
 
     public String getName() {
@@ -128,4 +148,6 @@ public class ScreenConfig {
     public String getIconPath() {
         return iconPath;
     }
+
+
 }

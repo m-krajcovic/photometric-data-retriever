@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.backend.resolver.name;
 
-import cz.muni.physics.pdr.backend.resolver.StarName;
+import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolver;
 import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
-import cz.muni.physics.pdr.backend.resolver.StarResolverResult;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +20,18 @@ import java.util.Set;
  * @since 10/04/16
  */
 @Component
-public class NameResolverManager implements StarResolverManager<StarName> {
+public class NameResolverManager implements StarResolverManager<StellarObjectName> {
 
     private final static Logger logger = LogManager.getLogger(NameResolverManager.class);
 
     @Autowired
-    private Set<StarResolver<StarName>> nameResolvers;
+    private Set<StarResolver<StellarObjectName>> nameResolvers;
 
     @Override
     @Cacheable
-    public StarResolverResult resolveFor(StarName name) {
-        StarResolverResult result = new StarResolverResult();
-        for (StarResolver<StarName> nameResolver : nameResolvers) {
+    public StellarObject resolveFor(StellarObjectName name) {
+        StellarObject result = new StellarObject();
+        for (StarResolver<StellarObjectName> nameResolver : nameResolvers) {
             logger.debug("Resolving star data from name {} by Resolver {}.", name.getValue(), nameResolver.getClass().getCanonicalName());
             result.merge(nameResolver.getResult(name));
         }
@@ -39,9 +39,9 @@ public class NameResolverManager implements StarResolverManager<StarName> {
     }
 
     @Override
-    public Map<StarResolver<StarName>, Boolean> getAvailableStarResolvers() {
-        Map<StarResolver<StarName>, Boolean> result = new HashMap<>();
-        for (StarResolver<StarName> resolver : nameResolvers) {
+    public Map<StarResolver<StellarObjectName>, Boolean> getAvailableStarResolvers() {
+        Map<StarResolver<StellarObjectName>, Boolean> result = new HashMap<>();
+        for (StarResolver<StellarObjectName> resolver : nameResolvers) {
             boolean isAvailable = resolver.isAvailable();
             logger.debug("Resolver {} is {} available.", resolver.getClass().getCanonicalName(), isAvailable ? "" : "not");
             result.put(resolver, isAvailable);
