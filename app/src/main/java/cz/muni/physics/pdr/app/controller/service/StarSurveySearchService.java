@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.app.controller.service;
 
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
-import cz.muni.physics.pdr.backend.plugin.StarSurveyPluginStarter;
+import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.plugin.StarSurveyPluginStarter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;

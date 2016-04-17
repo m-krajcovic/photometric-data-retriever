@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.app.controller.service;
 
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;

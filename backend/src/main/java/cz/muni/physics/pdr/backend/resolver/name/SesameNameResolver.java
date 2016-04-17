@@ -68,8 +68,7 @@ public class SesameNameResolver implements StarResolver<StellarObjectName> {
                 names.add(node.getTextContent());
             }
             result.setNames(names);
-            result.setJpos(xpath.evaluate("//jpos[1]", doc)); // TODO check these somehow
-            result.setRightAscension(Double.parseDouble(xpath.evaluate("//jradeg[1]", doc)));
+            result.setRightAscension(Double.parseDouble(xpath.evaluate("//jradeg[1]", doc))); //todo check these
             result.setDeclination(Double.parseDouble(xpath.evaluate("//jdedeg[1]", doc)));
         } catch (XPathExpressionException e) {
             e.printStackTrace();

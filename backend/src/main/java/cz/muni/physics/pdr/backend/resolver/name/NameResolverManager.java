@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.backend.resolver.name;
 
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.resolver.StarResolver;
 import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

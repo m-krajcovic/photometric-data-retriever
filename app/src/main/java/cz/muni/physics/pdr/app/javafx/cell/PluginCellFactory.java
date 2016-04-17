@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.app.javafx;
+package cz.muni.physics.pdr.app.javafx.cell;
 
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;

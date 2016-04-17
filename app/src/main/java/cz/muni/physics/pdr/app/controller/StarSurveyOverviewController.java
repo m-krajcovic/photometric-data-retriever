@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.javafx.PluginCellFactory;
+import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;

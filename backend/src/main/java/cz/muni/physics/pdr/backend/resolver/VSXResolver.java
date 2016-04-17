@@ -2,13 +2,13 @@ package cz.muni.physics.pdr.backend.resolver;
 
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.plugin.StreamGobbler;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -48,11 +48,15 @@ public abstract class VSXResolver<T> implements StarResolver<T> {
                         }
                         StellarObject result = new StellarObject();
                         result.getIds().put("vsx", oid);
-                        result.setNames(Arrays.asList(name));
+                        result.getNames().add(name);
                         result.setDeclination(Double.parseDouble(DEdeg));
                         result.setRightAscension(Double.parseDouble(RAdeg));
-                        result.setEpoch(epoch);
-                        result.setPeriod(period);
+                        if (!StringUtils.isBlank(epoch)) {
+                            result.setEpoch(Double.parseDouble(epoch));
+                        }
+                        if (!StringUtils.isBlank(period)) {
+                            result.setPeriod(Double.parseDouble(period));
+                        }
                         if (condition.test(result, param)) {
                             return result;
                         }

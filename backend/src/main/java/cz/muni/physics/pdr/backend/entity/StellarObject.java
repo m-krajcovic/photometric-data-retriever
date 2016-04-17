@@ -12,17 +12,15 @@ import java.util.Map;
  */
 public class StellarObject {
     private List<String> names = new ArrayList<>();
-    private String jpos;
     private Double rightAscension;
     private Double declination;
-    private String epoch;
-    private String period;
+    private Double epoch;
+    private Double period;
     private Map<String, String> ids = new HashMap<>();
     private Double distance;
 
     public void merge(StellarObject other) {
         if (other != null) {
-            this.jpos = this.jpos == null ? other.jpos : this.jpos;
             this.rightAscension = this.rightAscension == null ? other.rightAscension : this.rightAscension;
             this.declination = this.declination == null ? other.declination : this.declination;
             this.names.addAll(other.names);
@@ -57,27 +55,19 @@ public class StellarObject {
         this.names = names;
     }
 
-    public String getJpos() {
-        return jpos;
-    }
-
-    public void setJpos(String jpos) {
-        this.jpos = jpos;
-    }
-
-    public String getEpoch() {
+    public Double getEpoch() {
         return epoch;
     }
 
-    public void setEpoch(String epoch) {
+    public void setEpoch(Double epoch) {
         this.epoch = epoch;
     }
 
-    public String getPeriod() {
+    public Double getPeriod() {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(Double period) {
         this.period = period;
     }
 
@@ -101,8 +91,7 @@ public class StellarObject {
     public String toString() {
         return "StellarObject{" +
                 "names=[ " + String.join(", ", names) +
-                " ], jpos='" + jpos + '\'' +
-                ", rightAscension='" + rightAscension + '\'' +
+                " ], rightAscension='" + rightAscension + '\'' +
                 ", declination='" + declination + '\'' +
                 ", epoch='" + epoch + '\'' +
                 ", period='" + period + '\'' +
@@ -116,8 +105,7 @@ public class StellarObject {
         for (Map.Entry<String, String> id : ids.entrySet()){
             output += id.getKey() + ":" + id.getValue() + "\n";
         }
-        output += jpos + "\n"
-                + rightAscension + "\n"
+        output += rightAscension + "\n"
                 + declination + "\n"
                 + period + "\n"
                 + epoch + "\n";

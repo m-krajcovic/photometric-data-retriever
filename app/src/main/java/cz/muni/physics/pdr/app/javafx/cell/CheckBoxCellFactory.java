@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.app.javafx;
+package cz.muni.physics.pdr.app.javafx.cell;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;

@@ -11,7 +11,7 @@ import javafx.beans.property.StringProperty;
  * @version 1.0
  * @since 16/04/16
  */
-public class StellarObjectModel {
+public class StellarObjectModel implements EntityModel<StellarObject>{
     private StringProperty name;
     private DoubleProperty rightAscension;
     private DoubleProperty declination;
@@ -26,6 +26,16 @@ public class StellarObjectModel {
 
     public StellarObjectModel(StellarObject result) {
         this(result.getNames().get(0), result.getRightAscension(), result.getDeclination(), result.getDistance());
+    }
+
+    @Override
+    public StellarObject toEntity() {
+        StellarObject obj = new StellarObject();
+        obj.getNames().add(getName());
+        obj.setRightAscension(getRightAscension());
+        obj.setDeclination(getDeclination());
+        obj.setDistance(getDistance());
+        return obj;
     }
 
     public String getName() {
@@ -75,4 +85,5 @@ public class StellarObjectModel {
     public void setDistance(double distance) {
         this.distance.set(distance);
     }
+
 }

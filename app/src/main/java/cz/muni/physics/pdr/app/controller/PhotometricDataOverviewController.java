@@ -67,7 +67,7 @@ public class PhotometricDataOverviewController {
                 XYChart.Series<Number, Number> series = new XYChart.Series<>();
                 series.setName(entry.getKey().getName());
                 for (PhotometricDataModel d : entry.getValue()) {
-                    XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - Double.parseDouble(stellarObject.getEpoch())) / Double.parseDouble(stellarObject.getPeriod())) % 1, d.getMagnitude());
+                    XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1, d.getMagnitude());
                     series.getData().add(e);
                 }
                 obsList.add(series);

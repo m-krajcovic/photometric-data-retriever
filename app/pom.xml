@@ -51,11 +51,6 @@
             <version>${spring.version}</version>
         </dependency>
         <!--SPRING END -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.4</version>
-        </dependency>
     </dependencies>
 
     <pluginRepositories>

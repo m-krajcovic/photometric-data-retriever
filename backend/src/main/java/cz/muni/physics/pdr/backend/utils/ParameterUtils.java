@@ -2,7 +2,6 @@ package cz.muni.physics.pdr.backend.utils;
 
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriTemplate;
 
 import java.util.HashMap;
@@ -47,8 +46,8 @@ public class ParameterUtils {
     public static Map<String, String> resolveStarResolverParameters(StellarObject result, Map<String, String> params) {
         if (result.getRightAscension() != null) params.put("ra", result.getRightAscension().toString());
         if (result.getDeclination() != null) params.put("dec", result.getDeclination().toString());
-        if (StringUtils.isNotBlank(result.getPeriod())) params.put("period", result.getPeriod());
-        if (StringUtils.isNotBlank(result.getEpoch())) params.put("epoch", result.getEpoch());
+        if (result.getPeriod() != null) params.put("period", result.getPeriod().toString());
+        if (result.getEpoch() != null) params.put("epoch", result.getEpoch().toString());
         params.putAll(result.getIds());
         return params;
     }

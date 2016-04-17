@@ -20,9 +20,9 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
     private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<PluginModel> plugin = new SimpleObjectProperty<>();
 
-    private ObservableList<Pattern> regexPatterns = FXCollections.observableArrayList(); // napr NSVS\s(?<id>\d*) ~> match on name/coord resolved results
-    private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap(); // napr. <"radec", "${ra};${dec}"> ~> 188.7;+25.3
-    private ObservableList<String> urls = FXCollections.observableArrayList(); // napr. <1, "www.google.com?query={radec}">, <2, "www.google.com?id={id}&ra={ra}"> -> get first where all \{.*\} exists in parameter map
+    private ObservableList<Pattern> regexPatterns = FXCollections.observableArrayList();
+    private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap();
+    private ObservableList<String> urls = FXCollections.observableArrayList();
 
     public StarSurveyModel(StarSurvey survey){
         this(survey.getName(), new PluginModel(survey.getPlugin()));
