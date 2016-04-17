@@ -2,7 +2,7 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import javafx.application.Platform;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,6 +41,8 @@ public class PhotometricDataOverviewController {
     @FXML
     private ScatterChart<Number, Number> chart;
 
+    private StellarObject stellarObject;
+
     @FXML
     private void initialize() {
         julianDate.setCellValueFactory(cell -> cell.getValue().julianDateProperty());
@@ -59,20 +61,26 @@ public class PhotometricDataOverviewController {
             photometricDataTableView.getItems().addAll(entry.getValue());
         }
 
-        Platform.runLater(() -> {
-            logger.debug("Start");
+        if (stellarObject.getEpoch() != null && stellarObject.getPeriod() != null) { //todo async this
             ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
             for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
                 XYChart.Series<Number, Number> series = new XYChart.Series<>();
                 series.setName(entry.getKey().getName());
                 for (PhotometricDataModel d : entry.getValue()) {
-                    XYChart.Data<Number, Number> e = new XYChart.Data<>(d.getJulianDate(), d.getMagnitude());
+                    XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - Double.parseDouble(stellarObject.getEpoch())) / Double.parseDouble(stellarObject.getPeriod())) % 1, d.getMagnitude());
                     series.getData().add(e);
                 }
-                logger.debug("Something ended");
                 obsList.add(series);
             }
-            logger.debug("End");
-        });
+            chart.getData().addAll(obsList);
+        }
+    }
+
+    public StellarObject getStellarObject() {
+        return stellarObject;
+    }
+
+    public void setStellarObject(StellarObject stellarObject) {
+        this.stellarObject = stellarObject;
     }
 }

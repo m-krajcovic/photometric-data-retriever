@@ -81,7 +81,7 @@ public class StellarObjectOverviewController {
         stellarObjectsTable.setItems(FXCollections.observableArrayList(models));
         distanceColumn.setSortType(TableColumn.SortType.ASCENDING);
         stellarObjectsTable.getSortOrder().add(distanceColumn);
-        stellarObjectsTable.getSelectionModel().selectFirst(); // todo order by distance
+        stellarObjectsTable.getSelectionModel().selectFirst();
     }
 
     public Stage getDialogStage() {

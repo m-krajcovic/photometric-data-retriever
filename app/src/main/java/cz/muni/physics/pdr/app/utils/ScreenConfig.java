@@ -7,6 +7,7 @@ import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.utils.AppConfig;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -64,7 +65,7 @@ public class ScreenConfig {
         rootLayout.setCenter(searchView);
     }
 
-    public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricDataModel>> data) {
+    public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricDataModel>> data, StellarObject object) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
@@ -75,6 +76,7 @@ public class ScreenConfig {
         Scene scene = new Scene(photometricDataOverview);
         dialogStage.setScene(scene);
         dialogStage.show();
+        controller.setStellarObject(object);
         controller.setData(data);
     }
 
