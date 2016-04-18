@@ -30,7 +30,7 @@ public class PropertiesPluginReader implements PluginReader {
         try (InputStream is = new FileInputStream(new File(pluginDir, "plugin.properties"))) {
             props.load(is);
         } catch (FileNotFoundException e) {
-            throw new PluginManagerException("FileNotFoundException", e);
+            throw new PluginManagerException("FileNotFoundException", e); //todo
         } catch (IOException e) {
             throw new PluginManagerException("IOException", e);
         }

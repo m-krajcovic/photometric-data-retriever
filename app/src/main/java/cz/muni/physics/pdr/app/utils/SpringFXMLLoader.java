@@ -29,7 +29,7 @@ public class SpringFXMLLoader {
 
     public SpringFXMLLoader() {
         fxmlLoader.setControllerFactory(aClass -> {
-            logger.debug("Loading {} from Application Context: ", aClass.getName());
+            logger.debug("Loading {} bean from Application Context", aClass.getName());
             return context.getBean(aClass);
         });
     }

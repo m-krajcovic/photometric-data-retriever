@@ -3,7 +3,6 @@ package cz.muni.physics.pdr.backend.repository;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @author Michal Krajčovič
@@ -19,11 +18,7 @@ public interface GenericRepository<T, ID extends Serializable> {
 
     T getById(ID id);
 
-    default T searchFor(Predicate<T> predicate) {
-        return getAll().stream().filter(predicate).findFirst().orElseGet(() -> null);
-    }
+    T searchFor(Predicate<T> predicate);
 
-    default Collection<T> searchForAll(Predicate<T> predicate) {
-        return getAll().stream().filter(predicate).collect(Collectors.toList());
-    }
+    Collection<T> searchForAll(Predicate<T> predicate);
 }

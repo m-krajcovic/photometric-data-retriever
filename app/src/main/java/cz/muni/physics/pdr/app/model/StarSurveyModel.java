@@ -24,8 +24,8 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
     private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap();
     private ObservableList<String> urls = FXCollections.observableArrayList();
 
-    public StarSurveyModel(StarSurvey survey){
-        this(survey.getName(), new PluginModel(survey.getPlugin()));
+    public StarSurveyModel(StarSurvey survey) {
+        this(survey.getName(), survey.getPlugin() != null ? new PluginModel(survey.getPlugin()) : null);
         regexPatterns.addAll(survey.getRegexPatterns());
         valueParameters.putAll(survey.getValueParameters());
         urls.addAll(survey.getUrls());

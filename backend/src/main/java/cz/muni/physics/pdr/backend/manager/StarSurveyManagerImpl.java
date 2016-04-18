@@ -37,7 +37,7 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     public Collection<StarSurvey> getAll() {
         Collection<StarSurvey> surveys = starSurveyRepository.getAll();
         for (StarSurvey survey : surveys) {
-            survey.setPlugin(pluginRepository.getById(survey.getPlugin().getName()));
+            survey.setPlugin(survey.getPlugin().getName() != null ? pluginRepository.getById(survey.getPlugin().getName()) : null);
         }
         return surveys;
     }

@@ -1,6 +1,5 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.MainApp;
 import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
@@ -18,8 +17,6 @@ public class RootLayoutController {
     private ScreenConfig app;
     @FXML
     private MenuBar menuBar;
-
-    private MainApp mainApp;
 
     @FXML
     private void initialize() {
