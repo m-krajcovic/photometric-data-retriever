@@ -72,7 +72,6 @@ public class StarSurveyEditDialogController {
 
     private boolean isInputValid() {
         return !nameTextField.getText().isEmpty() && StringUtils.isAlphanumericSpace(nameTextField.getText())
-                && !urlTextArea.getText().isEmpty()
                 && pluginChoiceBox.getValue() != null;
     }
 

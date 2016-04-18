@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * @author Michal Krajčovič
@@ -28,11 +29,17 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
 
     private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
 
-    @Autowired
     private StarSurveyPluginStarter pluginStarter;
 
     private StellarObject resolverResult;
     private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
+
+    @Autowired
+    public StarSurveySearchService(StarSurveyPluginStarter pluginStarter,
+                                   Executor executor) {
+        this.pluginStarter = pluginStarter;
+        super.setExecutor(executor);
+    }
 
     @Override
     public void reset() {

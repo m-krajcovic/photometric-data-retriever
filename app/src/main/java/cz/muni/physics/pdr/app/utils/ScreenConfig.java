@@ -3,9 +3,6 @@ package cz.muni.physics.pdr.app.utils;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
-import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
-import cz.muni.physics.pdr.app.controller.service.NameSearchService;
-import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
@@ -131,27 +128,6 @@ public class ScreenConfig {
     @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
-    }
-    
-    @Bean
-    public NameSearchService nameSearchService() {
-        NameSearchService service = new NameSearchService();
-        service.setExecutor(backend.searchServiceExecutor());
-        return service;
-    }
-
-    @Bean
-    public StarSurveySearchService starSurveySearchService() {
-        StarSurveySearchService service = new StarSurveySearchService();
-        service.setExecutor(backend.searchServiceExecutor());
-        return service;
-    }
-
-    @Bean
-    public CoordsSearchService coordsSearchService() {
-        CoordsSearchService service = new CoordsSearchService();
-        service.setExecutor(backend.searchServiceExecutor());
-        return service;
     }
 
     @Bean

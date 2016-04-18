@@ -50,7 +50,6 @@ public class StarSurveyOverviewController {
         StarSurveyModel tempStarSurvey = new StarSurveyModel();
         boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
-            //app.getStarSurveyModels().add(tempStarSurvey);
             starSurveyManager.insert(tempStarSurvey.toEntity());
         }
     }
@@ -89,7 +88,6 @@ public class StarSurveyOverviewController {
         pluginColumn.setCellFactory(new PluginCellFactory());
 
         ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
-//        app.getStarSurveys().forEach(s -> list.add(new StarSurveyModel(s)));
         starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
         starSurveys.setItems(list);
     }

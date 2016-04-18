@@ -18,6 +18,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.Executor;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -36,7 +38,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ThreadPoolTaskExecutor searchServiceExecutor(){
+    public Executor searchServiceExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(6);
         executor.setDaemon(true);
@@ -50,7 +52,7 @@ public class AppConfig {
         xStream.processAnnotations(new Class[]{StarSurvey.class, Plugin.class});
         return xStream;
     }
-    
+
     @Bean
     public RestOperations restTemplate() {
         return new RestTemplate();

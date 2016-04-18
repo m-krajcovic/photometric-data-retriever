@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,11 +31,20 @@ public class NameResolverManager implements StarResolverManager<StellarObjectNam
 
     @Override
     @Cacheable
-    public StellarObject resolveFor(StellarObjectName name) {
+    public StellarObject resolverForResult(StellarObjectName name) {
         StellarObject result = new StellarObject();
         for (StarResolver<StellarObjectName> nameResolver : nameResolvers) {
             logger.debug("Resolving star data from name {} by Resolver {}.", name.getValue(), nameResolver.getClass().getCanonicalName());
             result.merge(nameResolver.getResult(name));
+        }
+        return result;
+    }
+
+    @Override
+    public List<StellarObject> resolverForResults(StellarObjectName param) {
+        List<StellarObject> result = new ArrayList<>();
+        for (StarResolver<StellarObjectName> nameResolver : nameResolvers) {
+            result.addAll(nameResolver.getResults(param));
         }
         return result;
     }

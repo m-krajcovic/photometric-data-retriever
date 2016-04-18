@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executor;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -22,8 +24,14 @@ public class NameSearchService extends Service<StellarObject> {
 
     private String searchText;
 
-    @Autowired
     private StarResolverManager<StellarObjectName> nameResolverManager;
+
+    @Autowired
+    public NameSearchService(StarResolverManager<StellarObjectName> nameResolverManager,
+                             Executor executor) {
+        this.nameResolverManager = nameResolverManager;
+        super.setExecutor(executor);
+    }
 
     @Override
     protected Task<StellarObject> createTask() {
@@ -35,7 +43,7 @@ public class NameSearchService extends Service<StellarObject> {
             @Override
             protected StellarObject call() {
                 logger.debug("Trying to get StellarObject.");
-                return nameResolverManager.resolveFor(new StellarObjectName(searchText));
+                return nameResolverManager.resolverForResult(new StellarObjectName(searchText));
             }
         };
     }

@@ -3,7 +3,7 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.resolver.StarResolver;
+import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * @author Michal Krajčovič
@@ -20,10 +21,16 @@ import java.util.List;
 @Component
 public class CoordsSearchService extends Service<List<StellarObjectModel>> {
 
-    @Autowired
-    private StarResolver<CelestialCoordinates> coordsResolver;
+    private StarResolverManager<CelestialCoordinates> coordsResolverManager;
 
     private CelestialCoordinates coords;
+
+    @Autowired
+    public CoordsSearchService(StarResolverManager<CelestialCoordinates> coordsResolverManager,
+                               Executor executor) {
+        this.coordsResolverManager = coordsResolverManager;
+        super.setExecutor(executor);
+    }
 
     @Override
     protected Task<List<StellarObjectModel>> createTask() {
@@ -34,7 +41,7 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
         return new Task<List<StellarObjectModel>>() {
             @Override
             protected List<StellarObjectModel> call() throws Exception {
-                List<StellarObject> results = coordsResolver.getResults(coords);
+                List<StellarObject> results = coordsResolverManager.resolverForResults(coords);
                 List<StellarObjectModel> models = new ArrayList<>(results.size());
                 for (StellarObject result : results) {
                     models.add(new StellarObjectModel(result));
