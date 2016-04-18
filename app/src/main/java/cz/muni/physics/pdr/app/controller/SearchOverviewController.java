@@ -3,6 +3,7 @@ package cz.muni.physics.pdr.app.controller;
 import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
 import cz.muni.physics.pdr.app.controller.service.NameSearchService;
 import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
+import cz.muni.physics.pdr.app.javafx.Shaker;
 import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
@@ -21,7 +22,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +58,11 @@ public class SearchOverviewController {
     private StellarObject stellarObject = new StellarObject();
 
     @FXML
-    private HBox searchBox;
+    private AnchorPane mainPane;
+    @FXML
+    private Label infoLabel;
+    @FXML
+    private VBox searchBox;
     @FXML
     private Button searchButton;
     @FXML
@@ -66,82 +74,93 @@ public class SearchOverviewController {
     @FXML
     private Label progressLabel;
 
-    private SearchMode searchMode;
+    private Shaker shaker;
 
     @FXML
     private void initialize() {
+        app.getPrimaryStage().getScene().setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ESCAPE)) {
+                cancelSearch();
+            }
+        });
+        shaker = new Shaker(mainPane);
         radiusTextField.setTextFormatter(new TextFormatter<>(new RadiusFilter()));
         initializeServices();
     }
 
     @FXML
     private void handleSearchButtonAction() {
-        disableElements(true);
         stellarObject = new StellarObject();
         decideSearchMode();
-        if (searchMode.equals(SearchMode.NAME)) {
-            handleNameSearch();
-        } else if (searchMode.equals(SearchMode.COORDS)) {
-            handleCoordsSearch();
+    }
+
+    private void decideSearchMode() {
+        String searchText = searchTextField.getText().trim();
+        if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
+            handleNameSearch(searchText.substring(5).trim());
+            return;
+        }
+        if (StringUtils.startsWithIgnoreCase(searchText, "coords:")) {
+            handleCoordsSearch(searchText.substring(7).trim());
+            return;
+        }
+        String[] spaceSplit = searchText.split(" ");
+        if (spaceSplit.length == 2 && NumberUtils.isParsable(spaceSplit[0]) && NumberUtils.isParsable(spaceSplit[1])) {
+            double ra = Double.parseDouble(spaceSplit[0]);
+            double dec = Double.parseDouble(spaceSplit[1]);
+            if (ra < 0 || ra > 360 || dec < -90 || dec > 90) {
+                handleNameSearch(searchText);
+                return;
+            }
+            handleCoordsSearch(searchText);
+        } else {
+            handleNameSearch(searchText);
         }
     }
 
-    private void handleCoordsSearch() {
-        if (searchTextField.getText().isEmpty()) {
-            FXMLUtils.showTooltip("Text field is empty. Insert coords in format '118.77167 +22.00139'", searchButton.getScene().getWindow(), searchTextField);
+    private void handleCoordsSearch(String query) {
+        disableElements(true);
+        if (query.isEmpty()) {
+            showInfoMessage("Query is empty. Insert coords in format '118.77167 +22.00139'");
             disableElements(false);
         } else {
-            String[] degrees = searchTextField.getText().split(" ");
+            String[] degrees = query.split(" ");
             if (degrees.length != 2 || !NumberUtils.isParsable(degrees[0]) || !NumberUtils.isParsable(degrees[1])) {
-                FXMLUtils.showTooltip("Wrong format use degrees like '118.77167 +22.00139'", searchButton.getScene().getWindow(), searchTextField);
+                showInfoMessage("Wrong format use degrees like '118.77167 +22.00139'");
                 disableElements(false);
             } else {
                 double ra = Double.parseDouble(degrees[0]);
                 double dec = Double.parseDouble(degrees[1]);
                 if (ra < 0 || ra > 360) {
-                    FXMLUtils.showTooltip("Right Ascension must be from interval [0, 360]'", searchButton.getScene().getWindow(), searchTextField);
-                }
-                if (dec < -90 || dec > 90) {
-                    FXMLUtils.showTooltip("Declination must be from interval [-90, +90]'", searchButton.getScene().getWindow(), searchTextField);
+                    showInfoMessage("Right Ascension must be from interval [0, 360]'");
+                    disableElements(false);
+                } else if (dec < -90 || dec > 90) {
+                    showInfoMessage("Declination must be from interval [-90, +90]'");
+                    disableElements(false);
                 }
                 if (!NumberUtils.isParsable(radiusTextField.getText()) || radiusTextField.getText().isEmpty()) {
                     radiusTextField.setText("0.05");
+                } else {
+                    coordsSearchService.setCoords(new CelestialCoordinates(ra, dec, Double.parseDouble(radiusTextField.getText())));
+                    coordsSearchService.start();
                 }
-                coordsSearchService.setCoords(new CelestialCoordinates(ra, dec, Double.parseDouble(radiusTextField.getText())));
-                coordsSearchService.start();
             }
         }
     }
 
-    private void handleNameSearch() {
-        if (searchTextField.getText().isEmpty()) {
-            logger.debug("Text field is empty");
-            FXMLUtils.showTooltip("Text field is empty", searchButton.getScene().getWindow(), searchTextField);
+    private void handleNameSearch(String query) {
+        disableElements(true);
+        if (query.isEmpty()) {
+            logger.debug("Query is empty");
+            showInfoMessage("Query is empty");
             disableElements(false);
         } else {
-            logger.debug("Handling search by name '{}'", searchTextField.getText());
-            nameSearchService.setSearchText(searchTextField.getText());
+            logger.debug("Handling search by name '{}'", query);
+            nameSearchService.setSearchText(query);
             nameSearchService.start();
         }
     }
 
-    private void decideSearchMode() {
-        if (searchTextField.getText().matches("\\+?((([012]?\\d\\d|3[012345]\\d)(\\.\\d*)?)|(360(\\.0*)?))\\s[\\-\\+]?(([0-8]?\\d(\\.\\d*)?)|(90(\\.0*)?))")) {
-            searchMode = SearchMode.COORDS;
-        } else {
-            searchMode = SearchMode.NAME;
-        }
-    }
-
-    private void disableElements(boolean disable) {
-        searchButton.setDisable(disable);
-        searchBox.setDisable(disable);
-        searchProgressIndicator.setVisible(disable);
-        progressLabel.setVisible(disable);
-        if (!disable) {
-            progressLabel.setText("");
-        }
-    }
 
     private void initializeServices() {
         initializeCoordsSearchService();
@@ -171,7 +190,7 @@ public class SearchOverviewController {
             Map<StarSurvey, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
             if (data.isEmpty()) {
                 logger.debug("No results found for '{}'", searchTextField.getText());
-                FXMLUtils.showTooltip("No results found", searchButton.getScene().getWindow(), searchTextField);
+                showInfoMessage("No results found for '" + searchTextField.getText() + "'");
             } else {
                 app.showPhotometricDataOverview(data, stellarObject);
             }
@@ -194,7 +213,7 @@ public class SearchOverviewController {
             StellarObjectModel selected;
             List<StellarObjectModel> searchResult = coordsSearchService.getValue();
             if (searchResult.isEmpty()) {
-                FXMLUtils.showTooltip("No results found", searchButton.getScene().getWindow(), searchTextField);
+                showInfoMessage("No results found");
                 disableElements(false);
             } else {
                 selected = app.showStellarObjects(searchResult, e -> disableElements(false));
@@ -215,8 +234,41 @@ public class SearchOverviewController {
     }
 
 
-    private enum SearchMode {
-        NAME, COORDS
+    private void disableElements(boolean disable) {
+        searchButton.setDisable(disable);
+        searchBox.setDisable(disable);
+        infoLabel.setVisible(!disable);
+        searchProgressIndicator.setVisible(disable);
+        if (!disable) {
+            progressLabel.setText("");
+        } else {
+            infoLabel.setText("");
+            searchTextField.getStyleClass().remove("error");
+        }
+    }
+
+    private void showInfoMessage(String message) {
+        shaker.shake();
+        searchTextField.getStyleClass().add("error");
+        infoLabel.setText(message);
+        infoLabel.setVisible(true);
+    }
+
+    private void cancelSearch() {
+        logger.debug("Canceled search");
+        if (coordsSearchService.isRunning()) {
+            coordsSearchService.cancel();
+            coordsSearchService.reset();
+        }
+        if (nameSearchService.isRunning()) {
+            nameSearchService.cancel();
+            nameSearchService.reset();
+        }
+        if (starSurveySearchService.isRunning()) {
+            starSurveySearchService.cancel();
+            starSurveySearchService.reset();
+        }
+        disableElements(false);
     }
 
 }

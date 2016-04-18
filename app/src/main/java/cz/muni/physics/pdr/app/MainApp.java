@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.app;
 
 import com.sun.javafx.application.LauncherImpl;
-import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
+import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -23,7 +23,8 @@ public class MainApp extends Application {
     private ScreenConfig app;
     private AppInitializer initializer;
 
-    public MainApp() {}
+    public MainApp() {
+    }
 
     public static void main(String[] args) {
         LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
@@ -33,7 +34,6 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle(app.getName());
         primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream(app.getIconPath())));
-
         app.setPrimaryStage(primaryStage);
         app.initRootLayout();
         app.showSearch();

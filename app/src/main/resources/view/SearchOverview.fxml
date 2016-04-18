@@ -9,21 +9,34 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
-      <HBox fx:id="searchBox" disable="false" layoutX="96.0" layoutY="258.0" prefHeight="27.0" prefWidth="318.0">
-         <children>
-              <TextField fx:id="searchTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="322.0" promptText="Input name or coords">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin></TextField>
-            <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="189.0" promptText="Radius">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin></TextField>
-         </children>
-      </HBox>
+        <VBox fx:id="searchBox" layoutX="107.0" layoutY="254.0">
+            <children>
+                <HBox disable="false" prefHeight="27.0" prefWidth="375.0">
+                    <children>
+                        <TextField fx:id="searchTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" promptText="Input name or coords">
+                            <HBox.margin>
+                                <Insets right="5.0" />
+                            </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="Radius">
+                            <HBox.margin>
+                                <Insets right="5.0" />
+                            </HBox.margin>
+                        </TextField>
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="Search" />
+                    </children>
+                </HBox>
+                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
+                </Label>
+            </children>
+        </VBox>
         <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="76.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/planet.png" />
@@ -31,7 +44,5 @@
         </ImageView>
         <ProgressIndicator fx:id="searchProgressIndicator" layoutX="274.0" layoutY="299.0" visible="false" />
         <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="359.0" prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false" />
-      <Label fx:id="inputInfoLabel" layoutX="96.0" layoutY="287.0" prefHeight="17.0" prefWidth="313.0" text="Label" visible="false" />
-      <Button fx:id="searchButton" layoutX="414.0" layoutY="258.0" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="79.0" text="Search" />
     </children>
 </AnchorPane>

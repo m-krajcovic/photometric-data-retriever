@@ -18,4 +18,6 @@ public interface ProcessStarter<T> {
     Process run() throws IOException;
 
     List<T> runForResult(Executor executor);
+
+    void cancel();
 }

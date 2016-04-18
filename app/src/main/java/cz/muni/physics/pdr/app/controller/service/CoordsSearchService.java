@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 /**
  * @author Michal Krajčovič
@@ -26,10 +27,8 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
     private CelestialCoordinates coords;
 
     @Autowired
-    public CoordsSearchService(StarResolverManager<CelestialCoordinates> coordsResolverManager,
-                               Executor executor) {
+    public CoordsSearchService(StarResolverManager<CelestialCoordinates> coordsResolverManager) {
         this.coordsResolverManager = coordsResolverManager;
-        super.setExecutor(executor);
     }
 
     @Override
@@ -43,12 +42,15 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
             protected List<StellarObjectModel> call() throws Exception {
                 List<StellarObject> results = coordsResolverManager.resolverForResults(coords);
                 List<StellarObjectModel> models = new ArrayList<>(results.size());
-                for (StellarObject result : results) {
-                    models.add(new StellarObjectModel(result));
-                }
+                models.addAll(results.stream().map(StellarObjectModel::new).collect(Collectors.toList()));
                 return models;
             }
         };
+    }
+
+    @Autowired
+    public void setTaskExecutor(Executor executor){
+        super.setExecutor(executor);
     }
 
     public CelestialCoordinates getCoords() {

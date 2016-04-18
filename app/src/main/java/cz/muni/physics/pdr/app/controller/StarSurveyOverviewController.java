@@ -77,7 +77,7 @@ public class StarSurveyOverviewController {
 
     @FXML
     private void handleDeleteButton() {
-
+        // TODO
     }
 
     @FXML

@@ -19,4 +19,6 @@ public interface StarSurveyPluginStarter {
     void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound);
 
     void setOnResultsFound(Consumer<StarSurvey> onResultsFound);
+
+    void cancelAll();
 }

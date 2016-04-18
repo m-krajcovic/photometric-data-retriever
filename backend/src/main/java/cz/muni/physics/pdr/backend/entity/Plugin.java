@@ -21,7 +21,6 @@ public class Plugin {
     private String mainFile;
     @XStreamOmitField
     private List<String> commands = new ArrayList<>();
-    ;
 
     public Plugin(String name) {
         this.name = name;

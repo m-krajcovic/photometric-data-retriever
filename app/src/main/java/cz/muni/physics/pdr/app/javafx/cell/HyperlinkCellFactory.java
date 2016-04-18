@@ -14,12 +14,11 @@ public class HyperlinkCellFactory<S> implements Callback<TableColumn<S, Hyperlin
 
     @Override
     public TableCell<S, Hyperlink> call(TableColumn<S, Hyperlink> arg) {
-        TableCell<S, Hyperlink> cell = new TableCell<S, Hyperlink>() {
+        return new TableCell<S, Hyperlink>() {
             @Override
             protected void updateItem(Hyperlink item, boolean empty) {
                 setGraphic(item);
             }
         };
-        return cell;
     }
 }

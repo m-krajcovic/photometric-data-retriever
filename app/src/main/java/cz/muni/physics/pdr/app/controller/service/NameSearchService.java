@@ -27,10 +27,8 @@ public class NameSearchService extends Service<StellarObject> {
     private StarResolverManager<StellarObjectName> nameResolverManager;
 
     @Autowired
-    public NameSearchService(StarResolverManager<StellarObjectName> nameResolverManager,
-                             Executor executor) {
+    public NameSearchService(StarResolverManager<StellarObjectName> nameResolverManager) {
         this.nameResolverManager = nameResolverManager;
-        super.setExecutor(executor);
     }
 
     @Override
@@ -46,6 +44,11 @@ public class NameSearchService extends Service<StellarObject> {
                 return nameResolverManager.resolverForResult(new StellarObjectName(searchText));
             }
         };
+    }
+
+    @Autowired
+    public void setTaskExecutor(Executor executor){
+        super.setExecutor(executor);
     }
 
     public String getSearchText() {

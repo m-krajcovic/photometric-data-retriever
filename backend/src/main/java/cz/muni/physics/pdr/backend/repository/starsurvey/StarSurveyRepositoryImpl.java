@@ -45,7 +45,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
     @Autowired
     public StarSurveyRepositoryImpl(XStream xStream,
-                                    @Value ("${user.home}${starsurveys.file.path}") String starSurveysFilePath) {
+                                    @Value("${user.home}${starsurveys.file.path}") String starSurveysFilePath) {
         this.xStream = xStream;
         this.starSurveysFilePath = starSurveysFilePath;
         this.fileWatcher = new FileWatcher(starSurveysFilePath);
@@ -118,6 +118,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
                 Map<String, StarSurvey> tempSurveys = new HashMap<>();
                 List<StarSurvey> fromXML = ((List<StarSurvey>) xStream.fromXML(reader));
                 for (StarSurvey starSurvey : fromXML) {
+                    logger.debug("Loaded survey {} ", starSurvey.getName());
                     tempSurveys.put(starSurvey.getName(), starSurvey);
                 }
                 starSurveys = new HashMap<>(tempSurveys);

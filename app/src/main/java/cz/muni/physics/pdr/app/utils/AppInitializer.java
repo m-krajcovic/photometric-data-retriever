@@ -45,17 +45,24 @@ public class AppInitializer {
 
     public void initialize(Application mainApp) {
         logger.debug("Initializing mainApp.");
+
+        File dataDir = new File(dataDirPath);
+        if (!dataDir.exists()) {
+            if(!dataDir.mkdir()){
+                logger.error("Failed to create app data directory");
+            }
+        }
+
         File pluginsDir = new File(pluginsDirPath);
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         logger.debug("Checking if app data exists");
         if (!pluginsDir.exists()) {
             logger.debug("Plugins folder not found, creating new one.");
-            pluginsDir.mkdir();
+            if(!pluginsDir.mkdir()){
+                logger.error("Failed to create plugins directory");
+            }
         }
-        File dataDir = new File(dataDirPath);
-        if (!dataDir.exists()) {
-            dataDir.mkdir();
-        }
+
 
         File starSurveysFile = new File(starSurveysFilePath);
         if (!starSurveysFile.exists()) {

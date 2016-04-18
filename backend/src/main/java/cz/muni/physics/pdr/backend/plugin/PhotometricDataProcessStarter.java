@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 /**
  * @author Michal Krajčovič
@@ -28,6 +29,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
     private String command;
     private Map<String, String> parameters;
     private boolean readyToRun = false;
+    private List<Future> futures = new ArrayList<>(2);
 
     @Override
     public boolean prepare(String command, Map<String, String> parameters) {
@@ -84,20 +86,34 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         }
 
         try {
-            CompletableFuture.supplyAsync(new StreamGobbler(p.getErrorStream()), executor);
-            result.addAll(CompletableFuture.supplyAsync(new StreamGobbler<>(p.getInputStream(), line -> {
+            futures.add(CompletableFuture.supplyAsync(new StreamGobbler<>(p.getErrorStream(), line -> {
+                logger.error(line);
+                return null;
+            }), executor));
+            CompletableFuture<List<PhotometricData>> future = CompletableFuture.supplyAsync(new StreamGobbler<>(p.getInputStream(), line -> {
+                System.out.println(line);
                 String[] split = line.split(",");
                 if (split.length >= 3 && NumberUtils.isParsable(split[0])
                         && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
                     return new PhotometricData(split[0], split[1], split[2]);
                 }
                 return null;
-            }), executor).get());
+            }), executor);
+            futures.add(future);
+            result.addAll(future.get());
         } catch (InterruptedException e) {
             logger.error("Process started by command {} was interrupted.", command, e);
         } catch (ExecutionException e) {
             logger.error("Process started by command {} was aborted by exception.", command, e);
         }
+        futures.clear();
         return result;
+    }
+
+    @Override
+    public void cancel() {
+        futures.stream().filter(future -> future != null && !future.isDone()).forEach(future -> {
+            future.cancel(true);
+        });
     }
 }

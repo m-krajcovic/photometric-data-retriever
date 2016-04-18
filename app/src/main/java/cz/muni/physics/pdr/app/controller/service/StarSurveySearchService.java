@@ -35,10 +35,11 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
     private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Autowired
-    public StarSurveySearchService(StarSurveyPluginStarter pluginStarter,
-                                   Executor executor) {
+    public StarSurveySearchService(StarSurveyPluginStarter pluginStarter) {
         this.pluginStarter = pluginStarter;
-        super.setExecutor(executor);
+        super.setOnCancelled(event -> {
+            pluginStarter.cancelAll();
+        });
     }
 
     @Override
@@ -71,6 +72,11 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
                 return resultMap;
             }
         };
+    }
+
+    @Autowired
+    public void setTaskExecutor(Executor executor) {
+        super.setExecutor(executor);
     }
 
     public StellarObject getResolverResult() {

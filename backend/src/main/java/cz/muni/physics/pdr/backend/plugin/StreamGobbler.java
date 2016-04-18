@@ -39,12 +39,12 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
                 T obj;
                 if (lineProcessor != null && (obj = lineProcessor.apply(line)) != null) {
                     lines.add(obj);
-                } else if (sout){
+                } else if (sout) {
                     System.out.println(line);
                 }
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            ioe.printStackTrace(); //todo
         }
         return lines;
     }
