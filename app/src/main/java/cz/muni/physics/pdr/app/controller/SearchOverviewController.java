@@ -4,6 +4,7 @@ import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
 import cz.muni.physics.pdr.app.controller.service.NameSearchService;
 import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
 import cz.muni.physics.pdr.app.javafx.Shaker;
+import cz.muni.physics.pdr.app.javafx.TitledTextField;
 import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,11 +50,11 @@ public class SearchOverviewController {
     @Autowired
     private ScreenConfig app;
     @Autowired
+    private CoordsSearchService coordsSearchService;
+    @Autowired
     private NameSearchService nameSearchService;
     @Autowired
     private StarSurveySearchService starSurveySearchService;
-    @Autowired
-    private CoordsSearchService coordsSearchService;
 
 
     private StellarObject stellarObject = new StellarObject();
@@ -66,7 +68,7 @@ public class SearchOverviewController {
     @FXML
     private Button searchButton;
     @FXML
-    private TextField searchTextField;
+    private TitledTextField searchTextField;
     @FXML
     private TextField radiusTextField;
     @FXML
@@ -86,6 +88,12 @@ public class SearchOverviewController {
         shaker = new Shaker(mainPane);
         radiusTextField.setTextFormatter(new TextFormatter<>(new RadiusFilter()));
         initializeServices();
+        searchTextField.setPrimaryPane(mainPane);
+        Map<String, String> textFieldChanges = new HashMap<>();
+        textFieldChanges.put("name", "Name:");
+        textFieldChanges.put("coords", "Coords:");
+        textFieldChanges.put("coordinates", "Coords:");
+        searchTextField.setAutomaticTitles(":", textFieldChanges);
     }
 
     @FXML
@@ -95,7 +103,7 @@ public class SearchOverviewController {
     }
 
     private void decideSearchMode() {
-        String searchText = searchTextField.getText().trim();
+        String searchText = searchTextField.getTextWithPrefix().trim();
         if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
             handleNameSearch(searchText.substring(5).trim());
             return;
@@ -131,19 +139,21 @@ public class SearchOverviewController {
             } else {
                 double ra = Double.parseDouble(degrees[0]);
                 double dec = Double.parseDouble(degrees[1]);
+                double rad;
                 if (ra < 0 || ra > 360) {
                     showInfoMessage("Right Ascension must be from interval [0, 360]'");
                     disableElements(false);
+                    return;
                 } else if (dec < -90 || dec > 90) {
                     showInfoMessage("Declination must be from interval [-90, +90]'");
                     disableElements(false);
+                    return;
                 }
                 if (!NumberUtils.isParsable(radiusTextField.getText()) || radiusTextField.getText().isEmpty()) {
                     radiusTextField.setText("0.05");
-                } else {
-                    coordsSearchService.setCoords(new CelestialCoordinates(ra, dec, Double.parseDouble(radiusTextField.getText())));
-                    coordsSearchService.start();
                 }
+                coordsSearchService.setCoords(new CelestialCoordinates(ra, dec, Double.parseDouble(radiusTextField.getText())));
+                coordsSearchService.start();
             }
         }
     }
@@ -182,6 +192,7 @@ public class SearchOverviewController {
             FXMLUtils.showAlert("Error", null, "Failed to get data from Name Resolvers", Alert.AlertType.ERROR);
             nameSearchService.reset();
             disableElements(false);
+            nameSearchService.reset();
         });
     }
 
@@ -216,10 +227,13 @@ public class SearchOverviewController {
                 showInfoMessage("No results found");
                 disableElements(false);
             } else {
-                selected = app.showStellarObjects(searchResult, e -> disableElements(false));
+                selected = app.showStellarObjects(searchResult);
                 if (selected != null) {
+                    stellarObject.merge(selected.toEntity());
                     nameSearchService.setSearchText(selected.getName());
                     nameSearchService.start();
+                } else {
+                    disableElements(false);
                 }
             }
             coordsSearchService.reset();

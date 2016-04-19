@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app;
 
 import com.sun.javafx.application.LauncherImpl;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
+import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -32,6 +33,10 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+            logger.error(e.getMessage(), e);
+            FXMLUtils.showExceptionAlert("Something went terribly wrong!", "Your best bet is to restart this application", e.getMessage(), e);
+        });
         primaryStage.setTitle(app.getName());
         primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream(app.getIconPath())));
         app.setPrimaryStage(primaryStage);

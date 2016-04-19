@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.backend.repository;
+package cz.muni.physics.pdr.backend.manager;
 
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 
@@ -11,16 +11,16 @@ import java.util.function.Predicate;
  * @version 1.0
  * @since 14/04/16
  */
-public interface GenericRepository<T, ID extends Serializable> {
+public interface GenericEntityManager<T, ID extends Serializable> {
     void insert(T entity) throws ResourceAvailabilityException;
 
     void delete(T entity) throws ResourceAvailabilityException;
 
     Collection<T> getAll() throws ResourceAvailabilityException;
 
-    T getById(ID id) throws ResourceAvailabilityException;
-
     T searchFor(Predicate<T> predicate) throws ResourceAvailabilityException;
 
     Collection<T> searchForAll(Predicate<T> predicate) throws ResourceAvailabilityException;
+
+    T getById(ID id) throws ResourceAvailabilityException;
 }

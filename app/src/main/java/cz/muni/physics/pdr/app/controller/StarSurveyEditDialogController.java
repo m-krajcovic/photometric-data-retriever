@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.PluginManager;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -55,7 +56,11 @@ public class StarSurveyEditDialogController {
             }
         });
         ObservableList<PluginModel> list = FXCollections.observableArrayList();
-        pluginManager.getAll().forEach(p -> list.add(new PluginModel(p)));
+        try {
+            pluginManager.getAll().forEach(p -> list.add(new PluginModel(p)));
+        } catch (ResourceAvailabilityException e) {
+            e.printStackTrace(); //todo
+        }
         pluginChoiceBox.setItems(list);
     }
 

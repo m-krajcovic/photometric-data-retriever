@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.backend.manager;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,22 +32,22 @@ public class PluginManagerImpl implements PluginManager {
 
 
     @Override
-    public Collection<Plugin> getAll() {
+    public Collection<Plugin> getAll() throws ResourceAvailabilityException {
         return pluginRepository.getAll();
     }
 
     @Override
-    public Plugin searchFor(Predicate<Plugin> predicate) {
+    public Plugin searchFor(Predicate<Plugin> predicate) throws ResourceAvailabilityException {
         return pluginRepository.searchFor(predicate);
     }
 
     @Override
-    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) {
+    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) throws ResourceAvailabilityException {
         return pluginRepository.searchForAll(predicate);
     }
 
     @Override
-    public Plugin getById(String s) {
+    public Plugin getById(String s) throws ResourceAvailabilityException {
         return pluginRepository.getById(s);
     }
 }

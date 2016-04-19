@@ -1,8 +1,9 @@
-package cz.muni.physics.pdr.backend.plugin;
+package cz.muni.physics.pdr.backend.resolver.plugin;
 
 import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,8 @@ import java.util.function.Consumer;
  * @version 1.0
  * @since 14/04/16
  */
-public interface StarSurveyPluginStarter {
-    Map<StarSurvey, List<PhotometricData>> runAll(StellarObject result);
+public interface PhotometricDataRetrieverManager {
+    Map<StarSurvey, List<PhotometricData>> runAll(StellarObject result) throws ResourceAvailabilityException;
 
     void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound);
 

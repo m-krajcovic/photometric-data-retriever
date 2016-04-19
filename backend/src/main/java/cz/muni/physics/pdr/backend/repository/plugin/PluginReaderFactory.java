@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -19,16 +19,15 @@ public abstract class PluginReaderFactory {
         }
         File[] files = pluginDir.listFiles();
         if (files != null) {
-            Map<String, File> fileMap = new HashMap<>();
+            Set<String> fileSet = new HashSet<>();
             for (File file : files) {
-                fileMap.put(file.getName(), file);
+                fileSet.add(file.getName());
             }
+            if (fileSet.contains("plugin.xml")) {
 
-            if (fileMap.containsKey("plugin.xml")) {
+            } else if (fileSet.contains("plugin.json")) {
 
-            } else if (fileMap.containsKey("plugin.json")) {
-
-            } else if (fileMap.containsKey("plugin.properties")) {
+            } else if (fileSet.contains("plugin.properties")) {
                 return new PropertiesPluginReader(pluginDir);
             }
         }

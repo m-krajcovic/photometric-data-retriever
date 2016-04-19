@@ -16,6 +16,7 @@ public class StellarObjectModel implements EntityModel<StellarObject>{
     private DoubleProperty rightAscension;
     private DoubleProperty declination;
     private DoubleProperty distance;
+    private StellarObject object;
 
     public StellarObjectModel(String name, double rightAscension, double declination, double distance) {
         this.name = new SimpleStringProperty(name);
@@ -24,12 +25,17 @@ public class StellarObjectModel implements EntityModel<StellarObject>{
         this.distance = new SimpleDoubleProperty(distance);
     }
 
-    public StellarObjectModel(StellarObject result) {
-        this(result.getNames().get(0), result.getRightAscension(), result.getDeclination(), result.getDistance());
+    public StellarObjectModel(StellarObject stellarObject) {
+        this(String.join(", " ,stellarObject.getNames()),
+                stellarObject.getRightAscension(),
+                stellarObject.getDeclination(),
+                stellarObject.getDistance());
+        this.object = stellarObject;
     }
 
     @Override
     public StellarObject toEntity() {
+        if(object != null) return object;
         StellarObject obj = new StellarObject();
         obj.getNames().add(getName());
         obj.setRightAscension(getRightAscension());

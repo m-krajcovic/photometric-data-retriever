@@ -1,7 +1,9 @@
 package cz.muni.physics.pdr.backend.repository.starsurvey;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,10 +41,6 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     private XStream xStream;
     private Map<String, StarSurvey> starSurveys;
 
-    /*
-     * TODO : file watcher -> load new on event
-     */
-
     @Autowired
     public StarSurveyRepositoryImpl(XStream xStream,
                                     @Value("${user.home}${starsurveys.file.path}") String starSurveysFilePath) {
@@ -53,13 +51,13 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
 
     @Override
-    public void insert(StarSurvey entity) {
+    public void insert(StarSurvey entity) throws ResourceAvailabilityException {
         starSurveys.put(entity.getName(), new StarSurvey(entity));
         saveToFile();
     }
 
     @Override
-    public void delete(StarSurvey entity) {
+    public void delete(StarSurvey entity) throws ResourceAvailabilityException {
         if (starSurveys.containsKey(entity.getName())) {
             starSurveys.remove(entity.getName());
             saveToFile();
@@ -67,7 +65,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public Collection<StarSurvey> getAll() {
+    public Collection<StarSurvey> getAll() throws ResourceAvailabilityException {
         checkAndLoadSurveys();
         List<StarSurvey> newList = new ArrayList<>(starSurveys.values().size());
         starSurveys.values().forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
@@ -75,13 +73,13 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public StarSurvey getById(String s) {
+    public StarSurvey getById(String s) throws ResourceAvailabilityException {
         checkAndLoadSurveys();
         return new StarSurvey(starSurveys.get(s));
     }
 
     @Override
-    public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
+    public StarSurvey searchFor(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException {
         checkAndLoadSurveys();
         Optional<StarSurvey> optional = starSurveys.values().stream().filter(predicate).findFirst();
         if (optional.isPresent()) {
@@ -91,7 +89,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) {
+    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException {
         checkAndLoadSurveys();
         List<StarSurvey> result = starSurveys.values().stream().filter(predicate).collect(Collectors.toList());
         List<StarSurvey> newList = new ArrayList<>(result.size());
@@ -99,7 +97,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
         return newList;
     }
 
-    private void checkAndLoadSurveys() {
+    private void checkAndLoadSurveys() throws ResourceAvailabilityException {
         if (starSurveys == null) {
             logger.debug("Surveys were not loaded yet. Loading surveys from {}", starSurveysFilePath);
             loadSurveys();
@@ -111,7 +109,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
         }
     }
 
-    private synchronized void loadSurveys() {
+    private synchronized void loadSurveys(int retryCount) throws ResourceAvailabilityException {
         if (starSurveys == null || fileWatcher.isFileUpdated()) {
             File starSurveysFile = new File(starSurveysFilePath);
             try (Reader reader = new FileReader(starSurveysFile)) {
@@ -122,19 +120,28 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
                     tempSurveys.put(starSurvey.getName(), starSurvey);
                 }
                 starSurveys = new HashMap<>(tempSurveys);
-            } catch (IOException e) {
-                e.printStackTrace(); // TODO
+            } catch (IOException | XStreamException e) {
+                if (starSurveys != null && retryCount <= 3) {
+                    saveToFile();
+                    loadSurveys(++retryCount);
+                } else {
+                    throw new ResourceAvailabilityException("Failed to load file", starSurveysFilePath, e);
+                }
             }
         }
     }
 
-    private synchronized void saveToFile() {
+    private synchronized void loadSurveys() throws ResourceAvailabilityException {
+        loadSurveys(0);
+    }
+
+    private synchronized void saveToFile() throws ResourceAvailabilityException {
         List<StarSurvey> allEntities = new ArrayList<>(starSurveys.values());
         File starSurveysFile = new File(starSurveysFilePath);
         try (Writer writer = new FileWriter(starSurveysFile)) {
             xStream.toXML(allEntities, writer);
         } catch (IOException e) {
-            e.printStackTrace(); //TODO
+            throw new ResourceAvailabilityException("Failed to save to file", starSurveysFilePath, e);
         }
     }
 }

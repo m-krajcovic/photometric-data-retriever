@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.backend.plugin;
+package cz.muni.physics.pdr.backend.resolver.plugin;
 
 import java.io.IOException;
 import java.util.List;

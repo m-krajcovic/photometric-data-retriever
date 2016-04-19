@@ -1,8 +1,8 @@
 package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.entity.StellarObjectName;
-import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
+import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -24,11 +24,11 @@ public class NameSearchService extends Service<StellarObject> {
 
     private String searchText;
 
-    private StarResolverManager<StellarObjectName> nameResolverManager;
+    private SesameNameResolver sesameNameResolver;
 
     @Autowired
-    public NameSearchService(StarResolverManager<StellarObjectName> nameResolverManager) {
-        this.nameResolverManager = nameResolverManager;
+    public NameSearchService(SesameNameResolver sesameNameResolver) {
+        this.sesameNameResolver = sesameNameResolver;
     }
 
     @Override
@@ -39,9 +39,9 @@ public class NameSearchService extends Service<StellarObject> {
         return new Task<StellarObject>() {
 
             @Override
-            protected StellarObject call() {
+            protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
-                return nameResolverManager.resolverForResult(new StellarObjectName(searchText));
+                return sesameNameResolver.findByName(searchText);
             }
         };
     }

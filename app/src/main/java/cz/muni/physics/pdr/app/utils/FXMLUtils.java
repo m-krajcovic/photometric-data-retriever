@@ -52,7 +52,7 @@ public class FXMLUtils {
         alert.showAndWait();
     }
 
-    public static void showExceptionAlert(String title, String header, String content, Exception exc) {
+    public static void showExceptionAlert(String title, String header, String content, Throwable exc) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(header);

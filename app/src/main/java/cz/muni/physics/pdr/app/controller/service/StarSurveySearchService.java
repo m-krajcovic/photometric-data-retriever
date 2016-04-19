@@ -3,7 +3,9 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.plugin.StarSurveyPluginStarter;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
+import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
+import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManagerImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;
@@ -29,14 +31,14 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
 
     private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
 
-    private StarSurveyPluginStarter pluginStarter;
+    private PhotometricDataRetrieverManager retrieverManager;
 
     private StellarObject resolverResult;
     private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Autowired
-    public StarSurveySearchService(StarSurveyPluginStarter pluginStarter) {
-        this.pluginStarter = pluginStarter;
+    public StarSurveySearchService(PhotometricDataRetrieverManagerImpl pluginStarter) {
+        this.retrieverManager = pluginStarter;
         super.setOnCancelled(event -> {
             pluginStarter.cancelAll();
         });
@@ -59,12 +61,12 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         }
         return new Task<Map<StarSurvey, List<PhotometricDataModel>>>() {
             @Override
-            protected Map<StarSurvey, List<PhotometricDataModel>> call() {
+            protected Map<StarSurvey, List<PhotometricDataModel>> call() throws ResourceAvailabilityException {
                 logger.debug("Starting task.");
-                pluginStarter.setOnNoResultsFound(s -> starSurveysMap.put(s, false));
-                pluginStarter.setOnResultsFound(s -> starSurveysMap.put(s, true));
+                retrieverManager.setOnNoResultsFound(s -> starSurveysMap.put(s, false));
+                retrieverManager.setOnResultsFound(s -> starSurveysMap.put(s, true));
                 Map<StarSurvey, List<PhotometricDataModel>> resultMap = new HashMap<>();
-                pluginStarter.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
+                retrieverManager.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
                     List<PhotometricDataModel> list = new ArrayList<>();
                     photometricDatas.forEach(d -> list.add(new PhotometricDataModel(d)));
                     resultMap.put(starSurvey, list);

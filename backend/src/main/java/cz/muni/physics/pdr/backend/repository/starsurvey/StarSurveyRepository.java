@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.backend.repository.starsurvey;
 
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.GenericRepository;
 
 /**
@@ -9,7 +10,7 @@ import cz.muni.physics.pdr.backend.repository.GenericRepository;
  * @since 14/04/16
  */
 public interface StarSurveyRepository extends GenericRepository<StarSurvey, String> {
-    default StarSurvey getById(String s) {
+    default StarSurvey getById(String s) throws ResourceAvailabilityException {
         return searchFor(survey -> survey.getName().equalsIgnoreCase(s));
     }
 }

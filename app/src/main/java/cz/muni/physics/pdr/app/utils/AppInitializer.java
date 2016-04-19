@@ -1,9 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
-import cz.muni.physics.pdr.backend.entity.StellarObjectName;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryImpl;
-import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +29,6 @@ public class AppInitializer {
 
     @Autowired
     private ScreenConfig app;
-    @Autowired
-    private StarResolverManager<StellarObjectName> nameResolverManager;
     @Value("${user.home}${plugins.dir.path}")
     private String pluginsDirPath;
     @Value("${user.home}${app.data.dir.path}")
@@ -48,8 +44,8 @@ public class AppInitializer {
 
         File dataDir = new File(dataDirPath);
         if (!dataDir.exists()) {
-            if(!dataDir.mkdir()){
-                logger.error("Failed to create app data directory");
+            if (!dataDir.mkdir()) {
+                initExceptions.add(new RuntimeException("Failed to create app data directory"));
             }
         }
 
@@ -58,8 +54,8 @@ public class AppInitializer {
         logger.debug("Checking if app data exists");
         if (!pluginsDir.exists()) {
             logger.debug("Plugins folder not found, creating new one.");
-            if(!pluginsDir.mkdir()){
-                logger.error("Failed to create plugins directory");
+            if (!pluginsDir.mkdir()) {
+                initExceptions.add(new RuntimeException("Failed to create plugins directory"));
             }
         }
 
@@ -74,22 +70,20 @@ public class AppInitializer {
                     outputStream.write(bytes, 0, read);
                 }
             } catch (IOException e) {
-                e.printStackTrace(); // TODO
+                initExceptions.add(new RuntimeException("Failed to copy default star surveys config to " + starSurveysFilePath, e));
             }
         }
         // TODO ? Backend should have initialization class ?
         // TODO check vsx dat file
 
-        mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
-        nameResolverManager.getAvailableStarResolvers().forEach((resolver, available) -> {
-                    if (!available) {
-                        logger.warn(resolver.getClass().getCanonicalName() + " is not available.");
-                        initErrors.add(resolver.getClass().getCanonicalName() + " is not available.");
-                    }
-                }
-
-
-        );
+//        mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);
+//        sesameNameResolver.getAvailableStarResolvers().forEach((resolver, available) -> {
+//                    if (!available) {
+//                        logger.warn(resolver.getClass().getCanonicalName() + " is not available.");
+//                        initErrors.add(resolver.getClass().getCanonicalName() + " is not available.");
+//                    }
+//                }
+//        );
     }
 
     public void showInitExceptions() {

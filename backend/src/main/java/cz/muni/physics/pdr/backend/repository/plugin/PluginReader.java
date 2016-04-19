@@ -1,7 +1,6 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
-import cz.muni.physics.pdr.backend.plugin.PluginManagerException;
 
 import java.io.File;
 
@@ -11,6 +10,6 @@ import java.io.File;
  * @since 13/04/16
  */
 public interface PluginReader {
-    Plugin readPlugin() throws PluginManagerException;
+    Plugin readPlugin();
     void setPluginDir(File pluginDir);
 }

@@ -7,6 +7,6 @@ import cz.muni.physics.pdr.backend.entity.Plugin;
  * @version 1.0
  * @since 14/04/16
  */
-public interface PluginManager extends GenericManager<Plugin, String> {
+public interface PluginManager extends GenericEntityManager<Plugin, String> {
 
 }

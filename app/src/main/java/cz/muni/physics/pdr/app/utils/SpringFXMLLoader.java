@@ -41,7 +41,7 @@ public class SpringFXMLLoader {
             fxmlLoader.setLocation(fxml);
             return fxmlLoader.load();
         } catch (IOException ioException) {
-            throw new RuntimeException("Failed to load fxml resource", ioException);
+            throw new RuntimeException(ioException.getMessage(), ioException);
         }
     }
 

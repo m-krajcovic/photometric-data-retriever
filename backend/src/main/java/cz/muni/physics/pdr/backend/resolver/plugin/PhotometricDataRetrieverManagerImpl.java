@@ -1,9 +1,10 @@
-package cz.muni.physics.pdr.backend.plugin;
+package cz.muni.physics.pdr.backend.resolver.plugin;
 
 import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.backend.utils.ParameterUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +30,9 @@ import java.util.function.Consumer;
  */
 @Component
 @Scope("prototype")
-public class StarSurveyPluginStarterImpl implements StarSurveyPluginStarter {
+public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetrieverManager {
 
-    private final static Logger logger = LogManager.getLogger(StarSurveyPluginStarterImpl.class);
+    private final static Logger logger = LogManager.getLogger(PhotometricDataRetrieverManagerImpl.class);
 
     @Autowired
     private StarSurveyManager starSurveyManager;
@@ -44,7 +45,7 @@ public class StarSurveyPluginStarterImpl implements StarSurveyPluginStarter {
     private List<Future> futures = null;
     private List<ProcessStarter> processStarters;
 
-    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
+    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) throws ResourceAvailabilityException {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         futures = new ArrayList<>();
         processStarters = new ArrayList<>();
@@ -71,9 +72,9 @@ public class StarSurveyPluginStarterImpl implements StarSurveyPluginStarter {
             try {
                 future.get();
             } catch (InterruptedException e) {
-                logger.error("Task got cancelled.");
+                logger.debug("Task got cancelled.");
             } catch (ExecutionException e) {
-                logger.error("Failed to wait for result for all star survey tasks.", e);
+                throw new RuntimeException("Failed to wait for result for all star survey tasks.", e);
             }
         });
         return resultMap;

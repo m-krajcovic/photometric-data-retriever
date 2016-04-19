@@ -1,10 +1,11 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
-import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.utils.ScreenConfig;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
+import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -50,7 +51,11 @@ public class StarSurveyOverviewController {
         StarSurveyModel tempStarSurvey = new StarSurveyModel();
         boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey);
         if (okClicked) {
-            starSurveyManager.insert(tempStarSurvey.toEntity());
+            try {
+                starSurveyManager.insert(tempStarSurvey.toEntity());
+            } catch (ResourceAvailabilityException e) {
+                e.printStackTrace(); //todo
+            }
         }
     }
 
@@ -60,24 +65,30 @@ public class StarSurveyOverviewController {
         if (selectedRecord != null) {
             boolean okClicked = app.showStarSurveyEditDialog(selectedRecord);
             if (okClicked) {
-                starSurveyManager.insert(selectedRecord.toEntity());
+                try {
+                    starSurveyManager.insert(selectedRecord.toEntity());
+                } catch (ResourceAvailabilityException e) {
+                    e.printStackTrace(); //todo
+                }
                 starSurveys.refresh();
             }
         } else {
-            // Nothing selected.
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(app.getPrimaryStage());
-            alert.setTitle("No Selection");
-            alert.setHeaderText("No Star Survey Selected");
-            alert.setContentText("Please select a person in the table.");
-
-            alert.showAndWait();
+            showNoSelectionDialog();
         }
     }
 
     @FXML
     private void handleDeleteButton() {
-        // TODO
+        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
+        if (selectedRecord != null) {
+            try{
+                starSurveyManager.delete(selectedRecord.toEntity());
+            } catch (ResourceAvailabilityException e) {
+                e.printStackTrace(); // todo
+            }
+        } else {
+            showNoSelectionDialog();
+        }
     }
 
     @FXML
@@ -88,7 +99,22 @@ public class StarSurveyOverviewController {
         pluginColumn.setCellFactory(new PluginCellFactory());
 
         ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
-        starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+        try {
+            starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+        } catch (ResourceAvailabilityException e) {
+            e.printStackTrace();
+        }
         starSurveys.setItems(list);
+    }
+
+    private void showNoSelectionDialog(){
+        // Nothing selected.
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.initOwner(app.getPrimaryStage());
+        alert.setTitle("No Selection");
+        alert.setHeaderText("No Star Survey Selected");
+        alert.setContentText("Please select a person in the table.");
+
+        alert.showAndWait();
     }
 }

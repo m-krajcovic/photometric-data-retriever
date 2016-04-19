@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.backend.plugin;
+package cz.muni.physics.pdr.backend.resolver.plugin;
 
 import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.utils.ParameterUtils;
@@ -81,8 +81,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         try {
             p = run();
         } catch (IOException e) {
-            logger.error("Failed to run process by command {}", command, e);
-            return result;
+            throw new RuntimeException("Failed to run process by command {}" + command, e);
         }
 
         try {
@@ -91,7 +90,6 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
                 return null;
             }), executor));
             CompletableFuture<List<PhotometricData>> future = CompletableFuture.supplyAsync(new StreamGobbler<>(p.getInputStream(), line -> {
-                System.out.println(line);
                 String[] split = line.split(",");
                 if (split.length >= 3 && NumberUtils.isParsable(split[0])
                         && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
@@ -102,9 +100,9 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
             futures.add(future);
             result.addAll(future.get());
         } catch (InterruptedException e) {
-            logger.error("Process started by command {} was interrupted.", command, e);
+            logger.debug("Process started by command {} was canceled.", command, e);
         } catch (ExecutionException e) {
-            logger.error("Process started by command {} was aborted by exception.", command, e);
+            throw new RuntimeException("Process started by command was aborted by exception.", e);
         }
         futures.clear();
         return result;

@@ -3,7 +3,8 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.resolver.StarResolverManager;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
+import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ import java.util.stream.Collectors;
 @Component
 public class CoordsSearchService extends Service<List<StellarObjectModel>> {
 
-    private StarResolverManager<CelestialCoordinates> coordsResolverManager;
+    private VSXStarResolver vsxStarResolver;
 
     private CelestialCoordinates coords;
 
     @Autowired
-    public CoordsSearchService(StarResolverManager<CelestialCoordinates> coordsResolverManager) {
-        this.coordsResolverManager = coordsResolverManager;
+    public CoordsSearchService(VSXStarResolver vsxStarResolver) {
+        this.vsxStarResolver = vsxStarResolver;
     }
 
     @Override
@@ -39,8 +40,8 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
 
         return new Task<List<StellarObjectModel>>() {
             @Override
-            protected List<StellarObjectModel> call() throws Exception {
-                List<StellarObject> results = coordsResolverManager.resolverForResults(coords);
+            protected List<StellarObjectModel> call() throws ResourceAvailabilityException {
+                List<StellarObject> results = vsxStarResolver.findByCoordinates(coords);
                 List<StellarObjectModel> models = new ArrayList<>(results.size());
                 models.addAll(results.stream().map(StellarObjectModel::new).collect(Collectors.toList()));
                 return models;

@@ -9,13 +9,11 @@ import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.utils.AppConfig;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -70,7 +68,7 @@ public class ScreenConfig {
         AnchorPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Search result");
+        dialogStage.setTitle("Search stellarObject");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(photometricDataOverview);
@@ -81,7 +79,8 @@ public class ScreenConfig {
     }
 
     public void showStarSurveyOverview() {
-        AnchorPane starSurveyOverview = fxmlLoader().load("/view/StarSurveyOverview.fxml");
+        AnchorPane starSurveyOverview;
+        starSurveyOverview = fxmlLoader().load("/view/StarSurveyOverview.fxml");
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Star surveys");
         dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -107,7 +106,7 @@ public class ScreenConfig {
         return controller.isOkClicked();
     }
 
-    public StellarObjectModel showStellarObjects(List<StellarObjectModel> stellarObjects, EventHandler<WindowEvent> onClose) {
+    public StellarObjectModel showStellarObjects(List<StellarObjectModel> stellarObjects) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane stellarObjectDialog = loader.load("/view/StellarObjectOverview.fxml");
         StellarObjectOverviewController controller = loader.getController();
@@ -119,7 +118,6 @@ public class ScreenConfig {
         dialogStage.setScene(scene);
         controller.setDialogStage(dialogStage);
         controller.setItems(stellarObjects);
-        dialogStage.setOnCloseRequest(onClose);
         dialogStage.showAndWait();
         return controller.getSelected();
     }

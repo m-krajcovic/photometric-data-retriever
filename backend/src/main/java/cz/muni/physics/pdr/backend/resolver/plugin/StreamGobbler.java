@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.backend.plugin;
+package cz.muni.physics.pdr.backend.resolver.plugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,9 +31,8 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
     @Override
     public List<T> get() {
         List<T> lines = new ArrayList<>();
-        try {
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+        try (InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr)) {
             String line;
             while ((line = br.readLine()) != null) {
                 T obj;
@@ -44,7 +43,7 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
                 }
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace(); //todo
+            throw new RuntimeException(ioe);
         }
         return lines;
     }

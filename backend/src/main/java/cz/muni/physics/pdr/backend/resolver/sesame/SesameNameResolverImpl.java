@@ -1,8 +1,8 @@
-package cz.muni.physics.pdr.backend.resolver.name;
+package cz.muni.physics.pdr.backend.resolver.sesame;
 
-import cz.muni.physics.pdr.backend.entity.StellarObjectName;
-import cz.muni.physics.pdr.backend.resolver.StarResolver;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,28 +30,27 @@ import java.util.List;
  * @since 24/03/16
  */
 @Component
-public class SesameNameResolver implements StarResolver<StellarObjectName> {
+public class SesameNameResolverImpl implements SesameNameResolver {
+    private final static Logger logger = LogManager.getLogger(SesameNameResolverImpl.class);
 
     private RestOperations restTemplate;
     private String resolverUrl;
     private String testUrl;
 
     @Autowired
-    public SesameNameResolver(RestOperations restTemplate,
-                              @Value("${sesame.resolver.url}") String resolverUrl,
-                              @Value("${sesame.test.url}") String testUrl) {
+    public SesameNameResolverImpl(RestOperations restTemplate,
+                                  @Value("${sesame.resolver.url}") String resolverUrl,
+                                  @Value("${sesame.test.url}") String testUrl) {
         this.restTemplate = restTemplate;
         this.resolverUrl = resolverUrl;
         this.testUrl = testUrl;
     }
 
-    @Override
-    public List<StellarObject> getResults(StellarObjectName param) {
-        return Collections.singletonList(getResult(param));
-    }
 
-    public StellarObject getResult(StellarObjectName name) {
-        String response = restTemplate.getForObject(resolverUrl, String.class, name.getValue()); // TODO try catch something
+    @Override
+    public StellarObject findByName(String name) {
+        logger.debug("Resolving name by Sesame with {}", name);
+        String response = restTemplate.getForObject(resolverUrl, String.class, name); // TODO try catch something
         InputSource source = new InputSource(new StringReader(response));
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
@@ -71,8 +69,9 @@ public class SesameNameResolver implements StarResolver<StellarObjectName> {
             result.setRightAscension(Double.parseDouble(xpath.evaluate("//jradeg[1]", doc))); //todo check these
             result.setDeclination(Double.parseDouble(xpath.evaluate("//jdedeg[1]", doc)));
         } catch (XPathExpressionException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // todo this can be handled
         }
+        logger.debug("Finished Sesame Name Resolver.");
         return result;
     }
 

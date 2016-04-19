@@ -91,7 +91,6 @@ public class StellarObjectOverviewController {
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
         dialogStage.setOnCloseRequest(event -> {
-            dialogStage.getOnCloseRequest().handle(event);
             selectedModel = null;
         });
     }

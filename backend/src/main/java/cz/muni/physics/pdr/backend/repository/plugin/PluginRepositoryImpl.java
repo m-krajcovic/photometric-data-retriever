@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
-import cz.muni.physics.pdr.backend.plugin.PluginManagerException;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +58,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public Plugin getById(String s) {
+    public Plugin getById(String s) throws ResourceAvailabilityException {
         checkAndLoadPlugins();
         return new Plugin(plugins.get(s));
     }
@@ -89,7 +89,7 @@ public class PluginRepositoryImpl implements PluginRepository {
         } else if (fileWatcher.isFileUpdated()) {
             logger.debug("Plugins folder has changed. Loading plugins from {}", pluginsFolderPath);
             loadPlugins();
-        } else{
+        } else {
             logger.debug("No outside change in plugins folder. Using cached copy.");
         }
     }
@@ -102,12 +102,7 @@ public class PluginRepositoryImpl implements PluginRepository {
             String pluginDirPath = pluginsFolderPath + File.separator + pluginDirName + File.separator;
             PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
             if (reader != null) {
-                Plugin plugin = null;
-                try {
-                    plugin = reader.readPlugin();
-                } catch (PluginManagerException e) {
-                    e.printStackTrace(); // todo
-                }
+                Plugin plugin = reader.readPlugin();
                 if (plugin != null) {
                     logger.debug("Loaded plugin {}", plugin.getName());
                     tempPlugins.put(plugin.getName(), plugin);
