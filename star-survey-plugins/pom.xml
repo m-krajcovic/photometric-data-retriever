@@ -14,6 +14,10 @@
         <module>nsvs-plugin</module>
         <module>java-plugin</module>
         <module>swasp-plugin</module>
+        <module>hip-plugin</module>
+        <module>asas3-plugin</module>
+        <module>apass-plugin</module>
+        <module>omc-plugin</module>
     </modules>
 
     <properties>

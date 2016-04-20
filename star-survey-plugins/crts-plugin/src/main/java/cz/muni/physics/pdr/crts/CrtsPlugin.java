@@ -40,21 +40,18 @@ public class CrtsPlugin implements Plugin {
             e.printStackTrace();
             return result;
         }
-        BufferedReader in;
-        try {
-            in = new BufferedReader(new InputStreamReader(csvUrl.openStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return result;
-        }
-        CSVReader reader = new CSVReader(in);
-        try {
-            String[] nextLine = reader.readNext();
-            if (nextLine == null) return null;
-            while ((nextLine = reader.readNext()) != null) {
-                Double julianDate = Double.parseDouble(nextLine[5]) + 2400000.5;
-                PhotometricData data = new PhotometricData(julianDate.toString(), nextLine[1], nextLine[2]);
-                result.add(data);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(csvUrl.openStream()))) {
+            CSVReader reader = new CSVReader(in);
+            try {
+                String[] nextLine = reader.readNext();
+                if (nextLine == null) return null;
+                while ((nextLine = reader.readNext()) != null) {
+                    Double julianDate = Double.parseDouble(nextLine[5]) + 2400000.5;
+                    PhotometricData data = new PhotometricData(julianDate.toString(), nextLine[1], nextLine[2]);
+                    result.add(data);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
