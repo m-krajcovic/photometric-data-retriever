@@ -32,22 +32,22 @@ public class PluginManagerImpl implements PluginManager {
 
 
     @Override
-    public Collection<Plugin> getAll() throws ResourceAvailabilityException {
+    public Collection<Plugin> getAll()  {
         return pluginRepository.getAll();
     }
 
     @Override
-    public Plugin searchFor(Predicate<Plugin> predicate) throws ResourceAvailabilityException {
+    public Plugin searchFor(Predicate<Plugin> predicate)  {
         return pluginRepository.searchFor(predicate);
     }
 
     @Override
-    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) throws ResourceAvailabilityException {
+    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate)  {
         return pluginRepository.searchForAll(predicate);
     }
 
     @Override
-    public Plugin getById(String s) throws ResourceAvailabilityException {
+    public Plugin getById(String s)  {
         return pluginRepository.getById(s);
     }
 }

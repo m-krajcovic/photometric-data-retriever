@@ -4,7 +4,6 @@ import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.backend.utils.ParameterUtils;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +44,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     private List<Future> futures = null;
     private List<ProcessStarter> processStarters;
 
-    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) throws ResourceAvailabilityException {
+    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult)  {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         futures = new ArrayList<>();
         processStarters = new ArrayList<>();

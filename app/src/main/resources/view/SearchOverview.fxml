@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import cz.muni.physics.pdr.app.javafx.TitledTextField?>
+<?import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -17,11 +17,11 @@
             <children>
                 <HBox disable="false" prefHeight="27.0" prefWidth="375.0">
                     <children>
-                        <TitledTextField fx:id="searchTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" promptText="Input name or coords">
+                        <TitledTextFieldBox fx:id="searchTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" maxWidth="234.0">
                             <HBox.margin>
                                 <Insets right="5.0" />
                             </HBox.margin>
-                        </TitledTextField>
+                        </TitledTextFieldBox>
                         <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="Radius">
                             <HBox.margin>
                                 <Insets right="5.0" />

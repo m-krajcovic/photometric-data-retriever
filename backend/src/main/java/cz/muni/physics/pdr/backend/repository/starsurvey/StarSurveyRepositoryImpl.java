@@ -51,13 +51,13 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
 
     @Override
-    public void insert(StarSurvey entity) throws ResourceAvailabilityException {
+    public void insert(StarSurvey entity)  {
         starSurveys.put(entity.getName(), new StarSurvey(entity));
         saveToFile();
     }
 
     @Override
-    public void delete(StarSurvey entity) throws ResourceAvailabilityException {
+    public void delete(StarSurvey entity)  {
         if (starSurveys.containsKey(entity.getName())) {
             starSurveys.remove(entity.getName());
             saveToFile();
@@ -65,7 +65,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public Collection<StarSurvey> getAll() throws ResourceAvailabilityException {
+    public Collection<StarSurvey> getAll()  {
         checkAndLoadSurveys();
         List<StarSurvey> newList = new ArrayList<>(starSurveys.values().size());
         starSurveys.values().forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
@@ -73,13 +73,13 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public StarSurvey getById(String s) throws ResourceAvailabilityException {
+    public StarSurvey getById(String s)  {
         checkAndLoadSurveys();
         return new StarSurvey(starSurveys.get(s));
     }
 
     @Override
-    public StarSurvey searchFor(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException {
+    public StarSurvey searchFor(Predicate<StarSurvey> predicate)  {
         checkAndLoadSurveys();
         Optional<StarSurvey> optional = starSurveys.values().stream().filter(predicate).findFirst();
         if (optional.isPresent()) {
@@ -89,7 +89,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     }
 
     @Override
-    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException {
+    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate)  {
         checkAndLoadSurveys();
         List<StarSurvey> result = starSurveys.values().stream().filter(predicate).collect(Collectors.toList());
         List<StarSurvey> newList = new ArrayList<>(result.size());
@@ -97,7 +97,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
         return newList;
     }
 
-    private void checkAndLoadSurveys() throws ResourceAvailabilityException {
+    private void checkAndLoadSurveys()  {
         if (starSurveys == null) {
             logger.debug("Surveys were not loaded yet. Loading surveys from {}", starSurveysFilePath);
             loadSurveys();
@@ -109,7 +109,7 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
         }
     }
 
-    private synchronized void loadSurveys(int retryCount) throws ResourceAvailabilityException {
+    private synchronized void loadSurveys(int retryCount)  {
         if (starSurveys == null || fileWatcher.isFileUpdated()) {
             File starSurveysFile = new File(starSurveysFilePath);
             try (Reader reader = new FileReader(starSurveysFile)) {
@@ -131,11 +131,11 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
         }
     }
 
-    private synchronized void loadSurveys() throws ResourceAvailabilityException {
+    private synchronized void loadSurveys()  {
         loadSurveys(0);
     }
 
-    private synchronized void saveToFile() throws ResourceAvailabilityException {
+    private synchronized void saveToFile()  {
         List<StarSurvey> allEntities = new ArrayList<>(starSurveys.values());
         File starSurveysFile = new File(starSurveysFilePath);
         try (Writer writer = new FileWriter(starSurveysFile)) {

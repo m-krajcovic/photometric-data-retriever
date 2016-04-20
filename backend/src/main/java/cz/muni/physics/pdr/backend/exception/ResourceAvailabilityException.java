@@ -5,7 +5,7 @@ package cz.muni.physics.pdr.backend.exception;
  * @version 1.0
  * @since 19/04/16
  */
-public class ResourceAvailabilityException extends Exception{
+public class ResourceAvailabilityException extends RuntimeException {
     private String resourcePath;
 
     public ResourceAvailabilityException(String message, String resourcePath, Throwable cause) {

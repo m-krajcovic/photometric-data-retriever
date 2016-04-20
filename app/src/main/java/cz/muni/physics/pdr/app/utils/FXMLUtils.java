@@ -44,12 +44,12 @@ public class FXMLUtils {
                 control.getHeight() - 5 + control.getScene().getY() + window.getY() + point.getY());
     }
 
-    public static void showAlert(String title, String header, String content, Alert.AlertType type) {
+    public static Alert showAlert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.showAndWait();
+        return alert;
     }
 
     public static void showExceptionAlert(String title, String header, String content, Throwable exc) {

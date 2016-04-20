@@ -29,7 +29,7 @@ public class TitledTextField extends TextField {
     public TitledTextField(boolean visibleTitle) {
         super();
         titleTextField = new TextField();
-        titleTextField.getStyleClass().add("no-right-radius");
+        titleTextField.getStyleClass().add("titled-text-field");
         titleTextField.setDisable(true);
         titleTextField.setFocusTraversable(false);
         titleTextField.setEditable(false);
@@ -52,7 +52,6 @@ public class TitledTextField extends TextField {
                 }
             });
         });
-        getChildren().add(titleTextField);
 
         setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {

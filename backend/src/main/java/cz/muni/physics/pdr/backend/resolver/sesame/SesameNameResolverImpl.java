@@ -45,8 +45,7 @@ public class SesameNameResolverImpl implements SesameNameResolver {
         this.resolverUrl = resolverUrl;
         this.testUrl = testUrl;
     }
-
-
+    
     @Override
     public StellarObject findByName(String name) {
         logger.debug("Resolving name by Sesame with {}", name);
@@ -66,8 +65,14 @@ public class SesameNameResolverImpl implements SesameNameResolver {
                 names.add(node.getTextContent());
             }
             result.setNames(names);
-            result.setRightAscension(Double.parseDouble(xpath.evaluate("//jradeg[1]", doc))); //todo check these
-            result.setDeclination(Double.parseDouble(xpath.evaluate("//jdedeg[1]", doc)));
+            String jradeg = xpath.evaluate("//jradeg[1]", doc);
+            if (!jradeg.isEmpty()) {
+                result.setRightAscension(Double.parseDouble(jradeg));
+            }
+            String jdedeg = xpath.evaluate("//jdedeg[1]", doc);
+            if (!jdedeg.isEmpty()) {
+                result.setDeclination(Double.parseDouble(jdedeg));
+            }
         } catch (XPathExpressionException e) {
             e.printStackTrace(); // todo this can be handled
         }

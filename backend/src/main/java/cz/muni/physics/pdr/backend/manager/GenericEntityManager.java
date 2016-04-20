@@ -1,7 +1,5 @@
 package cz.muni.physics.pdr.backend.manager;
 
-import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -12,15 +10,15 @@ import java.util.function.Predicate;
  * @since 14/04/16
  */
 public interface GenericEntityManager<T, ID extends Serializable> {
-    void insert(T entity) throws ResourceAvailabilityException;
+    void insert(T entity) ;
 
-    void delete(T entity) throws ResourceAvailabilityException;
+    void delete(T entity) ;
 
-    Collection<T> getAll() throws ResourceAvailabilityException;
+    Collection<T> getAll() ;
 
-    T searchFor(Predicate<T> predicate) throws ResourceAvailabilityException;
+    T searchFor(Predicate<T> predicate) ;
 
-    Collection<T> searchForAll(Predicate<T> predicate) throws ResourceAvailabilityException;
+    Collection<T> searchForAll(Predicate<T> predicate) ;
 
-    T getById(ID id) throws ResourceAvailabilityException;
+    T getById(ID id) ;
 }

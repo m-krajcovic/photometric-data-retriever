@@ -37,7 +37,6 @@ public class NameSearchService extends Service<StellarObject> {
             throw new IllegalArgumentException("searchText cannot be null.");
         }
         return new Task<StellarObject>() {
-
             @Override
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
@@ -47,7 +46,7 @@ public class NameSearchService extends Service<StellarObject> {
     }
 
     @Autowired
-    public void setTaskExecutor(Executor executor){
+    public void setTaskExecutor(Executor executor) {
         super.setExecutor(executor);
     }
 

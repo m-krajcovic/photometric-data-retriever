@@ -25,17 +25,17 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     private StarSurveyRepository starSurveyRepository;
 
     @Override
-    public void insert(StarSurvey entity) throws ResourceAvailabilityException {
+    public void insert(StarSurvey entity)  {
         starSurveyRepository.insert(entity);
     }
 
     @Override
-    public void delete(StarSurvey entity) throws ResourceAvailabilityException {
+    public void delete(StarSurvey entity)  {
         starSurveyRepository.delete(entity);
     }
 
     @Override
-    public Collection<StarSurvey> getAll() throws ResourceAvailabilityException{
+    public Collection<StarSurvey> getAll() {
         Collection<StarSurvey> surveys = starSurveyRepository.getAll();
         for (StarSurvey survey : surveys) {
             survey.setPlugin(survey.getPlugin().getName() != null ? pluginRepository.getById(survey.getPlugin().getName()) : null);
@@ -44,7 +44,7 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     }
 
     @Override
-    public StarSurvey searchFor(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException {
+    public StarSurvey searchFor(Predicate<StarSurvey> predicate)  {
         StarSurvey survey = starSurveyRepository.searchFor(predicate);
         Plugin plugin = pluginRepository.getById(survey.getName());
         survey.setPlugin(plugin);
@@ -52,7 +52,7 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     }
 
     @Override
-    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) throws ResourceAvailabilityException{
+    public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) {
         Collection<StarSurvey> surveys = starSurveyRepository.searchForAll(predicate);
         for (StarSurvey survey : surveys) {
             survey.setPlugin(pluginRepository.getById(survey.getPlugin().getName()));
@@ -61,7 +61,7 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     }
 
     @Override
-    public StarSurvey getById(String id) throws ResourceAvailabilityException{
+    public StarSurvey getById(String id) {
         StarSurvey survey = starSurveyRepository.getById(id);
         Plugin plugin = pluginRepository.getById(survey.getName());
         survey.setPlugin(plugin);

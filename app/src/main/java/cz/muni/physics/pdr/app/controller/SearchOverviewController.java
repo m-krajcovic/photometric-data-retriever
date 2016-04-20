@@ -4,16 +4,14 @@ import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
 import cz.muni.physics.pdr.app.controller.service.NameSearchService;
 import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
 import cz.muni.physics.pdr.app.javafx.Shaker;
-import cz.muni.physics.pdr.app.javafx.TitledTextField;
+import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.app.utils.ScreenConfig;
-import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
@@ -26,7 +24,6 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,6 @@ public class SearchOverviewController {
 
     private final static Logger logger = LogManager.getLogger(SearchOverviewController.class);
 
-
     @Autowired
     private ScreenConfig app;
     @Autowired
@@ -55,9 +51,6 @@ public class SearchOverviewController {
     private NameSearchService nameSearchService;
     @Autowired
     private StarSurveySearchService starSurveySearchService;
-
-
-    private StellarObject stellarObject = new StellarObject();
 
     @FXML
     private AnchorPane mainPane;
@@ -68,7 +61,7 @@ public class SearchOverviewController {
     @FXML
     private Button searchButton;
     @FXML
-    private TitledTextField searchTextField;
+    private TitledTextFieldBox searchTextField;
     @FXML
     private TextField radiusTextField;
     @FXML
@@ -76,6 +69,8 @@ public class SearchOverviewController {
     @FXML
     private Label progressLabel;
 
+    private StellarObject stellarObject = new StellarObject();
+    private SearchQueryParser queryParser;
     private Shaker shaker;
 
     @FXML
@@ -88,89 +83,42 @@ public class SearchOverviewController {
         shaker = new Shaker(mainPane);
         radiusTextField.setTextFormatter(new TextFormatter<>(new RadiusFilter()));
         initializeServices();
-        searchTextField.setPrimaryPane(mainPane);
-        Map<String, String> textFieldChanges = new HashMap<>();
-        textFieldChanges.put("name", "Name:");
-        textFieldChanges.put("coords", "Coords:");
-        textFieldChanges.put("coordinates", "Coords:");
-        searchTextField.setAutomaticTitles(":", textFieldChanges);
+        initializeTitledTextField();
+        initializeQueryParser();
     }
 
     @FXML
     private void handleSearchButtonAction() {
         stellarObject = new StellarObject();
-        decideSearchMode();
-    }
-
-    private void decideSearchMode() {
-        String searchText = searchTextField.getTextWithPrefix().trim();
-        if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
-            handleNameSearch(searchText.substring(5).trim());
-            return;
-        }
-        if (StringUtils.startsWithIgnoreCase(searchText, "coords:")) {
-            handleCoordsSearch(searchText.substring(7).trim());
-            return;
-        }
-        String[] spaceSplit = searchText.split(" ");
-        if (spaceSplit.length == 2 && NumberUtils.isParsable(spaceSplit[0]) && NumberUtils.isParsable(spaceSplit[1])) {
-            double ra = Double.parseDouble(spaceSplit[0]);
-            double dec = Double.parseDouble(spaceSplit[1]);
-            if (ra < 0 || ra > 360 || dec < -90 || dec > 90) {
-                handleNameSearch(searchText);
-                return;
-            }
-            handleCoordsSearch(searchText);
-        } else {
-            handleNameSearch(searchText);
-        }
-    }
-
-    private void handleCoordsSearch(String query) {
         disableElements(true);
-        if (query.isEmpty()) {
-            showInfoMessage("Query is empty. Insert coords in format '118.77167 +22.00139'");
-            disableElements(false);
-        } else {
-            String[] degrees = query.split(" ");
-            if (degrees.length != 2 || !NumberUtils.isParsable(degrees[0]) || !NumberUtils.isParsable(degrees[1])) {
-                showInfoMessage("Wrong format use degrees like '118.77167 +22.00139'");
-                disableElements(false);
-            } else {
-                double ra = Double.parseDouble(degrees[0]);
-                double dec = Double.parseDouble(degrees[1]);
-                double rad;
-                if (ra < 0 || ra > 360) {
-                    showInfoMessage("Right Ascension must be from interval [0, 360]'");
-                    disableElements(false);
-                    return;
-                } else if (dec < -90 || dec > 90) {
-                    showInfoMessage("Declination must be from interval [-90, +90]'");
-                    disableElements(false);
-                    return;
-                }
-                if (!NumberUtils.isParsable(radiusTextField.getText()) || radiusTextField.getText().isEmpty()) {
-                    radiusTextField.setText("0.05");
-                }
-                coordsSearchService.setCoords(new CelestialCoordinates(ra, dec, Double.parseDouble(radiusTextField.getText())));
-                coordsSearchService.start();
-            }
-        }
+        queryParser.parseQuery(searchTextField.getTextWithPrefix(), radiusTextField.getText());
     }
 
-    private void handleNameSearch(String query) {
-        disableElements(true);
-        if (query.isEmpty()) {
-            logger.debug("Query is empty");
-            showInfoMessage("Query is empty");
-            disableElements(false);
-        } else {
-            logger.debug("Handling search by name '{}'", query);
-            nameSearchService.setSearchText(query);
+    private void initializeTitledTextField() {
+        Map<String, String> textFieldChanges = new HashMap<>();
+        textFieldChanges.put("name", "Name:");
+        textFieldChanges.put("coords", "Coords:");
+        textFieldChanges.put("coordinates", "Coords:");
+        searchTextField.setAutomaticTitles(":", textFieldChanges);
+        searchTextField.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                removeErrorInfo();
+            }
+        });
+    }
+
+    private void initializeQueryParser() {
+        queryParser = new SearchQueryParser(coordinates -> {
+            coordsSearchService.setCoords(coordinates);
+            coordsSearchService.start();
+        }, name -> {
+            nameSearchService.setSearchText(name);
             nameSearchService.start();
-        }
+        }, error -> {
+            showErrorMessage(error);
+            disableElements(false);
+        });
     }
-
 
     private void initializeServices() {
         initializeCoordsSearchService();
@@ -184,7 +132,6 @@ public class SearchOverviewController {
             stellarObject.merge(nameSearchService.getValue());
             starSurveySearchService.setResolverResult(stellarObject);
             starSurveySearchService.start();
-
             nameSearchService.reset();
         });
         nameSearchService.setOnFailed(e -> {
@@ -200,8 +147,8 @@ public class SearchOverviewController {
         starSurveySearchService.setOnSucceeded(e -> {
             Map<StarSurvey, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
             if (data.isEmpty()) {
-                logger.debug("No results found for '{}'", searchTextField.getText());
-                showInfoMessage("No results found for '" + searchTextField.getText() + "'");
+                logger.debug("No results found for '{}'", searchTextField.getTextWithPrefix());
+                showErrorMessage("No results found for '" + searchTextField.getTextWithPrefix() + "'");
             } else {
                 app.showPhotometricDataOverview(data, stellarObject);
             }
@@ -224,7 +171,7 @@ public class SearchOverviewController {
             StellarObjectModel selected;
             List<StellarObjectModel> searchResult = coordsSearchService.getValue();
             if (searchResult.isEmpty()) {
-                showInfoMessage("No results found");
+                showErrorMessage("No results found");
                 disableElements(false);
             } else {
                 selected = app.showStellarObjects(searchResult);
@@ -256,14 +203,18 @@ public class SearchOverviewController {
         if (!disable) {
             progressLabel.setText("");
         } else {
-            infoLabel.setText("");
-            searchTextField.getStyleClass().remove("error");
+            removeErrorInfo();
         }
     }
 
-    private void showInfoMessage(String message) {
+    private void removeErrorInfo() {
+        infoLabel.setText("");
+        searchTextField.getTextField().getStyleClass().remove("error");
+    }
+
+    private void showErrorMessage(String message) {
         shaker.shake();
-        searchTextField.getStyleClass().add("error");
+        searchTextField.getTextField().getStyleClass().add("error");
         infoLabel.setText(message);
         infoLabel.setVisible(true);
     }

@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
+import cz.muni.physics.pdr.app.controller.StarSurveyOverviewController;
 import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -14,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -79,26 +81,28 @@ public class ScreenConfig {
     }
 
     public void showStarSurveyOverview() {
-        AnchorPane starSurveyOverview;
-        starSurveyOverview = fxmlLoader().load("/view/StarSurveyOverview.fxml");
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane starSurveyOverview = loader.load("/view/StarSurveyOverview.fxml");
+        StarSurveyOverviewController controller = loader.getController();
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Star surveys");
-        dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        controller.setPrimaryStage(dialogStage);
         Scene scene = new Scene(starSurveyOverview);
         dialogStage.setScene(scene);
         dialogStage.show();
     }
 
-    public boolean showStarSurveyEditDialog(StarSurveyModel record) {
+    public boolean showStarSurveyEditDialog(StarSurveyModel record, Window owner) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane starSurveyDialog = loader.load("/view/StarSurveyEditDialog.fxml");
         StarSurveyEditDialogController controller = loader.getController();
         controller.setStarSurvey(record);
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Edit Star Survey");
+        dialogStage.initOwner(owner);
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(starSurveyDialog);
         dialogStage.setScene(scene);
         controller.setDialogStage(dialogStage);
@@ -112,8 +116,8 @@ public class ScreenConfig {
         StellarObjectOverviewController controller = loader.getController();
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Edit Star Survey");
-        dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
         Scene scene = new Scene(stellarObjectDialog);
         dialogStage.setScene(scene);
         controller.setDialogStage(dialogStage);

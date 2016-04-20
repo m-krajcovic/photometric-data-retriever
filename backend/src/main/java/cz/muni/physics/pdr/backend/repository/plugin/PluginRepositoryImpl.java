@@ -1,7 +1,6 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
-import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +57,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public Plugin getById(String s) throws ResourceAvailabilityException {
+    public Plugin getById(String s)  {
         checkAndLoadPlugins();
         return new Plugin(plugins.get(s));
     }
