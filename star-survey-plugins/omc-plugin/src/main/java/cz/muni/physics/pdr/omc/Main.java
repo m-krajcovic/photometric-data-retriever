@@ -18,12 +18,12 @@ import java.net.URL;
  * @since 21/04/16
  */
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, FitsException {
         Main main = new Main();
-        main.postForm(args);
+        main.readData(args);
     }
 
-    private void postForm(String... args) throws IOException {
+    private void readData(String... args) throws IOException, FitsException {
         String searchFormUrl = "https://sdc.cab.inta-csic.es/omc/secure/form_busqueda.jsp?resetForm=true";
         String searchUrl = "https://sdc.cab.inta-csic.es/omc/secure/form_busqueda.jsp";
         Connection.Response form = Jsoup.connect(searchFormUrl).method(Connection.Method.GET).execute();
@@ -46,6 +46,8 @@ public class Main {
             post.data("ra", args[0])
                     .data("de", args[1])
                     .data("rad", "1");
+        } else {
+            return;
         }
         Document doc = post.post();
         Element fetchAnchor = doc.getElementsByAttributeValueStarting("href", "fetch_lcurve.jsp?obj_id=").first();
@@ -56,12 +58,13 @@ public class Main {
             TableHDU table = (TableHDU) fits.getHDU(1);
             float[] mags = (float[]) table.getColumn("MAG_V");
             float[] errs = (float[]) table.getColumn("ERRMAG_V");
+            double[] barytimes = (double[]) table.getColumn("BARYTIME");
+            double[] telapses = (double[]) table.getColumn("TELAPSE");
 
             for (int i = 0; i < mags.length; i++) {
-                System.out.println("1," + mags[i] + "," + errs[i]);
+                double jd = barytimes[i] + 2451544.5 + telapses[i] / 2 / 86400;
+                System.out.println(jd + "," + mags[i] + "," + errs[i]);
             }
-        } catch (FitsException e) {
-            e.printStackTrace();
         }
 
     }

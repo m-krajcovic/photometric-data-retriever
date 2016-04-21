@@ -200,6 +200,7 @@ public class SearchOverviewController {
         searchBox.setDisable(disable);
         infoLabel.setVisible(!disable);
         searchProgressIndicator.setVisible(disable);
+        progressLabel.setVisible(disable);
         if (!disable) {
             progressLabel.setText("");
         } else {

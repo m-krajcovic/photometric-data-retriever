@@ -40,8 +40,8 @@ public class CrtsPlugin implements Plugin {
             e.printStackTrace();
             return result;
         }
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(csvUrl.openStream()))) {
-            CSVReader reader = new CSVReader(in);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(csvUrl.openStream()));
+             CSVReader reader = new CSVReader(in)) {
             try {
                 String[] nextLine = reader.readNext();
                 if (nextLine == null) return null;

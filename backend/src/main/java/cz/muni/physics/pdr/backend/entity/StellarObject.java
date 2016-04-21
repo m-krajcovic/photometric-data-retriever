@@ -31,6 +31,14 @@ public class StellarObject {
         }
     }
 
+    public Double getDeclinationInHours(){
+        return declination / 15;
+    }
+
+    public Double getRightAscensionInHours(){
+        return rightAscension / 15;
+    }
+
     public Double getDeclination() {
         return declination;
     }

@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
-import cz.muni.physics.pdr.backend.manager.PluginManager;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
+import cz.muni.physics.pdr.backend.manager.PluginManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * @since 01/04/16
  */
 @Component
+@Scope("prototype")
 public class StarSurveyEditDialogController {
 
     @Autowired

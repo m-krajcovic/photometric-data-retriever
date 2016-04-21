@@ -36,7 +36,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     @Autowired
     private StarSurveyManager starSurveyManager;
     @Autowired
-    private Executor searchServiceExecutor;
+    private Executor executor;
 
     private Consumer<StarSurvey> onNoResultsFound;
     private Consumer<StarSurvey> onResultsFound;
@@ -44,7 +44,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     private List<Future> futures = null;
     private List<ProcessStarter> processStarters;
 
-    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult)  {
+    public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         futures = new ArrayList<>();
         processStarters = new ArrayList<>();
@@ -55,7 +55,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             }
             Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, resolverResult);
             futures.add(run(survey.getPlugin(), params)
-                    .thenAccept(data -> {
+                    .thenAcceptAsync(data -> {
                         logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
                         if (!data.isEmpty()) {
                             resultMap.put(survey, data);
@@ -65,7 +65,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                             if (onNoResultsFound != null)
                                 onNoResultsFound.accept(survey);
                         }
-                    }));
+                    }, executor));
         }
         futures.forEach(future -> {
             try {
@@ -93,7 +93,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             return CompletableFuture.completedFuture(new ArrayList<>());
         }
         processStarters.add(starter);
-        return CompletableFuture.supplyAsync(() -> starter.runForResult(searchServiceExecutor), searchServiceExecutor);
+        return CompletableFuture.supplyAsync(() -> starter.runForResult(executor), executor);
     }
 
 

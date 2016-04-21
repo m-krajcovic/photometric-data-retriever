@@ -90,7 +90,9 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
     public StarSurvey toEntity() {
         StarSurvey survey = new StarSurvey();
         survey.setName(getName());
-        survey.setPlugin(getPlugin().toEntity());
+        if (getPlugin() != null) {
+            survey.setPlugin(getPlugin().toEntity());
+        }
         survey.setRegexPatterns(getRegexPatterns());
         survey.setValueParameters(getValueParameters());
         survey.setUrls(getUrls());

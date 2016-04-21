@@ -1,5 +1,8 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
+import cz.muni.physics.pdr.backend.entity.Plugin;
+import cz.muni.physics.pdr.backend.exception.PluginReaderException;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +34,19 @@ public abstract class PluginReaderFactory {
                 return new PropertiesPluginReader(pluginDir);
             }
         }
-        return null;
+        return new NullPluginReader();
+    }
+
+    private static class NullPluginReader implements PluginReader {
+
+        @Override
+        public Plugin readPlugin() throws PluginReaderException {
+            return null;
+        }
+
+        @Override
+        public void setPluginDir(File pluginDir) {
+
+        }
     }
 }

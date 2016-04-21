@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.backend.repository.plugin;
 
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
+import cz.muni.physics.pdr.backend.exception.PluginReaderException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,21 +24,21 @@ public class PropertiesPluginReader implements PluginReader {
     }
 
     @Override
-    public Plugin readPlugin() {
+    public Plugin readPlugin() throws PluginReaderException{
         Properties props = new Properties();
         try (InputStream is = new FileInputStream(new File(pluginDir, "plugin.properties"))) {
             props.load(is);
         } catch (IOException e) {
-            throw new RuntimeException("There was a problem loading plugin properties file", e);
+            throw new PluginReaderException("There was a problem loading plugin properties file in", pluginDir.getPath(), e);
         }
         String commands = props.getProperty("command");
         String mainFileName = props.getProperty("mainFile");
         if (mainFileName == null || commands == null) {
-            throw new RuntimeException("There are some properties missing inside " + pluginDir.getPath() + "plugin.properties");
+            throw new PluginReaderException("There are some properties missing inside " + pluginDir.getPath() + "plugin.properties");
         }
         File mainFile = new File(pluginDir, mainFileName);
         if (!mainFile.exists()) {
-            throw new RuntimeException("Main file " + mainFileName + " was not found.");
+            throw new PluginReaderException("Main file " + mainFileName + " was not found in", pluginDir.getPath());
         }
         return new Plugin(pluginDir.getName(), mainFile.getPath(), commands.split(";"));
     }

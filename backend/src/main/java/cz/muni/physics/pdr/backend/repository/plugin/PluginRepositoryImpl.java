@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
+import cz.muni.physics.pdr.backend.exception.PluginReaderException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,9 +58,13 @@ public class PluginRepositoryImpl implements PluginRepository {
     }
 
     @Override
-    public Plugin getById(String s)  {
+    public Plugin getById(String s) {
         checkAndLoadPlugins();
-        return new Plugin(plugins.get(s));
+        if (plugins.containsKey(s)) {
+            return new Plugin(plugins.get(s));
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -100,15 +105,14 @@ public class PluginRepositoryImpl implements PluginRepository {
         for (String pluginDirName : dirs) {
             String pluginDirPath = pluginsFolderPath + File.separator + pluginDirName + File.separator;
             PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
-            if (reader != null) {
+            try {
                 Plugin plugin = reader.readPlugin();
-                if (plugin != null) {
-                    logger.debug("Loaded plugin {}", plugin.getName());
-                    tempPlugins.put(plugin.getName(), plugin);
-                }
+                logger.debug("Loaded plugin {}", plugin.getName());
+                tempPlugins.put(plugin.getName(), plugin);
+            } catch (PluginReaderException exc) {
+                logger.error("Failed loading plugin", exc);
             }
         }
         plugins = new HashMap<>(tempPlugins);
-
     }
 }

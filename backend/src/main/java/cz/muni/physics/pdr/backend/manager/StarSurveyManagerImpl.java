@@ -2,7 +2,6 @@ package cz.muni.physics.pdr.backend.manager;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,12 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     private StarSurveyRepository starSurveyRepository;
 
     @Override
-    public void insert(StarSurvey entity)  {
+    public void insert(StarSurvey entity) {
         starSurveyRepository.insert(entity);
     }
 
     @Override
-    public void delete(StarSurvey entity)  {
+    public void delete(StarSurvey entity) {
         starSurveyRepository.delete(entity);
     }
 
@@ -38,13 +37,16 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     public Collection<StarSurvey> getAll() {
         Collection<StarSurvey> surveys = starSurveyRepository.getAll();
         for (StarSurvey survey : surveys) {
-            survey.setPlugin(survey.getPlugin().getName() != null ? pluginRepository.getById(survey.getPlugin().getName()) : null);
+            if (survey.getPlugin().getName() != null) {
+                Plugin plugin = pluginRepository.getById(survey.getPlugin().getName());
+                survey.setPlugin(plugin);
+            }
         }
         return surveys;
     }
 
     @Override
-    public StarSurvey searchFor(Predicate<StarSurvey> predicate)  {
+    public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
         StarSurvey survey = starSurveyRepository.searchFor(predicate);
         Plugin plugin = pluginRepository.getById(survey.getName());
         survey.setPlugin(plugin);

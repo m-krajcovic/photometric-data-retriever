@@ -3,13 +3,13 @@
         <plugin name="NSVS"/>
         <patterns>
             <java.util.regex.Pattern>
-                <pattern>NSVS\s(?&lt;id&gt;\d*)</pattern>
+                <pattern>NSVS\s(?&lt;nsvsID&gt;\d*)</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </patterns>
         <valueParams/>
         <urls>
-            <string>http://skydot.lanl.gov/nsvs/star.php?num={id}&amp;mask=32004</string>
+            <string>http://skydot.lanl.gov/nsvs/star.php?num={nsvsID}&amp;mask=32004</string>
         </urls>
     </starSurvey>
     <starSurvey name="CRTS">
@@ -21,16 +21,16 @@
         </urls>
     </starSurvey>
     <starSurvey name="SWASP">
-        <plugin/>
+        <plugin name="SWASP"/>
         <patterns>
             <java.util.regex.Pattern>
-                <pattern>(?&lt;obj&gt;1SWASP\s(?&lt;id&gt;J.*))</pattern>
+                <pattern>(?&lt;swasp&gt;1SWASP\s(?&lt;swaspID&gt;J.*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </patterns>
         <valueParams/>
         <urls>
-            <string>http://wasp.cerit-sc.cz/json?type=CSV&amp;object={obj}</string>
+            <string>http://wasp.cerit-sc.cz/json?type=CSV&amp;object={swasp}</string>
             <string>http://wasp.cerit-sc.cz/search?ra={ra}&amp;dec={dec}&amp;radius=1&amp;radiusUnit=min&amp;limit=1</string>
         </urls>
     </starSurvey>

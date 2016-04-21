@@ -63,8 +63,12 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
             @Override
             protected Map<StarSurvey, List<PhotometricDataModel>> call() throws ResourceAvailabilityException {
                 logger.debug("Starting task.");
-                retrieverManager.setOnNoResultsFound(s -> starSurveysMap.put(s, false));
-                retrieverManager.setOnResultsFound(s -> starSurveysMap.put(s, true));
+                retrieverManager.setOnNoResultsFound(s -> {
+                    starSurveysMap.put(s, false);
+                });
+                retrieverManager.setOnResultsFound(s -> {
+                    starSurveysMap.put(s, true);
+                });
                 Map<StarSurvey, List<PhotometricDataModel>> resultMap = new HashMap<>();
                 retrieverManager.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
                     List<PhotometricDataModel> list = new ArrayList<>();
