@@ -63,10 +63,10 @@ public class MainApp extends Application {
 //        regexes.add("(?<tpbc>2PBC\\\\s(?<tpbcID>.*))");
 //        regexes.add("(?<pbc>PBC\\s(?<pbcID>.*))");
 //        regexes.add("(?<saxwfc>SAXWFC\\s(?<saxwfcID>.*))");
-//        regexes.add("(?<krl2007>[KRL2007]\\s(?<krl2007ID>.*))");
-//        regexes.add("(?<fs2003>[FS2003]\\s(?<fs2003ID>.*))");
-//        regexes.add("(?<tes2010>[TES2010]\\s(?<tes2010ID>.*))");
-//        regexes.add("(?<btm2013>[BTM2013]\\s(?<btm2013ID>.*))");
+//        regexes.add("(?<krl2007>\\[KRL2007\\]\\s(?<krl2007ID>.*))");
+//        regexes.add("(?<fs2003>\\[FS2003\\]\\s(?<fs2003ID>.*))");
+//        regexes.add("(?<tes2010>\\[TES2010\\]\\s(?<tes2010ID>.*))");
+//        regexes.add("(?<btm2013>\\[BTM2013\\]\\s(?<btm2013ID>.*))");
 //        regexes.add("(?<ta>3A\\s(?<taID>.*))");
 //        regexes.add("(?<als>ALS\\s(?<alsID>.*))");
 //        regexes.add("(?<bd42>BD+42\\s(?<bd42ID>.*))");
@@ -98,21 +98,18 @@ public class MainApp extends Application {
 //        regexes.add("(?<ucac2>UCAC2\\s(?<ucac2ID>.*))");
 //        regexes.add("(?<ucac3>UCAC3\\s(?<ucac3ID>.*))");
 //        regexes.add("(?<usno>USNO\\s(?<usnoID>.*))");
-//        regexes.add("(?<bm83>[BM83]\\s(?<bm83ID>.*))");
-//        regexes.add("(?<fs2003>[FS2003]\\s(?<fs2003ID>.*))");
-//        regexes.add("(?<krl2007b>[KRL2007b]\\s(?<krl2007bID>.*))");
-//        regexes.add("(?<kw97>[KW97]\\s(?<kw97ID>.*))");
+//        regexes.add("(?<bm83>\\[BM83\\]\\s(?<bm83ID>.*))");
+//        regexes.add("(?<fs2003>\\[FS2003\\]\\s(?<fs2003ID>.*))");
+//        regexes.add("(?<krl2007b>\\[KRL2007b\\]\\s(?<krl2007bID>.*))");
+//        regexes.add("(?<kw97>\\[KW97\\]\\s(?<kw97ID>.*))");
 //        regexes.add("(?<aavso>AAVSO\\s(?<aavsoID>.*))");
-//        regexes.add("(?<spb96>[SPB96]\\s(?<spb96ID>.*))");
+//        regexes.add("(?<spb96>\\[SPB96\\]\\s(?<spb96ID>.*))");
 //        regexes.add("(?<gsc>GSC\\s(?<gscID>.*))");
 //        regexes.add("(?<swasp>1SWASP\\s(?<swaspID>.*))");
 //        regexes.add("(?<asas>ASAS\\s(?<asasID>.*))");
 //        regexes.add("(?<iomc>IOMC\\s(?<iomcID>.*))");
 //        regexes.add("(?<gsc>GSC\\s(?<gscID>.*))");
-//
-//
-//
-//
+//        regexes.add("(?<linear>LINEAR\\s(?<linearID>.*))");
 //        xStream.toXML(regexes, System.out);
 
     }

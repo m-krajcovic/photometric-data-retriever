@@ -18,6 +18,8 @@
         <module>asas3-plugin</module>
         <module>apass-plugin</module>
         <module>omc-plugin</module>
+        <module>linear-plugin</module>
+        <module>piots-plugin</module>
     </modules>
 
     <properties>
