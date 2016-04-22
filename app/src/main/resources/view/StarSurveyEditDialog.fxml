@@ -26,7 +26,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
-                <Label text="Name">
+                <Label text="%starsurvey.name">
                     <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </GridPane.margin>
@@ -41,7 +41,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </GridPane.margin>
                 </Label>
-                <Label text="Plugin" GridPane.rowIndex="3">
+                <Label text="%starsurvey.plugin" GridPane.rowIndex="3">
                     <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </GridPane.margin>
@@ -74,8 +74,8 @@
         <ButtonBar layoutX="87.0" layoutY="202.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0"
                    AnchorPane.rightAnchor="5.0">
             <buttons>
-                <Button mnemonicParsing="false" onAction="#handleOk" text="Ok"/>
-                <Button mnemonicParsing="false" onAction="#handleCancel" text="Cancel"/>
+                <Button mnemonicParsing="false" onAction="#handleOk" text="%button.ok"/>
+                <Button mnemonicParsing="false" onAction="#handleCancel" text="%button.cancel"/>
             </buttons>
         </ButtonBar>
     </children>

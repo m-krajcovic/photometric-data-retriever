@@ -121,6 +121,14 @@ public class TitledTextFieldBox extends HBox {
         textField.getStyleClass().add("titled-text-field");
     }
 
+    public void setPromptText(String value) {
+        textField.setPromptText(value);
+    }
+
+    public String getPromptText() {
+        return textField.getPromptText();
+    }
+
     public Label getTitle() {
         return title;
     }
@@ -133,7 +141,7 @@ public class TitledTextFieldBox extends HBox {
         textField.setOnAction(onAction);
     }
 
-    public EventHandler<ActionEvent> getOnAction(){
+    public EventHandler<ActionEvent> getOnAction() {
         return textField.getOnAction();
     }
 

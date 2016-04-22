@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ResourceBundle;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -30,6 +32,8 @@ public class StarSurveyOverviewController {
     @Autowired
     private StarSurveyManager starSurveyManager;
 
+    @FXML
+    private ResourceBundle resources;
     @FXML
     private TableView<StarSurveyModel> starSurveys;
     @FXML
@@ -109,7 +113,8 @@ public class StarSurveyOverviewController {
 
 
     private void showNoSelectionDialog() {
-        Alert alert = FXMLUtils.alert("No selection", "No Star Survey Selected",
+        Alert alert = FXMLUtils.alert(resources.getString("alert.noselection"),
+                "No Star Survey Selected",
                 "Please select a Star Survey in the table.",
                 Alert.AlertType.WARNING);
         alert.initOwner(primaryStage);

@@ -10,10 +10,10 @@
     <children>
         <TableView fx:id="stellarObjectsTable" layoutX="186.0" layoutY="48.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columns>
-                <TableColumn fx:id="distanceColumn" prefWidth="75.0" text="Distance" />
-                <TableColumn fx:id="nameColumn" prefWidth="137.0" text="Name" />
-                <TableColumn fx:id="raColumn" minWidth="6.0" prefWidth="189.0" text="Right Ascension" />
-                <TableColumn fx:id="decColumn" prefWidth="198.0" text="Declination" />
+                <TableColumn fx:id="distanceColumn" prefWidth="75.0" text="%stellarobject.distance" />
+                <TableColumn fx:id="nameColumn" prefWidth="137.0" text="%stellarobject.name" />
+                <TableColumn fx:id="raColumn" minWidth="6.0" prefWidth="189.0" text="%stellarobject.ra" />
+                <TableColumn fx:id="decColumn" prefWidth="198.0" text="%stellarobject.dec" />
             </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -21,8 +21,8 @@
         </TableView>
         <ButtonBar layoutX="386.0" layoutY="360.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="14.0">
             <buttons>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="27.0" prefWidth="84.0" text="Close" />
-                <Button fx:id="selectButton" layoutX="126.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleSelectButton" prefHeight="27.0" prefWidth="84.0" text="Select" />
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="27.0" prefWidth="84.0" text="%button.close" />
+                <Button fx:id="selectButton" layoutX="126.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleSelectButton" prefHeight="27.0" prefWidth="84.0" text="%button.select" />
             </buttons>
         </ButtonBar>
     </children>

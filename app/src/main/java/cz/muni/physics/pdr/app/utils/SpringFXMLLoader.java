@@ -39,6 +39,7 @@ public class SpringFXMLLoader {
         try {
             URL fxml = SpringFXMLLoader.class.getResource(url);
             fxmlLoader.setLocation(fxml);
+            fxmlLoader.setResources(ResourceBundle.getBundle("i18n/bundle"));
             return fxmlLoader.load();
         } catch (IOException ioException) {
             throw new RuntimeException(ioException.getMessage(), ioException);

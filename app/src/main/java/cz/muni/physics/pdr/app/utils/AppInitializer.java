@@ -29,11 +29,11 @@ public class AppInitializer {
 
     @Autowired
     private ScreenConfig app;
-    @Value("${user.home}${plugins.dir.path}")
+    @Value("${plugins.dir.path:${default.plugins.dir.path}}")
     private String pluginsDirPath;
-    @Value("${user.home}${app.data.dir.path}")
+    @Value("${app.data.dir.path:${default.app.data.dir.path}}")
     private String dataDirPath;
-    @Value("${user.home}${starsurveys.file.path}")
+    @Value("${starsurveys.file.path:${default.starsurveys.file.path}}")
     private String starSurveysFilePath;
 
     private List<Exception> initExceptions = new ArrayList<>();
@@ -73,7 +73,6 @@ public class AppInitializer {
                 initExceptions.add(new RuntimeException("Failed to copy default star surveys config to " + starSurveysFilePath, e));
             }
         }
-        // TODO ? Backend should have initialization class ?
         // TODO check vsx dat file
 
 //        mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);

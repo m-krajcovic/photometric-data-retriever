@@ -17,17 +17,17 @@
             <children>
                 <HBox disable="false" prefHeight="27.0" prefWidth="375.0">
                     <children>
-                        <TitledTextFieldBox fx:id="searchTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" maxWidth="234.0">
+                        <TitledTextFieldBox fx:id="searchTextField" promptText="%textfield.search.prompt" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" maxWidth="234.0">
                             <HBox.margin>
                                 <Insets right="5.0" />
                             </HBox.margin>
                         </TitledTextFieldBox>
-                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="Radius">
+                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="%textfield.radius.prompt">
                             <HBox.margin>
                                 <Insets right="5.0" />
                             </HBox.margin>
                         </TextField>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="Search" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="%button.search" />
                     </children>
                 </HBox>
                 <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">

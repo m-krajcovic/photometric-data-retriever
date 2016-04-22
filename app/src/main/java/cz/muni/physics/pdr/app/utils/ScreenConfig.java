@@ -24,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -139,25 +139,25 @@ public class ScreenConfig {
     }
 
     @Bean
-    public VSXStarResolver vsxStarResolver(@Value("${user.home}${app.data.dir.path:/.pdr}") String dataDir,
-                                           @Value("${vsx.dat.file.name:vsx.dat}") String vsxDatFile) {
-        return new VSXStarResolverImpl(dataDir + File.separator + vsxDatFile);
+    public VSXStarResolver vsxStarResolver(@Value("${vsx.dat.file.path:${default.vsx.dat.file.path}}") String vsxDatFilePath) {
+        return new VSXStarResolverImpl(vsxDatFilePath);
     }
 
     @Bean
-    public StarSurveyRepository starSurveyRepository(XStream xStream, @Value("${user.home}${starsurveys.file.path:/.pdr/star_surveys.xml}") String starSurveysFilePath) {
+    public StarSurveyRepository starSurveyRepository(XStream xStream, @Value("${starsurveys.file.path:${default.starsurveys.file.path}}") String starSurveysFilePath) {
         return new StarSurveyRepositoryImpl(xStream, starSurveysFilePath);
     }
 
     @Bean
-    public PluginRepository pluginRepository(@Value("${user.home}${plugins.dir.path:/.pdr/plugins}") String pluginDirPath) {
+    public PluginRepository pluginRepository(@Value("${plugins.dir.path:${default.plugins.dir.path}}") String pluginDirPath) {
         return new PluginRepositoryImpl(pluginDirPath);
     }
 
     @Bean
-    public Executor searchServiceExecutor(@Value("${core.pool.size:4}") int corePoolSize) {
+    public Executor searchServiceExecutor(@Value("${core.pool.size:${default.core.pool.size}}") int corePoolSize) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.prefersShortLivedTasks();
+        System.out.println(corePoolSize);
         executor.setCorePoolSize(corePoolSize); // min 2 -> max ?
         executor.setDaemon(true);
         executor.setThreadNamePrefix("Backend Thread-");
@@ -165,8 +165,14 @@ public class ScreenConfig {
     }
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+    public static PropertySourcesPlaceholderConfigurer propertyPlaceHolder() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    public static PreferencesPlaceholderConfigurer preferencePlaceHolder() {
+        PreferencesPlaceholderConfigurer preferencesPlaceholderConfigurer = new PreferencesPlaceholderConfigurer();
+        return preferencesPlaceholderConfigurer;
     }
 
     public Stage getPrimaryStage() {
