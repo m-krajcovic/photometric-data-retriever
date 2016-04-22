@@ -9,3 +9,12 @@ This tool finds the specified object in every available database and transfers t
 It should be easy to add other databases, thus, part of the assignment is to create a system of plugins allowing access to individual databases and programmable data editing. It should be possible to implement a plugin for another database in any programming language, especially in Python that is known by astronomers and is easy to use for text data processing.
 
 Throughout the development you ought to use iterative approach during which you will consult your work with your supervisor. Supervisor’s overall satisfaction with a finished application will be an important criteria of evaluation.
+
+# Installation
+
+> Installation packages will be available later. For now, follow these steps:
+
+1. `git clone` this project.
+2. Build at project root with `mvn clean install`. Maven will install plugins to `${user.home}/.pdr/plugins` folder by default.
+3. For vsx resolver to work you have to manually (for now) download `vsx.dat.gz` from [here](ftp://cdsarc.u-strasbg.fr/pub/cats/B/vsx) and unzip `vsx.dat` to `${user.home}/.pdr/` folder.
+4. Default `star_surveys.xml` is added at startup to `${user.home}/.pdr` .
