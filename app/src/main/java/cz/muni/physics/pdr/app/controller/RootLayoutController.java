@@ -31,7 +31,12 @@ public class RootLayoutController {
     }
 
     @FXML
-    private void handlePreferencesMenuItem(){
+    private void handlePreferencesMenuItem() {
         app.showPreferencesOverview();
+    }
+
+    @FXML
+    private void handleCloseMenuItem() {
+        app.close();
     }
 }

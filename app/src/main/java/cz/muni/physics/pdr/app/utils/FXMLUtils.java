@@ -10,10 +10,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -50,6 +53,26 @@ public class FXMLUtils {
         alert.setHeaderText(header);
         alert.setContentText(content);
         return alert;
+    }
+
+    public static File showDirChooser(String title, String initPath, Window dialogStage) {
+        DirectoryChooser fileChooser = new DirectoryChooser();
+        fileChooser.setTitle(title);
+        fileChooser.setInitialDirectory(new File(initPath));
+        return fileChooser.showDialog(dialogStage);
+    }
+
+    public static File showSaveFileChooser(String title,
+                                           String initPath,
+                                           String initFileName,
+                                           Window dialogStage,
+                                           FileChooser.ExtensionFilter... extensionFilters) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.setInitialFileName(initFileName);
+        fileChooser.setInitialDirectory(new File(initPath));
+        fileChooser.getExtensionFilters().addAll(extensionFilters);
+        return fileChooser.showSaveDialog(dialogStage);
     }
 
     public static void showExceptionAlert(String title, String header, String content, Throwable exc) {

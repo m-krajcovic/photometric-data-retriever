@@ -20,7 +20,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#handlePreferencesMenuItem"
                                   text="%menu.item.preferences"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="%menu.item.close"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleCloseMenuItem" text="%menu.item.close"/>
                     </items>
                 </Menu>
             </menus>

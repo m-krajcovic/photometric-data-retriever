@@ -81,7 +81,7 @@ public class ScreenConfig {
 
     public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricDataModel>> data, StellarObject object) {
         SpringFXMLLoader loader = fxmlLoader();
-        AnchorPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
+        BorderPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Search stellarObject");
@@ -152,6 +152,10 @@ public class ScreenConfig {
         controller.setItems(stellarObjects);
         dialogStage.showAndWait();
         return controller.getSelected();
+    }
+
+    public void close(){
+        primaryStage.close();
     }
 
     @Bean

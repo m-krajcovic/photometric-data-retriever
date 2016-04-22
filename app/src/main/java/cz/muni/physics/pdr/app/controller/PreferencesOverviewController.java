@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +18,8 @@ import java.io.File;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import static cz.muni.physics.pdr.app.utils.FXMLUtils.showDirChooser;
 
 /**
  * @author Michal Krajčovič
@@ -65,7 +66,7 @@ public class PreferencesOverviewController {
 
     @FXML
     private void handleAppDataRootButton() {
-        File chosen = showDirChooser(resources.getString("dir.chooser.app.data.title"), appDataRootTextField.getText());
+        File chosen = showDirChooser(resources.getString("dir.chooser.app.data.title"), appDataRootTextField.getText(), dialogStage);
         if (chosen != null) {
             String oldPath = appDataRoot.getValue();
             String newPath = chosen.getAbsolutePath();
@@ -79,7 +80,7 @@ public class PreferencesOverviewController {
 
     @FXML
     private void handlePluginsRootButton() {
-        File chosen = showDirChooser(resources.getString("dir.chooser.plugins.title"), pluginsRootTextField.getText());
+        File chosen = showDirChooser(resources.getString("dir.chooser.plugins.title"), pluginsRootTextField.getText(), dialogStage);
         if (chosen != null) {
             pluginsRoot.setValue(chosen.getAbsolutePath());
             changeMade.setValue(true);
@@ -107,13 +108,6 @@ public class PreferencesOverviewController {
         } catch (BackingStoreException e) {
             e.printStackTrace();
         }
-    }
-
-    private File showDirChooser(String title, String initPath) {
-        DirectoryChooser fileChooser = new DirectoryChooser();
-        fileChooser.setTitle(title);
-        fileChooser.setInitialDirectory(new File(initPath));
-        return fileChooser.showDialog(dialogStage);
     }
 
     @FXML
