@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.app.utils;
+package cz.muni.physics.pdr.app.spring;
 
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;

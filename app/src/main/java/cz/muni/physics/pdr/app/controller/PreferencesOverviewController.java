@@ -1,6 +1,5 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.utils.PreferencesHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,13 +11,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * @author Michal Krajčovič
@@ -29,10 +29,13 @@ import java.util.prefs.BackingStoreException;
 @Scope("prototype")
 public class PreferencesOverviewController {
 
+    @Value("${app.data.dir.path}")
+    private String appDataDirPath;
+    @Value("${plugins.dir.path}")
+    private String pluginsDirPath;
+
     @Autowired
-    private PreferencesHolder preferences;
-    @Autowired
-    private ApplicationContext context;
+    private Preferences preferences;
 
     @FXML
     private ResourceBundle resources;
@@ -54,8 +57,8 @@ public class PreferencesOverviewController {
         pluginsRootTextField.textProperty().bind(pluginsRoot);
         appDataRootTextField.textProperty().bind(appDataRoot);
 
-        appDataRoot.setValue(preferences.get("app.data.dir.path"));
-        pluginsRoot.setValue(preferences.get("plugins.dir.path"));
+        appDataRoot.setValue(appDataDirPath);
+        pluginsRoot.setValue(pluginsDirPath);
 
         applyButton.disableProperty().bind(changeMade.not());
     }

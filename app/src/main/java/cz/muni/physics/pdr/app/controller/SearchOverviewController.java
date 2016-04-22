@@ -9,7 +9,7 @@ import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.app.utils.ScreenConfig;
+import cz.muni.physics.pdr.app.spring.ScreenConfig;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;

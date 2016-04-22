@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.app;
 
 import com.sun.javafx.application.LauncherImpl;
+import cz.muni.physics.pdr.app.spring.ScreenConfig;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.app.utils.ScreenConfig;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -11,6 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * @author Michal Krajčovič
@@ -29,6 +32,13 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
+
+        try {
+            Preferences.userRoot().clear();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
+
         LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
 
 //        Map<String, String> params = new HashMap<>();

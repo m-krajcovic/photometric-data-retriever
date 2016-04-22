@@ -39,11 +39,9 @@
 .text-input.input-group-left {
     -fx-border-radius: 3 0 0 3;
     -fx-background-radius: 3 0 0 3;
-    -fx-border-width: 1 0 1 1;
 }
 
 .button.input-group-right {
     -fx-border-radius: 0 3 3 0;
     -fx-background-radius: 0 3 3 0;
-    -fx-border-width: 1 1 1 0;
 }

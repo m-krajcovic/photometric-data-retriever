@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.utils.ScreenConfig;
+import cz.muni.physics.pdr.app.spring.ScreenConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import org.springframework.beans.factory.annotation.Autowired;

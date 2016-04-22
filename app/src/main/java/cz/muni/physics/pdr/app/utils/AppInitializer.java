@@ -59,7 +59,6 @@ public class AppInitializer {
             }
         }
 
-
         if (!starSurveysFile.exists()) {
             try (InputStream inputStream = StarSurveyRepositoryImpl.class.getResourceAsStream("/star_surveys.xml");
                  OutputStream outputStream = new FileOutputStream(starSurveysFile)) {

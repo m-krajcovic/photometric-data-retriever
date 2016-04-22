@@ -4,7 +4,7 @@ import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.app.utils.ScreenConfig;
+import cz.muni.physics.pdr.app.spring.ScreenConfig;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import javafx.collections.FXCollections;
