@@ -19,10 +19,10 @@ import java.util.function.Predicate;
  */
 public class VSXStarResolverImpl implements VSXStarResolver {
 
-    private String vsxDatFilePath;
+    private File vsxDatFile;
 
-    public VSXStarResolverImpl(String vsxDatFilePath) {
-        this.vsxDatFilePath = vsxDatFilePath;
+    public VSXStarResolverImpl(File vsxDatFile) {
+        this.vsxDatFile = vsxDatFile;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class VSXStarResolverImpl implements VSXStarResolver {
     }
 
     private List<StellarObject> getResults(Predicate<StellarObject> condition) {
-        try (FileInputStream fis = new FileInputStream(new File(vsxDatFilePath))) {
+        try (FileInputStream fis = new FileInputStream(vsxDatFile)) {
             StreamGobbler<StellarObject> gobbler = new StreamGobbler<>(fis,
                     s -> {
                         String oid = s.substring(0, 6).trim();
@@ -79,6 +79,6 @@ public class VSXStarResolverImpl implements VSXStarResolver {
 
     @Override
     public boolean isAvailable() {
-        return new File(vsxDatFilePath).exists();
+        return vsxDatFile.exists();
     }
 }

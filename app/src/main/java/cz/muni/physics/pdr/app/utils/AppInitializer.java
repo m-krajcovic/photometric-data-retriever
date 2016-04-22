@@ -6,8 +6,6 @@ import javafx.application.Application;
 import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -27,29 +25,31 @@ import java.util.List;
 public class AppInitializer {
     private final static Logger logger = LogManager.getLogger(AppInitializer.class);
 
-    @Autowired
-    private ScreenConfig app;
-    @Value("${plugins.dir.path:${default.plugins.dir.path}}")
-    private String pluginsDirPath;
-    @Value("${app.data.dir.path:${default.app.data.dir.path}}")
-    private String dataDirPath;
-    @Value("${starsurveys.file.path:${default.starsurveys.file.path}}")
-    private String starSurveysFilePath;
+    private File appDataDir;
+    private File pluginsDir;
+    private File starSurveysFile;
+    private File vsxDatFile;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
 
+
+    public AppInitializer(File appDataDir, File pluginsDir, File starSurveysFile, File vsxDatFile) {
+        this.appDataDir = appDataDir;
+        this.pluginsDir = pluginsDir;
+        this.starSurveysFile = starSurveysFile;
+        this.vsxDatFile = vsxDatFile;
+    }
+
     public void initialize(Application mainApp) {
         logger.debug("Initializing mainApp.");
 
-        File dataDir = new File(dataDirPath);
-        if (!dataDir.exists()) {
-            if (!dataDir.mkdir()) {
+        if (!appDataDir.exists()) {
+            if (!appDataDir.mkdir()) {
                 initExceptions.add(new RuntimeException("Failed to create app data directory"));
             }
         }
 
-        File pluginsDir = new File(pluginsDirPath);
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         logger.debug("Checking if app data exists");
         if (!pluginsDir.exists()) {
@@ -60,7 +60,6 @@ public class AppInitializer {
         }
 
 
-        File starSurveysFile = new File(starSurveysFilePath);
         if (!starSurveysFile.exists()) {
             try (InputStream inputStream = StarSurveyRepositoryImpl.class.getResourceAsStream("/star_surveys.xml");
                  OutputStream outputStream = new FileOutputStream(starSurveysFile)) {
@@ -70,9 +69,10 @@ public class AppInitializer {
                     outputStream.write(bytes, 0, read);
                 }
             } catch (IOException e) {
-                initExceptions.add(new RuntimeException("Failed to copy default star surveys config to " + starSurveysFilePath, e));
+                initExceptions.add(new RuntimeException("Failed to copy default star surveys config to " + starSurveysFile.getAbsolutePath(), e));
             }
         }
+        
         // TODO check vsx dat file
 
 //        mainApp.notifyPreloader(PreloaderHandlerEvent.CHECKING_SESAME);

@@ -12,8 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.prefs.Preferences;
-
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -28,8 +26,6 @@ public class MainApp extends Application {
 
     public MainApp() {
 
-        Preferences prefs = Preferences.userRoot();
-        prefs.putInt("core.pool.size", 8);
     }
 
     public static void main(String[] args) {

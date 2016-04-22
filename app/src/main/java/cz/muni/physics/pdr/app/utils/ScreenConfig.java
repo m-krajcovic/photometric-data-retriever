@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app.utils;
 
 import com.thoughtworks.xstream.XStream;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
+import cz.muni.physics.pdr.app.controller.PreferencesOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.app.controller.StarSurveyOverviewController;
 import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
@@ -23,8 +24,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +33,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -53,6 +56,8 @@ public class ScreenConfig {
     private String name;
     @Value("${app.icon.path:/images/planet.png}")
     private String iconPath;
+    @Autowired
+    private Environment environment;
 
     private Stage primaryStage;
     private BorderPane rootLayout;
@@ -86,6 +91,20 @@ public class ScreenConfig {
         controller.setData(data);
     }
 
+    public void showPreferencesOverview() {
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane starSurveyOverview = loader.load("/view/PreferencesOverview.fxml");
+        PreferencesOverviewController controller = loader.getController();
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Star surveys");
+        dialogStage.initOwner(primaryStage);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        controller.setDialogStage(dialogStage);
+        Scene scene = new Scene(starSurveyOverview);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+    }
+
     public void showStarSurveyOverview() {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane starSurveyOverview = loader.load("/view/StarSurveyOverview.fxml");
@@ -94,7 +113,7 @@ public class ScreenConfig {
         dialogStage.setTitle("Star surveys");
         dialogStage.initOwner(primaryStage);
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        controller.setPrimaryStage(dialogStage);
+        controller.setDialogStage(dialogStage);
         Scene scene = new Scene(starSurveyOverview);
         dialogStage.setScene(scene);
         dialogStage.show();
@@ -133,31 +152,45 @@ public class ScreenConfig {
     }
 
     @Bean
+    public AppInitializer appInitializer(@Value("#{preferences.get('app.data.dir.path')}") String appDataDirPath,
+                                         @Value("#{preferences.get('plugins.dir.path')}") String pluginDirPath,
+                                         @Value("${starsurveys.file.name}") String starSurveysFileName,
+                                         @Value("${vsx.dat.file.name}") String vsxDatFileName) {
+        return new AppInitializer(new File(appDataDirPath),
+                new File(pluginDirPath),
+                new File(appDataDirPath, starSurveysFileName),
+                new File(appDataDirPath, vsxDatFileName));
+    }
+
+
+    @Bean
     @Scope("prototype")
     public SpringFXMLLoader fxmlLoader() {
         return new SpringFXMLLoader();
     }
 
     @Bean
-    public VSXStarResolver vsxStarResolver(@Value("${vsx.dat.file.path:${default.vsx.dat.file.path}}") String vsxDatFilePath) {
-        return new VSXStarResolverImpl(vsxDatFilePath);
+    public VSXStarResolver vsxStarResolver(@Value("#{preferences.get('app.data.dir.path')}") String appDataDirPath,
+                                           @Value("${vsx.dat.file.name}") String vsxDatFileName) {
+        return new VSXStarResolverImpl(new File(appDataDirPath, vsxDatFileName));
     }
 
     @Bean
-    public StarSurveyRepository starSurveyRepository(XStream xStream, @Value("${starsurveys.file.path:${default.starsurveys.file.path}}") String starSurveysFilePath) {
-        return new StarSurveyRepositoryImpl(xStream, starSurveysFilePath);
+    public StarSurveyRepository starSurveyRepository(XStream xStream,
+                                                     @Value("#{preferences.get('app.data.dir.path')}") String appDataDirPath,
+                                                     @Value("${starsurveys.file.name}") String starSurveysFileName) {
+        return new StarSurveyRepositoryImpl(xStream, new File(appDataDirPath, starSurveysFileName));
     }
 
     @Bean
-    public PluginRepository pluginRepository(@Value("${plugins.dir.path:${default.plugins.dir.path}}") String pluginDirPath) {
-        return new PluginRepositoryImpl(pluginDirPath);
+    public PluginRepository pluginRepository(@Value("#{preferences.get('plugins.dir.path')}") String pluginDirPath) {
+        return new PluginRepositoryImpl(new File(pluginDirPath));
     }
 
     @Bean
-    public Executor searchServiceExecutor(@Value("${core.pool.size:${default.core.pool.size}}") int corePoolSize) {
+    public Executor searchServiceExecutor(@Value("#{preferences.get('core.pool.size')}") int corePoolSize) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.prefersShortLivedTasks();
-        System.out.println(corePoolSize);
         executor.setCorePoolSize(corePoolSize); // min 2 -> max ?
         executor.setDaemon(true);
         executor.setThreadNamePrefix("Backend Thread-");
@@ -165,15 +198,15 @@ public class ScreenConfig {
     }
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyPlaceHolder() {
+    public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
     @Bean
-    public static PreferencesPlaceholderConfigurer preferencePlaceHolder() {
-        PreferencesPlaceholderConfigurer preferencesPlaceholderConfigurer = new PreferencesPlaceholderConfigurer();
-        return preferencesPlaceholderConfigurer;
+    public PreferencesHolder preferences() {
+        return new PreferencesHolder();
     }
+
 
     public Stage getPrimaryStage() {
         return primaryStage;

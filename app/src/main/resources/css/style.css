@@ -1,4 +1,5 @@
-/*TOP RIGHT BOTTOM LEFT*/
+/* top right bottom left */
+/* top-left, top-right, bottom-right, and bottom-left corners, in that order. */
 
 .chart-symbol {
     -fx-shape: "M0 3 L3 3 L3 0 L0 0 Z";
@@ -13,7 +14,6 @@
     -fx-text-fill: #555;
     -fx-border-color: #ccc;
     -fx-border-width: 1 0 1 1;
-    /* top-left, top-right, bottom-right, and bottom-left corners, in that order. */
 }
 
 .text-input.error {
@@ -34,5 +34,16 @@
 .text-input.titled-text-field, .text-input.titled-text-field:disabled {
     -fx-border-radius: 0 3 3 0;
     -fx-background-radius: 0 3 3 0;
-    /* top-left, top-right, bottom-right, and bottom-left corners, in that order. */
+}
+
+.text-input.input-group-left {
+    -fx-border-radius: 3 0 0 3;
+    -fx-background-radius: 3 0 0 3;
+    -fx-border-width: 1 0 1 1;
+}
+
+.button.input-group-right {
+    -fx-border-radius: 0 3 3 0;
+    -fx-background-radius: 0 3 3 0;
+    -fx-border-width: 1 1 1 0;
 }

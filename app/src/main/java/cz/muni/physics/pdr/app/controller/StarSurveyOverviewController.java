@@ -45,7 +45,7 @@ public class StarSurveyOverviewController {
     @FXML
     private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
 
-    private Stage primaryStage;
+    private Stage dialogStage;
 
     @FXML
     private void initialize() {
@@ -67,7 +67,7 @@ public class StarSurveyOverviewController {
     @FXML
     private void handleNewButton() {
         StarSurveyModel tempStarSurvey = new StarSurveyModel();
-        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, primaryStage);
+        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, dialogStage);
         if (okClicked) {
             try {
                 starSurveys.getItems().add(tempStarSurvey);
@@ -83,7 +83,7 @@ public class StarSurveyOverviewController {
     private void handleEditButton() {
         StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
-            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, primaryStage);
+            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, dialogStage);
             if (okClicked) {
                 try {
                     starSurveyManager.insert(selectedRecord.toEntity());
@@ -117,11 +117,11 @@ public class StarSurveyOverviewController {
                 "No Star Survey Selected",
                 "Please select a Star Survey in the table.",
                 Alert.AlertType.WARNING);
-        alert.initOwner(primaryStage);
+        alert.initOwner(dialogStage);
         alert.showAndWait();
     }
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    public void setDialogStage(Stage dialogStage) {
+        this.dialogStage = dialogStage;
     }
 }

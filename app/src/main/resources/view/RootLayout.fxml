@@ -5,7 +5,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
             prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"
             fx:controller="cz.muni.physics.pdr.app.controller.RootLayoutController">
     <top>
@@ -13,10 +14,13 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="databasesMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
+                        <MenuItem mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
                                   text="%menu.item.starsurveys"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handlePreferencesMenuItem"
+                                  text="%menu.item.preferences"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="%menu.item.close"/>
                     </items>
                 </Menu>
             </menus>

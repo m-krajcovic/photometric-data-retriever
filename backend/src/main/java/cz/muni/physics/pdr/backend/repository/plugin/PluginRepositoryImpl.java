@@ -25,13 +25,13 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     private final static Logger logger = LogManager.getLogger(PluginRepositoryImpl.class);
 
-    private String pluginsFolderPath;
+    private File pluginsFolder;
     private FileWatcher fileWatcher;
     private Map<String, Plugin> plugins;
 
-    public PluginRepositoryImpl(String pluginsFolderPath) {
-        this.pluginsFolderPath = pluginsFolderPath;
-        fileWatcher = new FileWatcher(pluginsFolderPath);
+    public PluginRepositoryImpl(File pluginsFolder) {
+        this.pluginsFolder = pluginsFolder;
+        fileWatcher = new FileWatcher(pluginsFolder);
     }
 
     @Override
@@ -83,10 +83,10 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     private void checkAndLoadPlugins() {
         if (plugins == null) {
-            logger.debug("Plugins were not loaded yet. Loading plugins from {}", pluginsFolderPath);
+            logger.debug("Plugins were not loaded yet. Loading plugins from {}", pluginsFolder.getAbsolutePath());
             loadPlugins();
         } else if (fileWatcher.isFileUpdated()) {
-            logger.debug("Plugins folder has changed. Loading plugins from {}", pluginsFolderPath);
+            logger.debug("Plugins folder has changed. Loading plugins from {}", pluginsFolder.getAbsolutePath());
             loadPlugins();
         } else {
             logger.debug("No outside change in plugins folder. Using cached copy.");
@@ -95,10 +95,9 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     private synchronized void loadPlugins() {
         Map<String, Plugin> tempPlugins = new HashMap<>();
-        File dir = new File(pluginsFolderPath);
-        String[] dirs = dir.list((file, name) -> new File(file, name).isDirectory());
+        String[] dirs = pluginsFolder.list((file, name) -> new File(file, name).isDirectory());
         for (String pluginDirName : dirs) {
-            String pluginDirPath = pluginsFolderPath + File.separator + pluginDirName + File.separator;
+            String pluginDirPath = pluginsFolder.getAbsolutePath() + File.separator + pluginDirName + File.separator;
             try {
                 PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
                 Plugin plugin = reader.readPlugin();

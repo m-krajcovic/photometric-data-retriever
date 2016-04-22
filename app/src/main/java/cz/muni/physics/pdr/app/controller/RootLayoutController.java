@@ -29,4 +29,9 @@ public class RootLayoutController {
     private void handleDatabasesMenuItem() {
         app.showStarSurveyOverview();
     }
+
+    @FXML
+    private void handlePreferencesMenuItem(){
+        app.showPreferencesOverview();
+    }
 }
