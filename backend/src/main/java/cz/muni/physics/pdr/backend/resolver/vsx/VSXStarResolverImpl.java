@@ -5,9 +5,6 @@ import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.resolver.plugin.StreamGobbler;
 import cz.muni.physics.pdr.backend.utils.AstroUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,17 +17,12 @@ import java.util.function.Predicate;
  * @version 1.0
  * @since 13/04/16
  */
-@Component
 public class VSXStarResolverImpl implements VSXStarResolver {
 
-    private String dataDir;
-    private String vsxDatFile;
+    private String vsxDatFilePath;
 
-    @Autowired
-    public VSXStarResolverImpl(@Value("${user.home}${app.data.dir.path}") String dataDir,
-                               @Value("${vsx.dat.file.name}") String vsxDatFile) {
-        this.dataDir = dataDir;
-        this.vsxDatFile = vsxDatFile;
+    public VSXStarResolverImpl(String vsxDatFilePath) {
+        this.vsxDatFilePath = vsxDatFilePath;
     }
 
     @Override
@@ -48,7 +40,7 @@ public class VSXStarResolverImpl implements VSXStarResolver {
     }
 
     private List<StellarObject> getResults(Predicate<StellarObject> condition) {
-        try (FileInputStream fis = new FileInputStream(new File(dataDir, vsxDatFile))) {
+        try (FileInputStream fis = new FileInputStream(new File(vsxDatFilePath))) {
             StreamGobbler<StellarObject> gobbler = new StreamGobbler<>(fis,
                     s -> {
                         String oid = s.substring(0, 6).trim();
@@ -87,6 +79,6 @@ public class VSXStarResolverImpl implements VSXStarResolver {
 
     @Override
     public boolean isAvailable() {
-        return new File(dataDir, vsxDatFile).exists();
+        return new File(vsxDatFilePath).exists();
     }
 }

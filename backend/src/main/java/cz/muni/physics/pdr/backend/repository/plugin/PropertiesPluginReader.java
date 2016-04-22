@@ -15,11 +15,11 @@ import java.util.Properties;
  * @version 1.0
  * @since 13/04/16
  */
-public class PropertiesPluginReader implements PluginReader {
+class PropertiesPluginReader implements PluginReader {
 
     private File pluginDir;
 
-    public PropertiesPluginReader(File pluginDir) {
+    PropertiesPluginReader(File pluginDir) {
         this.pluginDir = pluginDir;
     }
 

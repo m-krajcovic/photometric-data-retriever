@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.utils;
 
+import com.thoughtworks.xstream.XStream;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.app.controller.StarSurveyOverviewController;
@@ -9,6 +10,12 @@ import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
+import cz.muni.physics.pdr.backend.repository.plugin.PluginRepositoryImpl;
+import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
+import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryImpl;
+import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
+import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolverImpl;
 import cz.muni.physics.pdr.backend.utils.AppConfig;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -16,7 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,9 +31,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * @author Michal Krajčovič
@@ -40,12 +49,9 @@ import java.util.Map;
 @Import(AppConfig.class)
 public class ScreenConfig {
 
-    @Autowired
-    private AppConfig backend;
-
-    @Value("${app.name}")
+    @Value("${app.name:PDR}")
     private String name;
-    @Value("${app.icon.path}")
+    @Value("${app.icon.path:/images/planet.png}")
     private String iconPath;
 
     private Stage primaryStage;
@@ -133,6 +139,32 @@ public class ScreenConfig {
     }
 
     @Bean
+    public VSXStarResolver vsxStarResolver(@Value("${user.home}${app.data.dir.path:/.pdr}") String dataDir,
+                                           @Value("${vsx.dat.file.name:vsx.dat}") String vsxDatFile) {
+        return new VSXStarResolverImpl(dataDir + File.separator + vsxDatFile);
+    }
+
+    @Bean
+    public StarSurveyRepository starSurveyRepository(XStream xStream, @Value("${user.home}${starsurveys.file.path:/.pdr/star_surveys.xml}") String starSurveysFilePath) {
+        return new StarSurveyRepositoryImpl(xStream, starSurveysFilePath);
+    }
+
+    @Bean
+    public PluginRepository pluginRepository(@Value("${user.home}${plugins.dir.path:/.pdr/plugins}") String pluginDirPath) {
+        return new PluginRepositoryImpl(pluginDirPath);
+    }
+
+    @Bean
+    public Executor searchServiceExecutor(@Value("${core.pool.size:4}") int corePoolSize) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.prefersShortLivedTasks();
+        executor.setCorePoolSize(corePoolSize); // min 2 -> max ?
+        executor.setDaemon(true);
+        executor.setThreadNamePrefix("Backend Thread-");
+        return executor;
+    }
+
+    @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
@@ -152,6 +184,4 @@ public class ScreenConfig {
     public String getIconPath() {
         return iconPath;
     }
-
-
 }

@@ -43,8 +43,21 @@ public class StarSurveyOverviewController {
 
     private Stage primaryStage;
 
-    public StarSurveyOverviewController() {
+    @FXML
+    private void initialize() {
+        nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
+        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
 
+        pluginColumn.setCellFactory(new PluginCellFactory());
+
+        ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
+        try {
+            starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+        } catch (ResourceAvailabilityException e) {
+            FXMLUtils.alert("This is bad!", "Have you tried turning it off and on again?", "Failed to load star surveys from app data", Alert.AlertType.ERROR)
+                    .showAndWait();
+        }
+        starSurveys.setItems(list);
     }
 
     @FXML
@@ -94,24 +107,9 @@ public class StarSurveyOverviewController {
         }
     }
 
-    @FXML
-    private void initialize() {
-        nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
-        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
-
-        pluginColumn.setCellFactory(new PluginCellFactory());
-
-        ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
-        try {
-            starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
-        } catch (ResourceAvailabilityException e) {
-            e.printStackTrace();
-        }
-        starSurveys.setItems(list);
-    }
 
     private void showNoSelectionDialog() {
-        Alert alert = FXMLUtils.showAlert("No selection", "No Star Survey Selected",
+        Alert alert = FXMLUtils.alert("No selection", "No Star Survey Selected",
                 "Please select a Star Survey in the table.",
                 Alert.AlertType.WARNING);
         alert.initOwner(primaryStage);

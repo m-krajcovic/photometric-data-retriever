@@ -5,9 +5,6 @@ import cz.muni.physics.pdr.backend.exception.PluginReaderException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +21,6 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 14/04/16
  */
-@Component
 public class PluginRepositoryImpl implements PluginRepository {
 
     private final static Logger logger = LogManager.getLogger(PluginRepositoryImpl.class);
@@ -33,8 +29,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     private FileWatcher fileWatcher;
     private Map<String, Plugin> plugins;
 
-    @Autowired
-    public PluginRepositoryImpl(@Value("${user.home}${plugins.dir.path}") String pluginsFolderPath) {
+    public PluginRepositoryImpl(String pluginsFolderPath) {
         this.pluginsFolderPath = pluginsFolderPath;
         fileWatcher = new FileWatcher(pluginsFolderPath);
     }
@@ -104,13 +99,13 @@ public class PluginRepositoryImpl implements PluginRepository {
         String[] dirs = dir.list((file, name) -> new File(file, name).isDirectory());
         for (String pluginDirName : dirs) {
             String pluginDirPath = pluginsFolderPath + File.separator + pluginDirName + File.separator;
-            PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
             try {
+                PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
                 Plugin plugin = reader.readPlugin();
                 logger.debug("Loaded plugin {}", plugin.getName());
                 tempPlugins.put(plugin.getName(), plugin);
             } catch (PluginReaderException exc) {
-                logger.error("Failed loading plugin", exc);
+                logger.error("Failed loading plugin from {}", pluginDirPath, exc);
             }
         }
         plugins = new HashMap<>(tempPlugins);

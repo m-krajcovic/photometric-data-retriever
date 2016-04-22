@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 /**
@@ -33,21 +32,23 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataRetrieverManagerImpl.class);
 
-    @Autowired
     private StarSurveyManager starSurveyManager;
-    @Autowired
     private Executor executor;
 
     private Consumer<StarSurvey> onNoResultsFound;
     private Consumer<StarSurvey> onResultsFound;
+    private List<CompletableFuture> futures = null;
 
-    private List<Future> futures = null;
-    private List<ProcessStarter> processStarters;
+    @Autowired
+    public PhotometricDataRetrieverManagerImpl(StarSurveyManager starSurveyManager,
+                                               Executor executor) {
+        this.starSurveyManager = starSurveyManager;
+        this.executor = executor;
+    }
 
     public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         futures = new ArrayList<>();
-        processStarters = new ArrayList<>();
         for (StarSurvey survey : starSurveyManager.getAll()) {
             if (survey.getPlugin() == null || survey.getPlugin().getName().isEmpty()) {
                 logger.debug("No plugin set for {} star survey, skipping", survey.getName());
@@ -67,15 +68,12 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                         }
                     }, executor));
         }
-        futures.forEach(future -> {
-            try {
-                future.get();
-            } catch (InterruptedException e) {
-                logger.debug("Task got cancelled.");
-            } catch (ExecutionException e) {
-                throw new RuntimeException("Failed to wait for result for all star survey tasks.", e);
-            }
-        });
+        CompletableFuture[] cfs = futures.toArray(new CompletableFuture[futures.size()]);
+        try {
+            CompletableFuture.allOf(cfs).join();
+        } catch (CancellationException exc) {
+            logger.error("Photometric Data Retriever tasks were cancelled", exc);
+        }
         return resultMap;
     }
 
@@ -92,27 +90,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             logger.debug("Not able to prepare {} plugin command", plugin.getName());
             return CompletableFuture.completedFuture(new ArrayList<>());
         }
-        processStarters.add(starter);
-        return CompletableFuture.supplyAsync(() -> starter.runForResult(executor), executor);
-    }
-
-
-    public Consumer<StarSurvey> getOnNoResultsFound() {
-        return onNoResultsFound;
-    }
-
-    @Override
-    public void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound) {
-        this.onNoResultsFound = onNoResultsFound;
-    }
-
-    public Consumer<StarSurvey> getOnResultsFound() {
-        return onResultsFound;
-    }
-
-    @Override
-    public void setOnResultsFound(Consumer<StarSurvey> onResultsFound) {
-        this.onResultsFound = onResultsFound;
+        return CompletableFuture.supplyAsync(starter::runForResult, executor);
     }
 
     @Override
@@ -123,8 +101,17 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                 future.cancel(true);
             });
         }
-        if (processStarters != null) {
-            processStarters.stream().filter(p -> p != null).forEach(ProcessStarter::cancel);
-        }
     }
+
+    @Override
+    public void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound) {
+        this.onNoResultsFound = onNoResultsFound;
+    }
+
+    @Override
+    public void setOnResultsFound(Consumer<StarSurvey> onResultsFound) {
+        this.onResultsFound = onResultsFound;
+    }
+
+
 }

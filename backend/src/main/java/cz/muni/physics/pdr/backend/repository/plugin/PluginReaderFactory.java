@@ -1,6 +1,5 @@
 package cz.muni.physics.pdr.backend.repository.plugin;
 
-import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.exception.PluginReaderException;
 
 import java.io.File;
@@ -13,7 +12,7 @@ import java.util.Set;
  * @since 13/04/16
  */
 public abstract class PluginReaderFactory {
-    public static PluginReader getReader(File pluginDir) {
+    public static PluginReader getReader(File pluginDir) throws PluginReaderException {
         if (pluginDir == null) {
             throw new IllegalArgumentException("pluginDir cannot be null.");
         }
@@ -34,19 +33,6 @@ public abstract class PluginReaderFactory {
                 return new PropertiesPluginReader(pluginDir);
             }
         }
-        return new NullPluginReader();
-    }
-
-    private static class NullPluginReader implements PluginReader {
-
-        @Override
-        public Plugin readPlugin() throws PluginReaderException {
-            return null;
-        }
-
-        @Override
-        public void setPluginDir(File pluginDir) {
-
-        }
+        throw new PluginReaderException("No plugin config file found in ", pluginDir.getAbsolutePath());
     }
 }

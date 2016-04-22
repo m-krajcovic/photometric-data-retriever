@@ -94,7 +94,7 @@ public class AppInitializer {
 
     public void showInitErrors() {
         for (String error : initErrors) {
-            FXMLUtils.showAlert("Error", null, error, Alert.AlertType.ERROR);
+            FXMLUtils.alert("Error", null, error, Alert.AlertType.ERROR);
         }
     }
 }

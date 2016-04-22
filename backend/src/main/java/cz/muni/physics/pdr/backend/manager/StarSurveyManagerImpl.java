@@ -18,10 +18,15 @@ import java.util.function.Predicate;
 @Component
 public class StarSurveyManagerImpl implements StarSurveyManager {
 
-    @Autowired
     private PluginRepository pluginRepository;
-    @Autowired
     private StarSurveyRepository starSurveyRepository;
+
+    @Autowired
+    public StarSurveyManagerImpl(PluginRepository pluginRepository,
+                                 StarSurveyRepository starSurveyRepository){
+        this.pluginRepository = pluginRepository;
+        this.starSurveyRepository = starSurveyRepository;
+    }
 
     @Override
     public void insert(StarSurvey entity) {

@@ -7,9 +7,6 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.repository.FileWatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,7 +28,6 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 14/04/16
  */
-@Component
 public class StarSurveyRepositoryImpl implements StarSurveyRepository {
 
     private final static Logger logger = LogManager.getLogger(StarSurveyRepositoryImpl.class);
@@ -41,14 +37,12 @@ public class StarSurveyRepositoryImpl implements StarSurveyRepository {
     private XStream xStream;
     private Map<String, StarSurvey> starSurveys;
 
-    @Autowired
     public StarSurveyRepositoryImpl(XStream xStream,
-                                    @Value("${user.home}${starsurveys.file.path}") String starSurveysFilePath) {
+                                    String starSurveysFilePath) {
         this.xStream = xStream;
         this.starSurveysFilePath = starSurveysFilePath;
         this.fileWatcher = new FileWatcher(starSurveysFilePath);
     }
-
 
     @Override
     public void insert(StarSurvey entity)  {

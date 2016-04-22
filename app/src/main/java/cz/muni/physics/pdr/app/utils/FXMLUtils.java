@@ -44,7 +44,7 @@ public class FXMLUtils {
                 control.getHeight() - 5 + control.getScene().getY() + window.getY() + point.getY());
     }
 
-    public static Alert showAlert(String title, String header, String content, Alert.AlertType type) {
+    public static Alert alert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);

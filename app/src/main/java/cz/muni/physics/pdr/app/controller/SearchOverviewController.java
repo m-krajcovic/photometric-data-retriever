@@ -136,7 +136,7 @@ public class SearchOverviewController {
         });
         nameSearchService.setOnFailed(e -> {
             logger.error("Failed to get data from Name Resolvers", nameSearchService.getException());
-            FXMLUtils.showAlert("Error", null, "Failed to get data from Name Resolvers", Alert.AlertType.ERROR);
+            FXMLUtils.alert("Error", null, "Failed to get data from Name Resolvers", Alert.AlertType.ERROR);
             nameSearchService.reset();
             disableElements(false);
             nameSearchService.reset();
@@ -188,7 +188,7 @@ public class SearchOverviewController {
 
         coordsSearchService.setOnFailed(event -> {
             logger.error("Failed to get data from Coords Resolvers", coordsSearchService.getException());
-            FXMLUtils.showAlert("Error", null, "Failed to get data from Coords Resolvers", Alert.AlertType.ERROR);
+            FXMLUtils.alert("Error", null, "Failed to get data from Coords Resolvers", Alert.AlertType.ERROR);
             disableElements(false);
             coordsSearchService.reset();
         });

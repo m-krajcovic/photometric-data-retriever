@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 
 /**
  * @author Michal Krajčovič
@@ -29,7 +25,6 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
     private String command;
     private Map<String, String> parameters;
     private boolean readyToRun = false;
-    private List<Future> futures = new ArrayList<>(2);
 
     @Override
     public boolean prepare(String command, Map<String, String> parameters) {
@@ -75,7 +70,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
     }
 
     @Override
-    public List<PhotometricData> runForResult(Executor executor) {
+    public List<PhotometricData> runForResult() {
         List<PhotometricData> result = new ArrayList<>();
         Process p;
         try {
@@ -84,34 +79,21 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
             throw new RuntimeException("Failed to run process by command {}" + command, e);
         }
 
-        try {
-            futures.add(CompletableFuture.supplyAsync(new StreamGobbler<>(p.getErrorStream(), line -> {
-                logger.error(line);
-                return null;
-            }), executor));
-            CompletableFuture<List<PhotometricData>> future = CompletableFuture.supplyAsync(new StreamGobbler<>(p.getInputStream(), line -> {
-                String[] split = line.split(",");
-                if (split.length >= 3 && NumberUtils.isParsable(split[0])
-                        && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
-                    return new PhotometricData(split[0], split[1], split[2]);
-                }
-                return null;
-            }), executor);
-            futures.add(future);
-            result.addAll(future.get());
-        } catch (InterruptedException e) {
-            logger.debug("Process started by command {} was canceled.", command, e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException("Process started by command was aborted by exception.", e);
-        }
-        futures.clear();
+        StreamGobbler<PhotometricData> stdOutput = new StreamGobbler<>(p.getInputStream(), line -> {
+            String[] split = line.split(",");
+            if (split.length >= 3 && NumberUtils.isParsable(split[0])
+                    && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
+                return new PhotometricData(split[0], split[1], split[2]);
+            }
+            return null;
+        });
+        StreamGobbler errorOutput = new StreamGobbler<>(p.getErrorStream(), line -> {
+            logger.error(line);
+            return null;
+        });
+
+        result.addAll(stdOutput.get());
         return result;
     }
 
-    @Override
-    public void cancel() {
-        futures.stream().filter(future -> future != null && !future.isDone()).forEach(future -> {
-            future.cancel(true);
-        });
-    }
 }
