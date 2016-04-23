@@ -102,10 +102,12 @@ public class StarSurveyOverviewController {
         StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
             try {
+                starSurveys.getItems().remove(selectedRecord);
                 starSurveyManager.delete(selectedRecord.toEntity());
             } catch (ResourceAvailabilityException e) {
                 e.printStackTrace(); // todo
             }
+            starSurveys.refresh();
         } else {
             showNoSelectionDialog();
         }

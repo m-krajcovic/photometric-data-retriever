@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 public class Configuration {
     @XStreamAlias("starSurveys")
     private List<StarSurvey> starSurveys;
-    @XStreamAlias("regexes")
-    private List<Pattern> regexes;
+    @XStreamAlias("patterns")
+    private Map<String, Pattern> patterns;
     @XStreamAlias("valueParameters")
     private Map<String, String> valueParameters;
 
@@ -28,12 +28,12 @@ public class Configuration {
         this.starSurveys = starSurveys;
     }
 
-    public List<Pattern> getRegexes() {
-        return regexes;
+    public Map<String, Pattern> getPatterns() {
+        return patterns;
     }
 
-    public void setRegexes(List<Pattern> regexes) {
-        this.regexes = regexes;
+    public void setPatterns(Map<String, Pattern> patterns) {
+        this.patterns = patterns;
     }
 
     public Map<String, String> getValueParameters() {

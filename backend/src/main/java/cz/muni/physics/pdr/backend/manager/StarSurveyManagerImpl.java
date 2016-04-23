@@ -6,7 +6,9 @@ import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * @author Michal Krajčovič
@@ -19,7 +21,7 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     private StarSurveyRepository starSurveyRepository;
 
     public StarSurveyManagerImpl(PluginRepository pluginRepository,
-                                 StarSurveyRepository starSurveyRepository){
+                                 StarSurveyRepository starSurveyRepository) {
         this.pluginRepository = pluginRepository;
         this.starSurveyRepository = starSurveyRepository;
     }
@@ -69,5 +71,35 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
         Plugin plugin = pluginRepository.getById(survey.getName());
         survey.setPlugin(plugin);
         return survey;
+    }
+
+    @Override
+    public Map<String, Pattern> getAllPatterns() {
+        return starSurveyRepository.getAllPatterns();
+    }
+
+    @Override
+    public void insertPattern(String key, Pattern pattern) {
+        starSurveyRepository.insertPattern(key, pattern);
+    }
+
+    @Override
+    public void removePattern(String key) {
+        starSurveyRepository.removePattern(key);
+    }
+
+    @Override
+    public Map<String, String> getAllValueParameters() {
+        return starSurveyRepository.getAllValueParameters();
+    }
+
+    @Override
+    public void insertValueParameter(String key, String value) {
+        starSurveyRepository.insertValueParameter(key, value);
+    }
+
+    @Override
+    public void removeValueParameter(String key) {
+        starSurveyRepository.removeValueParameter(key);
     }
 }

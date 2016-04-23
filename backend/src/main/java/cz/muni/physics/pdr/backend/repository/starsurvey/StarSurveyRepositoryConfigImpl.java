@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -22,14 +23,16 @@ import java.util.stream.Collectors;
  */
 public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
     private final static Logger logger = LogManager.getLogger(StarSurveyRepositoryConfigImpl.class);
-    
+
     private Map<String, StarSurvey> starSurveysCache = new HashMap<>();
+    private Map<String, Pattern> patterns = new HashMap<>();
+    private Map<String, String> valueParameters = new HashMap<>();
     private ConfigurationHolder configHolder;
 
     public StarSurveyRepositoryConfigImpl(ConfigurationHolder configHolder) {
         this.configHolder = configHolder;
-        loadSurveys(configHolder.get());
-        configHolder.addOnConfigurationChange(this::loadSurveys);
+        reloadConfig(configHolder.get());
+        configHolder.addOnConfigurationChange(this::reloadConfig);
     }
 
     @Override
@@ -75,15 +78,56 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
         return newList;
     }
 
-    private void loadSurveys(Configuration configuration) {
+    private void reloadConfig(Configuration configuration) {
         for (StarSurvey starSurvey : configuration.getStarSurveys()) {
+            starSurveysCache.clear();
             starSurveysCache.put(starSurvey.getName(), starSurvey);
         }
+        patterns = new HashMap<>(configuration.getPatterns());
+        valueParameters = new HashMap<>(configuration.getValueParameters());
     }
 
     private void saveConfig() {
         Configuration configuration = configHolder.get();
         configuration.setStarSurveys(new ArrayList<>(starSurveysCache.values()));
         configHolder.persist(configuration);
+    }
+
+    @Override
+    public Map<String, Pattern> getAllPatterns() {
+        return new HashMap<>(patterns);
+    }
+
+    @Override
+    public void insertPattern(String key, Pattern pattern) {
+        patterns.put(key, pattern);
+        saveConfig();
+    }
+
+    @Override
+    public void removePattern(String key) {
+        if (patterns.containsKey(key)) {
+            patterns.remove(key);
+            saveConfig();
+        }
+    }
+
+    @Override
+    public Map<String, String> getAllValueParameters() {
+        return new HashMap<>(valueParameters);
+    }
+
+    @Override
+    public void insertValueParameter(String key, String value) {
+        valueParameters.put(key, value);
+        saveConfig();
+    }
+
+    @Override
+    public void removeValueParameter(String key) {
+        if (valueParameters.containsKey(key)) {
+            valueParameters.remove(key);
+            saveConfig();
+        }
     }
 }
