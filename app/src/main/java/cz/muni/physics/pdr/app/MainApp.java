@@ -138,8 +138,7 @@ public class MainApp extends Application {
         app.initRootLayout();
         app.showSearch();
 
-        initializer.showInitExceptions();
-        initializer.showInitErrors();
+        initializer.start();
     }
 
     @Override

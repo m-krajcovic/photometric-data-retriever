@@ -10,6 +10,7 @@ import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
+import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
@@ -154,7 +155,7 @@ public class ScreenConfig {
         return controller.getSelected();
     }
 
-    public void close(){
+    public void close() {
         primaryStage.close();
     }
 
@@ -162,11 +163,15 @@ public class ScreenConfig {
     public AppInitializer appInitializer(@Value("${app.data.dir.path}") String appDataDirPath,
                                          @Value("${plugins.dir.path}") String pluginDirPath,
                                          @Value("${starsurveys.file.name}") String starSurveysFileName,
-                                         @Value("${vsx.dat.file.name}") String vsxDatFileName) {
-        return new AppInitializer(new File(appDataDirPath),
+                                         @Value("${vsx.dat.file.name}") String vsxDatFileName,
+                                         @Value("${vsx.ftp.url}") String vsxFtpUrl,
+                                         @Value("${vsx.check.outdated}") boolean checkOutdated) {
+        return new AppInitializerImpl(new File(appDataDirPath),
                 new File(pluginDirPath),
                 new File(appDataDirPath, starSurveysFileName),
-                new File(appDataDirPath, vsxDatFileName));
+                new File(appDataDirPath, vsxDatFileName),
+                vsxFtpUrl,
+                checkOutdated);
     }
 
 
