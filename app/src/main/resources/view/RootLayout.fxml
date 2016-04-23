@@ -14,13 +14,13 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
+                        <MenuItem fx:id="surveysMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
                                   text="%menu.item.starsurveys"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handlePreferencesMenuItem"
+                        <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false" onAction="#handlePreferencesMenuItem"
                                   text="%menu.item.preferences"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handleCloseMenuItem" text="%menu.item.close"/>
+                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem" text="%menu.item.close"/>
                     </items>
                 </Menu>
             </menus>

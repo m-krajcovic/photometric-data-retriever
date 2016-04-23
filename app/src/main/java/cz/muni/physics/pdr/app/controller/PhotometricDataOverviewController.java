@@ -15,6 +15,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,11 +26,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -46,6 +49,8 @@ public class PhotometricDataOverviewController {
     private MenuBar menuBar;
     @FXML
     private MenuItem saveAllMenuItem;
+    @FXML
+    private MenuItem closeMenuItem;
     @FXML
     private Menu saveMenu;
     @FXML
@@ -67,6 +72,8 @@ public class PhotometricDataOverviewController {
         final String os = System.getProperty("os.name");
         if (os != null && os.startsWith("Mac"))
             menuBar.useSystemMenuBarProperty().set(true);
+        saveAllMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
 
         julianDate.setCellValueFactory(cell -> cell.getValue().julianDateProperty());
         magnitude.setCellValueFactory(cell -> cell.getValue().magnitudeProperty());
@@ -78,28 +85,36 @@ public class PhotometricDataOverviewController {
     }
 
     @FXML
-    private void handleSaveAllMenuItem() {
+    private void handleSaveAllMenuItem() { // todo must be done async
+        String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
         File zip = FXMLUtils.showSaveFileChooser("Choose your destiny",
                 System.getProperty("user.home"),
-                "pdr-export-" + stellarObject.getRightAscension() + " " + stellarObject.getDeclination() + ".zip",
+                "pdr-export " + coords + ".zip",
                 photometricDataTableView.getScene().getWindow(),
-                new FileChooser.ExtensionFilter("zip file", "*.zip"));
-        try {
+                new FileChooser.ExtensionFilter("Zip file(*.zip)", "*.zip"));
+        if (zip != null) {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
                 for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
-                    ZipEntry e = new ZipEntry(MessageFormat.format("{0} {1} {2}.csv", entry.getKey().getName(), stellarObject.getRightAscension(), stellarObject.getDeclination()));
+                    ZipEntry e = new ZipEntry(MessageFormat.format("{0} {1}.csv", entry.getKey().getName(), coords));
                     out.putNextEntry(e);
-                    Optional<String> os = entry.getValue().stream().map(PhotometricDataModel::toCsv).reduce((s1, s2) -> s1 + "\n" + s2);
-                    if (os.isPresent()) {
-                        byte[] byteArray = os.get().getBytes();
-                        out.write(byteArray, 0, byteArray.length);
-                    }
+                    String csv = toCsv(entry.getValue());
+                    byte[] byteArray = csv.getBytes();
+                    out.write(byteArray, 0, byteArray.length);
                     out.closeEntry();
                 }
+            } catch (IOException e) {
+                e.printStackTrace(); //todo handle
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    private String toCsv(List<PhotometricDataModel> models) {
+        return models.stream().map(PhotometricDataModel::toCsv).reduce("Julian date,Magnitude,Magnitude error", (s1, s2) -> s1 + "\n" + s2);
+    }
+
+    @FXML
+    private void handleCloseMenuItem() {
+
     }
 
     public void setData(Map<StarSurvey, List<PhotometricDataModel>> data) {
@@ -110,6 +125,21 @@ public class PhotometricDataOverviewController {
             photometricDataTableView.getItems().addAll(entry.getValue());
 
             MenuItem menuItem = new MenuItem(entry.getKey().getName());
+            menuItem.setOnAction(event -> { // todo async
+                String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
+                File csv = FXMLUtils.showSaveFileChooser("Choose your destiny",
+                        System.getProperty("user.home"),
+                        entry.getKey().getName() + " " + coords + ".csv",
+                        photometricDataTableView.getScene().getWindow(),
+                        new FileChooser.ExtensionFilter("Csv file(*.csv)", "*.csv"));
+                if (csv != null) {
+                    try (FileWriter writer = new FileWriter(csv)) {
+                        writer.write(toCsv(entry.getValue()));
+                    } catch (IOException e) {
+                        e.printStackTrace(); // todo handle
+                    }
+                }
+            });
             saveMenu.getItems().add(menuItem);
         }
 

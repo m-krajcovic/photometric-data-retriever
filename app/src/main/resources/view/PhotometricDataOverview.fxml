@@ -1,51 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-
-
-<BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
-   <center>
-      <AnchorPane prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
-          <children>
-              <TableView fx:id="photometricDataTableView" editable="true" maxHeight="-Infinity" maxWidth="601.0" minHeight="-Infinity" minWidth="600" prefHeight="255.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <columns>
-                      <TableColumn fx:id="julianDate" prefWidth="68.0" text="%photometricdata.jd" />
-                      <TableColumn fx:id="magnitude" prefWidth="163.0" text="%photometricdata.magnitude" />
-                      <TableColumn fx:id="error" prefWidth="258.0" text="%photometricdata.error" />
-                  </columns>
-                  <columnResizePolicy>
-                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                  </columnResizePolicy>
-              </TableView>
-              <ScatterChart fx:id="chart" layoutX="1.0" layoutY="326.0" prefHeight="274.0" prefWidth="575.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
-                  <xAxis>
-                      <NumberAxis forceZeroInRange="false" label="Julian Date" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" upperBound="0.0" />
-                  </xAxis>
-                  <yAxis>
-                      <NumberAxis forceZeroInRange="false" label="Magnitude" lowerBound="10.0" side="LEFT" upperBound="15.0" />
-                  </yAxis>
-              </ScatterChart>
-          </children>
-      </AnchorPane>
-   </center>
-   <top>
-      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem fx:id="saveAllMenuItem" onAction="#handleSaveAllMenuItem" mnemonicParsing="false" text="%menu.item.save.all" />
-                  <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
+    <center>
+        <AnchorPane prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
+            <children>
+                <TableView fx:id="photometricDataTableView" editable="true" maxHeight="-Infinity" maxWidth="601.0"
+                           minHeight="-Infinity" minWidth="600" prefHeight="255.0" prefWidth="600.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                        <TableColumn fx:id="julianDate" prefWidth="68.0" text="%photometricdata.jd"/>
+                        <TableColumn fx:id="magnitude" prefWidth="163.0" text="%photometricdata.magnitude"/>
+                        <TableColumn fx:id="error" prefWidth="258.0" text="%photometricdata.error"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+                <ScatterChart fx:id="chart" layoutX="1.0" layoutY="326.0" prefHeight="274.0" prefWidth="575.0"
+                              AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0"
+                              AnchorPane.topAnchor="265.0">
+                    <xAxis>
+                        <NumberAxis forceZeroInRange="false" label="Julian Date" prefHeight="42.0" prefWidth="548.0"
+                                    side="BOTTOM" upperBound="0.0"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis forceZeroInRange="false" label="Magnitude" lowerBound="10.0" side="LEFT"
+                                    upperBound="15.0"/>
+                    </yAxis>
+                </ScatterChart>
+            </children>
+        </AnchorPane>
+    </center>
+    <top>
+        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="saveAllMenuItem" onAction="#handleSaveAllMenuItem" mnemonicParsing="false"
+                                  text="%menu.item.save.all"/>
+                        <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem fx:id="closeMenuItem" onAction="#handleCloseMenuItem" mnemonicParsing="false"
+                                  text="%menu.item.close"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
 </BorderPane>
