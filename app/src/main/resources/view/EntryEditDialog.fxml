@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="135.0" prefWidth="362.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.EntryEditDialogController">
+   <children>
+      <GridPane layoutX="30.0" layoutY="30.0" prefHeight="73.0" prefWidth="322.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="331.0" minWidth="10.0" percentWidth="30.0" prefWidth="285.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="312.0" minWidth="10.0" prefWidth="295.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="103.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="164.0" minHeight="10.0" percentHeight="50.0" prefHeight="27.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label text="%label.key" />
+            <Label text="%label.value" GridPane.rowIndex="1" />
+            <TextField GridPane.columnIndex="1" fx:id="keyTextField"/>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1"  fx:id="valueTextField"/>
+         </children>
+      </GridPane>
+      <ButtonBar layoutX="162.0" layoutY="222.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <buttons>
+          <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancelButton" text="%button.cancel" />
+            <Button layoutX="140.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleOkButton" text="%button.ok" />
+        </buttons>
+      </ButtonBar>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

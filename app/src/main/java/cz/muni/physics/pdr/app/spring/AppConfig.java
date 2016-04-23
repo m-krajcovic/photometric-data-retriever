@@ -1,14 +1,19 @@
 package cz.muni.physics.pdr.app.spring;
 
 import com.thoughtworks.xstream.XStream;
+import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
+import cz.muni.physics.pdr.app.controller.PatternsOverviewController;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.PreferencesOverviewController;
 import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.app.controller.StarSurveyOverviewController;
 import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
+import cz.muni.physics.pdr.app.controller.ValuesOverviewController;
+import cz.muni.physics.pdr.app.model.PatternModel;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.model.ValueParameterModel;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
@@ -158,6 +163,66 @@ public class AppConfig {
         controller.setItems(stellarObjects);
         dialogStage.showAndWait();
         return controller.getSelected();
+    }
+
+    public void showValueParameterOverview(Stage owner){
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane dialog = loader.load("/view/ValuesOverview.fxml");
+        ValuesOverviewController controller = loader.getController();
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Parameter Values");
+        dialogStage.initOwner(owner);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Scene scene = new Scene(dialog);
+        dialogStage.setScene(scene);
+        controller.setDialogStage(dialogStage);
+        dialogStage.showAndWait();
+    }
+
+    public void showPatternsOverview(Stage owner){
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane dialog = loader.load("/view/PatternsOverview.fxml");
+        PatternsOverviewController controller = loader.getController();
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Patterns");
+        dialogStage.initOwner(owner);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Scene scene = new Scene(dialog);
+        dialogStage.setScene(scene);
+        controller.setDialogStage(dialogStage);
+        dialogStage.showAndWait();
+    }
+
+    public boolean showValueParameterEditDialog(ValueParameterModel model, Stage owner) {
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane valueParameterDialog = loader.load("/view/EntryEditDialog.fxml");
+        EntryEditDialogController controller = loader.getController();
+        controller.setModel(model);
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Edit Value Parameter");
+        dialogStage.initOwner(owner);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Scene scene = new Scene(valueParameterDialog);
+        dialogStage.setScene(scene);
+        controller.setDialogStage(dialogStage);
+        dialogStage.showAndWait();
+        return controller.isOkClicked();
+    }
+
+    public boolean showPatternEditDialog(PatternModel model, Stage owner) {
+        SpringFXMLLoader loader = fxmlLoader();
+        AnchorPane patternsDialog = loader.load("/view/EntryEditDialog.fxml");
+        EntryEditDialogController controller = loader.getController();
+        controller.setModel(model);
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Edit Pattern");
+        dialogStage.initOwner(owner);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Scene scene = new Scene(patternsDialog);
+        dialogStage.setScene(scene);
+        controller.setDialogStage(dialogStage);
+        dialogStage.showAndWait();
+        return controller.isOkClicked();
     }
 
     public void close() {

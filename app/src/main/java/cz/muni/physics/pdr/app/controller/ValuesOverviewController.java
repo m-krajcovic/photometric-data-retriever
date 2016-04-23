@@ -1,8 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
-import cz.muni.physics.pdr.app.model.PluginModel;
-import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.app.model.ValueParameterModel;
 import cz.muni.physics.pdr.app.spring.AppConfig;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
@@ -22,10 +20,10 @@ import java.util.ResourceBundle;
 /**
  * @author Michal Krajčovič
  * @version 1.0
- * @since 31/03/16
+ * @since 23/04/16
  */
 @Component
-public class StarSurveyOverviewController {
+public class ValuesOverviewController {
 
     @Autowired
     private AppConfig app;
@@ -35,58 +33,57 @@ public class StarSurveyOverviewController {
     @FXML
     private ResourceBundle resources;
     @FXML
-    private TableView<StarSurveyModel> starSurveys;
+    private TableView<ValueParameterModel> tableView;
     @FXML
-    private TableColumn<StarSurveyModel, String> nameColumn;
+    private TableColumn<ValueParameterModel, String> keyTableColumn;
     @FXML
-    private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
+    private TableColumn<ValueParameterModel, String> valueTableColumn;
 
     private Stage dialogStage;
 
     @FXML
     private void initialize() {
-        nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
-        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
+        keyTableColumn.setCellValueFactory(c -> c.getValue().getKey());
+        valueTableColumn.setCellValueFactory(c -> c.getValue().getValue());
 
-        pluginColumn.setCellFactory(new PluginCellFactory());
-
-        ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
+        ObservableList<ValueParameterModel> list = FXCollections.observableArrayList();
         try {
-            starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+            starSurveyManager.getAllValueParameters().forEach((k, v) -> list.add(new ValueParameterModel(k, v)));
         } catch (ResourceAvailabilityException e) {
             FXMLUtils.alert("This is bad!", "Have you tried turning it off and on again?", "Failed to load star surveys from app data", Alert.AlertType.ERROR)
                     .showAndWait();
         }
-        starSurveys.setItems(list);
+        tableView.setItems(list);
     }
 
     @FXML
     private void handleNewButton() {
-        StarSurveyModel tempStarSurvey = new StarSurveyModel();
-        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, dialogStage);
+        ValueParameterModel model = new ValueParameterModel();
+        boolean okClicked = app.showValueParameterEditDialog(model, dialogStage);
         if (okClicked) {
             try {
-                starSurveys.getItems().add(tempStarSurvey);
-                starSurveyManager.insert(tempStarSurvey.toEntity());
+                tableView.getItems().add(model);
+                starSurveyManager.insertValueParameter(model.key(), model.value());
             } catch (ResourceAvailabilityException e) {
                 e.printStackTrace(); //todo
             }
-            starSurveys.refresh();
+            tableView.refresh();
         }
     }
 
+
     @FXML
     private void handleEditButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, dialogStage);
+        ValueParameterModel model = tableView.getSelectionModel().getSelectedItem();
+        if (model != null) {
+            boolean okClicked = app.showValueParameterEditDialog(model, dialogStage);
             if (okClicked) {
                 try {
-                    starSurveyManager.insert(selectedRecord.toEntity());
+                    starSurveyManager.insertValueParameter(model.key(), model.value());
                 } catch (ResourceAvailabilityException e) {
                     e.printStackTrace(); //todo
                 }
-                starSurveys.refresh();
+                tableView.refresh();
             }
         } else {
             showNoSelectionDialog();
@@ -95,34 +92,25 @@ public class StarSurveyOverviewController {
 
     @FXML
     private void handleDeleteButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
+        ValueParameterModel selectedRecord = tableView.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
             try {
-                starSurveys.getItems().remove(selectedRecord);
-                starSurveyManager.delete(selectedRecord.toEntity());
+                tableView.getItems().remove(selectedRecord);
+                starSurveyManager.removeValueParameter(selectedRecord.key());
             } catch (ResourceAvailabilityException e) {
                 e.printStackTrace(); // todo
             }
-            starSurveys.refresh();
+            tableView.refresh();
         } else {
             showNoSelectionDialog();
         }
     }
 
-    @FXML
-    private void handleValuesButton() {
-        app.showValueParameterOverview(dialogStage);
-    }
-
-    @FXML
-    private void handlePatternsButton() {
-        app.showPatternsOverview(dialogStage);
-    }
 
     private void showNoSelectionDialog() {
         Alert alert = FXMLUtils.alert(resources.getString("alert.noselection"),
-                "No Star Survey Selected",
-                "Please select a Star Survey in the table.",
+                "No value selected",
+                "Please select a row in the table.",
                 Alert.AlertType.WARNING);
         alert.initOwner(dialogStage);
         alert.showAndWait();
@@ -131,5 +119,4 @@ public class StarSurveyOverviewController {
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
-
 }

@@ -79,8 +79,9 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
     }
 
     private void reloadConfig(Configuration configuration) {
-        for (StarSurvey starSurvey : configuration.getStarSurveys()) {
-            starSurveysCache.clear();
+        List<StarSurvey> starSurveys = configuration.getStarSurveys();
+        starSurveysCache = new HashMap<>(starSurveys.size());
+        for (StarSurvey starSurvey : starSurveys) {
             starSurveysCache.put(starSurvey.getName(), starSurvey);
         }
         patterns = new HashMap<>(configuration.getPatterns());

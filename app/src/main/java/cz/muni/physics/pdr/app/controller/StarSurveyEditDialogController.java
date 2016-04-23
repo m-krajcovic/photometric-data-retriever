@@ -6,7 +6,6 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.PluginManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
@@ -34,8 +33,6 @@ public class StarSurveyEditDialogController {
     private TextField nameTextField;
     @FXML
     private ChoiceBox<PluginModel> pluginChoiceBox;
-    @FXML
-    private TextArea sesameIdentifierTextArea;
     @FXML
     private TextArea urlTextArea;
 
@@ -83,13 +80,14 @@ public class StarSurveyEditDialogController {
     }
 
     @FXML
-    private void handleCancel(ActionEvent actionEvent) {
+    private void handleCancel() {
         dialogStage.close();
     }
 
     public void setStarSurvey(StarSurveyModel starSurvey) {
         this.starSurvey = starSurvey;
         nameTextField.setText(starSurvey.getName());
+        urlTextArea.setText(String.join("\n", starSurvey.getUrls()));
         pluginChoiceBox.getSelectionModel().select(starSurvey.getPlugin());
     }
 
