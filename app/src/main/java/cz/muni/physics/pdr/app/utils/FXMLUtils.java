@@ -1,19 +1,28 @@
 package cz.muni.physics.pdr.app.utils;
 
+import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import java.io.File;
@@ -102,5 +111,27 @@ public class FXMLUtils {
 
         alert.getDialogPane().setExpandableContent(expContent);
         alert.showAndWait();
+    }
+
+    public static Dialog showProgressDialog(Stage owner, Task task){
+        Dialog dialog = new Dialog();
+        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.initOwner(owner);
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setPrefSize(300, 30);
+        Label progressLabel = new Label();
+        progressLabel.setPrefSize(300, 10);
+        progressLabel.setAlignment(Pos.BASELINE_CENTER);
+        VBox vBox = new VBox(progressBar, progressLabel);
+        vBox.setFillWidth(true);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
+        dialog.getDialogPane().setContent(vBox);
+        progressBar.progressProperty().bind(task.progressProperty());
+        progressLabel.textProperty().bind(task.messageProperty());
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        Node closeButton = dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+        closeButton.managedProperty().bind(closeButton.visibleProperty());
+        closeButton.setVisible(false);
+        return dialog;
     }
 }

@@ -3,14 +3,18 @@ package cz.muni.physics.pdr.app.utils;
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import org.apache.commons.io.FileUtils;
+import javafx.scene.control.Dialog;
+import javafx.stage.Stage;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
@@ -45,6 +50,8 @@ public class AppInitializerImpl implements AppInitializer {
     private List<Consumer<Alert>> confirmations = new ArrayList<>();
     private boolean initializeCalled = false;
     private boolean shutdown = false;
+    private Executor executor;
+    private Stage primaryStage;
 
     public AppInitializerImpl(File appDataDir, File pluginsDir, File configFile, File vsxDatFile, String vsxDownloadUrl, boolean checkOutdated) {
         this.appDataDir = appDataDir;
@@ -139,48 +146,81 @@ public class AppInitializerImpl implements AppInitializer {
     }
 
     private void loadDefaultConfigFile() {
-        logger.debug("Started loading default config file");
-        try (InputStream inputStream = AppInitializerImpl.class.getResourceAsStream("/pdr_configuration.xml"); //async
-             OutputStream outputStream = new FileOutputStream(configFile)) {
-            int read;
-            byte[] bytes = new byte[1024];
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                logger.debug("Started loading default config file");
+                try (InputStream inputStream = AppInitializerImpl.class.getResourceAsStream("/pdr_configuration.xml"); //async
+                     OutputStream outputStream = new FileOutputStream(configFile)) {
+                    int read;
+                    byte[] bytes = new byte[1024];
+                    while ((read = inputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, read);
+                    }
+                    logger.debug("Successfully loaded default configuration file");
+                } catch (IOException e) {
+                    initExceptions.add(new RuntimeException("Failed to copy default configuration to " + configFile.getAbsolutePath(), e));
+                }
+                return null;
             }
-            logger.debug("Successfully loaded default configuration file");
-        } catch (IOException e) {
-            initExceptions.add(new RuntimeException("Failed to copy default configuration to " + configFile.getAbsolutePath(), e));
+        };
+        Dialog dialog = FXMLUtils.showProgressDialog(primaryStage, task);
+        task.setOnSucceeded(event -> dialog.close());
+        if (executor != null) {
+            executor.execute(task);
+        } else {
+            new Thread(task).start();
         }
+        dialog.showAndWait();
     }
 
     private void downloadVsxDatFile() {
-        logger.debug("Starting to download vsx.dat file");
-        File tempFile = null;
-        try {
-            URL url = new URL(vsxDownloadUrl);
-            tempFile = new File(FileUtils.getTempDirectory(), "vsx-" + System.currentTimeMillis() + ".dat.gz"); // todo async
-            FileUtils.copyURLToFile(url, tempFile);
-            try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(tempFile));
-                 FileOutputStream out = new FileOutputStream(vsxDatFile)) {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = gzis.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                logger.debug("Starting to download vsx.dat file");
+                try {
+                    URL url = new URL(vsxDownloadUrl);
+                    long size = 1;
+                    FTPClient ftpClient = new FTPClient();
+                    ftpClient.connect("cdsarc.u-strasbg.fr");
+                    ftpClient.enterLocalPassiveMode();
+                    ftpClient.login("anonymous", "");
+                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                    for (FTPFile ftpFile : ftpClient.listFiles("/pub/cats/B/vsx/vsx.dat.gz")) {
+                        size = ftpFile.getSize() * 5;
+                    }
+                    try (GZIPInputStream gzis = new GZIPInputStream(url.openStream());
+                         FileOutputStream out = new FileOutputStream(vsxDatFile)) {
+                        byte[] buffer = new byte[1024];
+                        long prog = 0;
+                        int len;
+                        int i = 0;
+                        while ((len = gzis.read(buffer)) > 0) {
+                            out.write(buffer, 0, len);
+                            prog += buffer.length;
+                            updateProgress(prog, size);
+                            double p = (prog / (double) size);
+                            if (p > 1) p = 1;
+                            updateMessage(String.format("%.1f", 100 * p) + "%");
+                        }
+                        logger.debug("Successfully downloaded vsx.dat file");
+                    }
+                } catch (IOException e) {
+                    logger.error("Failed to download vsx.dat file", e);
+                    initErrors.add("Failed to download vsx.dat file. Try downloading it manually and put it into pdr app data folder");
                 }
-                logger.debug("Successfully downloaded vsx.dat file");
+                return null;
             }
-        } catch (IOException e) {
-            logger.error("Failed to download vsx.dat file", e);
-            initErrors.add("Failed to download vsx.dat file. Try downloading it manually and put it into pdr app data folder");
-        } finally {
-            if (tempFile != null && tempFile.exists()) {
-                if (tempFile.delete()) {
-                    logger.debug("Cleaned up temp file {}", tempFile.getAbsoluteFile());
-                } else {
-                    logger.error("Could not delete temp file {}", tempFile.getAbsoluteFile());
-                }
-            }
+        };
+        Dialog dialog = FXMLUtils.showProgressDialog(primaryStage, task);
+        task.setOnSucceeded(event -> dialog.close());
+        if (executor != null) {
+            executor.execute(task);
+        } else {
+            new Thread(task).start();
         }
+        dialog.showAndWait();
     }
 
     private void showInitExceptions() {
@@ -198,23 +238,29 @@ public class AppInitializerImpl implements AppInitializer {
     private void showAlerts() {
         for (Consumer<Alert> consumer : confirmations) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initOwner(primaryStage);
             consumer.accept(alert);
         }
     }
 
+    private void setExecutor(Executor executor) {
+        this.executor = executor;
+    }
+
     @Override
-    public void start() {
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalThreadStateException("This method must be called only from JavaFX Application Thread");
         }
-        if (!initializeCalled){
+        if (!initializeCalled) {
             throw new IllegalStateException("You must call start() after initialize()");
         }
         showInitExceptions();
         showInitErrors();
         showAlerts();
-        if(shutdown) try {
-            mainApp.stop();
+        if (shutdown) try {
+            primaryStage.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

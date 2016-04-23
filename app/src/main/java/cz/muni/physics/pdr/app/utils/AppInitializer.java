@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  * This class is used to put initialization of javafx.application.Application to one place,
@@ -27,5 +28,5 @@ public interface AppInitializer {
      *
      * @see javafx.application.Application
      */
-    void start();
+    void start(Stage primaryStage);
 }
