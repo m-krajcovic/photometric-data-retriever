@@ -13,13 +13,17 @@ import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
+import cz.muni.physics.pdr.backend.manager.StarSurveyManagerImpl;
+import cz.muni.physics.pdr.backend.repository.config.ConfigurationHolder;
+import cz.muni.physics.pdr.backend.repository.config.ConfigurationHolderImpl;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepositoryImpl;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
-import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryImpl;
+import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryConfigImpl;
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolverImpl;
-import cz.muni.physics.pdr.backend.utils.AppConfig;
+import cz.muni.physics.pdr.backend.utils.BackendConfig;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -33,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -51,12 +56,12 @@ import java.util.prefs.Preferences;
  * @since 08/04/16
  */
 @Configuration
-@ComponentScan(basePackages = {"cz.muni.physics.pdr.app.*"})
-@Import(AppConfig.class)
-public class ScreenConfig {
+@Lazy
+@ComponentScan(basePackages = {"cz.muni.physics.pdr.app.*"}, lazyInit = true)
+@Import(BackendConfig.class)
+public class AppConfig {
 
     private static ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-
 
     @Value("${app.name:PDR}")
     private String name;
@@ -162,13 +167,13 @@ public class ScreenConfig {
     @Bean
     public AppInitializer appInitializer(@Value("${app.data.dir.path}") String appDataDirPath,
                                          @Value("${plugins.dir.path}") String pluginDirPath,
-                                         @Value("${starsurveys.file.name}") String starSurveysFileName,
+                                         @Value("${config.file.name}") String configFileName,
                                          @Value("${vsx.dat.file.name}") String vsxDatFileName,
                                          @Value("${vsx.ftp.url}") String vsxFtpUrl,
                                          @Value("${vsx.check.outdated}") boolean checkOutdated) {
         return new AppInitializerImpl(new File(appDataDirPath),
                 new File(pluginDirPath),
-                new File(appDataDirPath, starSurveysFileName),
+                new File(appDataDirPath, configFileName),
                 new File(appDataDirPath, vsxDatFileName),
                 vsxFtpUrl,
                 checkOutdated);
@@ -188,10 +193,21 @@ public class ScreenConfig {
     }
 
     @Bean
-    public StarSurveyRepository starSurveyRepository(XStream xStream,
-                                                     @Value("${app.data.dir.path}") String appDataDirPath,
-                                                     @Value("${starsurveys.file.name}") String starSurveysFileName) {
-        return new StarSurveyRepositoryImpl(xStream, new File(appDataDirPath, starSurveysFileName));
+    public StarSurveyManager starSurveyManager(PluginRepository pluginRepository,
+                                               StarSurveyRepository starSurveyRepository){
+        return new StarSurveyManagerImpl(pluginRepository, starSurveyRepository);
+    }
+
+    @Bean
+    public StarSurveyRepository starSurveyRepository(ConfigurationHolder configurationHolder) {
+        return new StarSurveyRepositoryConfigImpl(configurationHolder);
+    }
+
+    @Bean
+    public ConfigurationHolder configurationHolder(XStream xStream,
+                                                   @Value("${app.data.dir.path}") String appDataDirPath,
+                                                   @Value("${config.file.name}") String configFileName) {
+        return new ConfigurationHolderImpl(xStream, new File(appDataDirPath, configFileName));
     }
 
     @Bean
@@ -220,7 +236,7 @@ public class ScreenConfig {
 
     @Bean
     public Preferences preferences() {
-        return Preferences.userRoot().node(ScreenConfig.class.getName());
+        return Preferences.userRoot().node(AppConfig.class.getName());
     }
 
     public Stage getPrimaryStage() {

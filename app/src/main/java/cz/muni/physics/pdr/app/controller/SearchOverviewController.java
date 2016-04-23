@@ -8,8 +8,8 @@ import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.spring.AppConfig;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.app.spring.ScreenConfig;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;
@@ -44,7 +44,7 @@ public class SearchOverviewController {
     private final static Logger logger = LogManager.getLogger(SearchOverviewController.class);
 
     @Autowired
-    private ScreenConfig app;
+    private AppConfig app;
     @Autowired
     private CoordsSearchService coordsSearchService;
     @Autowired

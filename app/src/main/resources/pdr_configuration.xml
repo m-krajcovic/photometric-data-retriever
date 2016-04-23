@@ -1,4 +1,5 @@
-<list>
+<configuration>
+<starSurveys>
     <starSurvey name="SWASP">
         <plugin name="SWASP"/>
         <urls>
@@ -58,4 +59,7 @@
         <patterns/>
         <valueParams/>
     </starSurvey>
-</list>
+</starSurveys>
+<regexes/>
+<valueParameters/>
+</configuration>

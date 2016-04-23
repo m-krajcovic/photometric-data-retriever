@@ -8,6 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import sun.reflect.CallerSensitive;
 
 import java.io.IOException;
@@ -20,6 +22,8 @@ import java.util.ResourceBundle;
  * @version 1.0
  * @since 24/03/16
  */
+@Component
+@Scope("prototype")
 public class SpringFXMLLoader {
 
     private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
@@ -28,10 +32,7 @@ public class SpringFXMLLoader {
     private FXMLLoader fxmlLoader = new FXMLLoader();
 
     public SpringFXMLLoader() {
-        fxmlLoader.setControllerFactory(aClass -> {
-            logger.debug("Loading {} bean from Application Context", aClass.getName());
-            return context.getBean(aClass);
-        });
+        fxmlLoader.setControllerFactory(aClass -> context.getBean(aClass));
     }
 
     public <T> T load(String url) {

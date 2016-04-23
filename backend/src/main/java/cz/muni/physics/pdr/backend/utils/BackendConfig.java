@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.backend.utils;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import cz.muni.physics.pdr.backend.entity.Configuration;
 import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
@@ -9,11 +10,10 @@ import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataProcessStarter
 import cz.muni.physics.pdr.backend.resolver.plugin.ProcessStarter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,11 +22,11 @@ import org.springframework.web.client.RestTemplate;
  * @version 1.0
  * @since 08/04/16
  */
-@Configuration
-@EnableAsync
-@ComponentScan(basePackages = {"cz.muni.physics.pdr.backend.*"})
+@Lazy
+@org.springframework.context.annotation.Configuration
+@ComponentScan(basePackages = {"cz.muni.physics.pdr.backend.*"}, lazyInit = true)
 @PropertySource("classpath:backend.properties")
-public class AppConfig {
+public class BackendConfig {
 
     @Bean
     @Scope("prototype")
@@ -37,7 +37,8 @@ public class AppConfig {
     @Bean
     public XStream xStream() {
         XStream xStream = new XStream(new DomDriver());
-        xStream.processAnnotations(new Class[]{StarSurvey.class, Plugin.class});
+        xStream.processAnnotations(new Class[]{Configuration.class,
+                StarSurvey.class, Plugin.class});
         return xStream;
     }
 
