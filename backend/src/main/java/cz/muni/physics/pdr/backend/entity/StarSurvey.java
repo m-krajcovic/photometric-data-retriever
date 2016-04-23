@@ -4,10 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * @author Michal Krajčovič
@@ -21,10 +18,6 @@ public class StarSurvey {
     private Plugin plugin;
     @XStreamAlias("urls")
     private List<String> urls;
-    @XStreamAlias("patterns")
-    private List<Pattern> regexPatterns;
-    @XStreamAlias("valueParams")
-    private Map<String, String> valueParameters;
 
     public StarSurvey(String name, Plugin plugin) {
         this.name = name;
@@ -39,12 +32,6 @@ public class StarSurvey {
         this.plugin = new Plugin(survey.plugin);
         if (survey.urls != null)
             this.urls = new ArrayList<>(survey.urls);
-        if (survey.valueParameters != null)
-            this.valueParameters = new HashMap<>(survey.valueParameters);
-        if (survey.regexPatterns != null){
-            this.regexPatterns = new ArrayList<>();
-            survey.regexPatterns.forEach(p -> this.regexPatterns.add(Pattern.compile(p.pattern())));
-        }
     }
 
     public String getName() {
@@ -69,21 +56,5 @@ public class StarSurvey {
 
     public void setUrls(List<String> urls) {
         this.urls = urls;
-    }
-
-    public List<Pattern> getRegexPatterns() {
-        return regexPatterns;
-    }
-
-    public void setRegexPatterns(List<Pattern> regexPatterns) {
-        this.regexPatterns = regexPatterns;
-    }
-
-    public Map<String, String> getValueParameters() {
-        return valueParameters;
-    }
-
-    public void setValueParameters(Map<String, String> valueParameters) {
-        this.valueParameters = valueParameters;
     }
 }

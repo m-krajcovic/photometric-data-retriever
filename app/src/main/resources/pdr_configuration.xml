@@ -6,58 +6,34 @@
                 <string>http://wasp.cerit-sc.cz/json?type=CSV&amp;object={swasp}</string>
                 <string>http://wasp.cerit-sc.cz/search?ra={radeg}&amp;dec={decdeg}&amp;radius=1&amp;radiusUnit=min&amp;limit=1</string>
             </urls>
-            <patterns>
-                <java.util.regex.Pattern>
-                    <pattern>(?&lt;swasp&gt;1SWASP\s(?&lt;swaspID&gt;J.*))</pattern>
-                    <flags>0</flags>
-                </java.util.regex.Pattern>
-            </patterns>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="CRTS">
             <plugin name="CRTS"/>
             <urls>
                 <string>http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={radeg}&amp;Dec={decdeg}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot</string>
             </urls>
-            <patterns/>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="OMC">
             <plugin name="OMC"/>
             <urls/>
-            <patterns/>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="ASAS3">
             <plugin name="ASAS3"/>
             <urls/>
-            <patterns/>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="NSVS">
             <plugin name="NSVS"/>
             <urls>
                 <string>http://skydot.lanl.gov/nsvs/star.php?num={nsvsID}&amp;mask=32004</string>
             </urls>
-            <patterns>
-                <java.util.regex.Pattern>
-                    <pattern>NSVS\s(?&lt;nsvsID&gt;\d*)</pattern>
-                    <flags>0</flags>
-                </java.util.regex.Pattern>
-            </patterns>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="APASS">
             <plugin name="APASS"/>
             <urls/>
-            <patterns/>
-            <valueParams/>
         </starSurvey>
         <starSurvey name="HIP">
             <plugin name="HIP"/>
             <urls/>
-            <patterns/>
-            <valueParams/>
         </starSurvey>
     </starSurveys>
     <patterns>

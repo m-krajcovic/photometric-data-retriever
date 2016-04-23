@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
  */
 public class ParameterUtils {
 
-    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult) {
-        Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), survey.getRegexPatterns());
+    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult, List<Pattern> patterns, Map<String, String> valueParameters) {
+        Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), patterns);
         resolveStarResolverParameters(resolverResult, params);
-        resolveValueParameters(survey.getValueParameters(), params);
+        resolveValueParameters(valueParameters, params);
         resolveUrlParameter(survey.getUrls(), params);
         if (survey.getPlugin().getMainFile() != null && !survey.getPlugin().getMainFile().trim().isEmpty())
             params.put("mainFile", survey.getPlugin().getMainFile());

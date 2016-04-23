@@ -7,9 +7,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
-
-import java.util.regex.Pattern;
 
 /**
  * @author Michal Krajčovič
@@ -19,15 +16,10 @@ import java.util.regex.Pattern;
 public class StarSurveyModel implements EntityModel<StarSurvey> {
     private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<PluginModel> plugin = new SimpleObjectProperty<>();
-
-    private ObservableList<Pattern> regexPatterns = FXCollections.observableArrayList();
-    private ObservableMap<String, String> valueParameters = FXCollections.observableHashMap();
     private ObservableList<String> urls = FXCollections.observableArrayList();
 
     public StarSurveyModel(StarSurvey survey) {
         this(survey.getName(), survey.getPlugin() != null ? new PluginModel(survey.getPlugin()) : null);
-        regexPatterns.addAll(survey.getRegexPatterns());
-        valueParameters.putAll(survey.getValueParameters());
         urls.addAll(survey.getUrls());
     }
 
@@ -63,21 +55,6 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
         return plugin;
     }
 
-    public ObservableList<Pattern> getRegexPatterns() {
-        return regexPatterns;
-    }
-
-    public void setRegexPatterns(ObservableList<Pattern> regexPatterns) {
-        this.regexPatterns = regexPatterns;
-    }
-
-    public ObservableMap<String, String> getValueParameters() {
-        return valueParameters;
-    }
-
-    public void setValueParameters(ObservableMap<String, String> valueParameters) {
-        this.valueParameters = valueParameters;
-    }
 
     public ObservableList<String> getUrls() {
         return urls;
@@ -93,8 +70,6 @@ public class StarSurveyModel implements EntityModel<StarSurvey> {
         if (getPlugin() != null) {
             survey.setPlugin(getPlugin().toEntity());
         }
-        survey.setRegexPatterns(getRegexPatterns());
-        survey.setValueParameters(getValueParameters());
         survey.setUrls(getUrls());
         return survey;
     }
