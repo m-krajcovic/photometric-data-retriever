@@ -16,5 +16,4 @@ Throughout the development you ought to use iterative approach during which you 
 
 1. `git clone` this project.
 2. Build at project root with `mvn clean install`. Maven will install plugins to `${user.home}/.pdr/plugins` folder by default.
-3. For vsx resolver to work you have to manually (for now) download `vsx.dat.gz` from [here](http://cdsarc.u-strasbg.fr/viz-bin/Cat?cat=vsx&find=+) and unzip `vsx.dat` to `${user.home}/.pdr/` folder.
-4. Default `star_surveys.xml` is added at startup to `${user.home}/.pdr` .
+3. Start application. You will be asked if you want to load default settings of star surveys and vsx.dat file will be downloaded
