@@ -12,9 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -32,11 +29,6 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
-        try {
-            Preferences.userRoot().clear();
-        } catch (BackingStoreException e) {
-            e.printStackTrace();
-        }
 //        launch(MainApp.class);
         LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
     }

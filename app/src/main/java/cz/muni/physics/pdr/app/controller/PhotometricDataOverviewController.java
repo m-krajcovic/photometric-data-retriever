@@ -1,19 +1,18 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.javafx.PhotometricChartDataFactory;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
+import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.CacheHint;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -60,8 +59,6 @@ public class PhotometricDataOverviewController {
     @FXML
     private ResourceBundle resources;
     @FXML
-    private Label infoLabel;
-    @FXML
     private MenuBar menuBar;
     @FXML
     private MenuItem saveAllMenuItem;
@@ -76,8 +73,8 @@ public class PhotometricDataOverviewController {
     @FXML
     private ProgressIndicator chartProgressIndicator;
 
-    private Map<StarSurvey, List<PhotometricDataModel>> data;
-    private StellarObject stellarObject;
+    private Map<StarSurveyModel, List<PhotometricDataModel>> data;
+    private StellarObjectModel stellarObject;
 
     @FXML
     private void initialize() {
@@ -86,6 +83,7 @@ public class PhotometricDataOverviewController {
             menuBar.useSystemMenuBarProperty().set(true);
         saveAllMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
+        chart.setCacheHint(CacheHint.SPEED);
     }
 
     @FXML
@@ -101,7 +99,7 @@ public class PhotometricDataOverviewController {
             protected Object call() throws Exception {
                 if (zip != null) {
                     try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-                        for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
+                        for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
                             ZipEntry e = new ZipEntry(MessageFormat.format("{0} {1}.csv", entry.getKey().getName(), coords));
                             out.putNextEntry(e);
                             String csv = toCsv(entry.getValue());
@@ -121,100 +119,94 @@ public class PhotometricDataOverviewController {
         dialog.showAndWait();
     }
 
-    private String toCsv(List<PhotometricDataModel> models) {
-        return models.stream().map(PhotometricDataModel::toCsv).reduce("Julian date,Magnitude,Magnitude error", (s1, s2) -> s1 + "\n" + s2);
-    }
-
     @FXML
     private void handleCloseMenuItem() {
 
     }
 
-    public void setData(Map<StarSurvey, List<PhotometricDataModel>> data) {
+    public void setData(Map<StarSurveyModel, List<PhotometricDataModel>> data) {
         this.data = data;
         chart.getData().clear();
-        for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
-            try {
-                TableView<PhotometricDataModel> table = FXMLLoader.load(this.getClass().getResource("/view/PhotometricDataTable.fxml"), resources);
-                table.getItems().addAll(entry.getValue());
-                Tab tab = new Tab(String.format("%s (%d)", entry.getKey().getName(), entry.getValue().size()), table);
-                tab.setClosable(false);
-                tabPane.getTabs().add(tab);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load .fxml resource", e);
-            }
-            MenuItem menuItem = new MenuItem(entry.getKey().getName());
-            menuItem.setOnAction(event -> {
-                String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-                File csv = FXMLUtils.showSaveFileChooser("Choose your destiny",
-                        System.getProperty("user.home"),
-                        entry.getKey().getName() + " " + coords + ".csv",
-                        menuBar.getScene().getWindow(),
-                        new FileChooser.ExtensionFilter("Csv file(*.csv)", "*.csv"));
-                Task task = new Task() {
-                    @Override
-                    protected Object call() throws Exception {
-                        if (csv != null) {
-                            try (FileWriter writer = new FileWriter(csv)) {
-                                writer.write(toCsv(entry.getValue()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return null;
-                    }
-                };
-                Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
-                executor.execute(task);
-                dialog.showAndWait();
-            });
-            saveMenu.getItems().add(menuItem);
+        for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
+            tabPane.getTabs().add(getTab(entry.getKey().getName(), entry.getValue()));
+            saveMenu.getItems().add(getMenuItem(entry.getKey().getName(), entry.getValue()));
         }
+        PhotometricChartDataFactory dataFactory = PhotometricChartDataFactory.getInstance(stellarObject);
+        dataFactory.setUpChart(chart, resources);
+        chartProgressIndicator.setVisible(true);
+        chartProgressIndicator.setDisable(false);
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
+                    XYChart.Series<Number, Number> series = dataFactory.getSeries(entry.getKey().getName(), entry.getValue());
+                    Platform.runLater(() -> chart.getData().add(series));
+                }
+                return null;
+            }
 
-        if (stellarObject.getEpoch() != null && stellarObject.getPeriod() != null) {
-            chartProgressIndicator.setVisible(true);
-            chartProgressIndicator.setDisable(false);
-            ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
-            chart.setData(obsList);
+            @Override
+            protected void succeeded() {
+                chartProgressIndicator.setDisable(true);
+                chartProgressIndicator.setVisible(false);
+                chart.setDisable(false);
+                chart.setOpacity(1);
+            }
+        };
+        executor.execute(task);
+    }
+
+    private Tab getTab(String name, List<PhotometricDataModel> models) {
+        TableView<PhotometricDataModel> table;
+        try {
+            table = FXMLLoader.load(this.getClass().getResource("/view/PhotometricDataTable.fxml"), resources);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load .fxml resource", e);
+        }
+        table.getItems().addAll(models);
+        Tab tab = new Tab(String.format("%s (%d)", name, models.size()), table);
+        tab.setClosable(false);
+        return tab;
+    }
+
+    private MenuItem getMenuItem(String name, List<PhotometricDataModel> models) {
+        MenuItem menuItem = new MenuItem(name);
+        menuItem.setOnAction(event -> {
+            String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
+            File csv = FXMLUtils.showSaveFileChooser("Choose your destiny",
+                    System.getProperty("user.home"),
+                    name + " " + coords + ".csv",
+                    menuBar.getScene().getWindow(),
+                    new FileChooser.ExtensionFilter("Csv file(*.csv)", "*.csv"));
             Task task = new Task() {
                 @Override
                 protected Object call() throws Exception {
-                    for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
-                        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-                        series.setName(entry.getKey().getName());
-                        int size = entry.getValue().size();
-                        int increment = size > 5000 ? 10 : 1;
-                        for (int i = 0; i < size; i += increment) {
-                            PhotometricDataModel d = entry.getValue().get(i);
-                            double period = ((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1;
-                            series.getData().add(new XYChart.Data<>(period, d.getMagnitude()));
+                    if (csv != null) {
+                        try (FileWriter writer = new FileWriter(csv)) {
+                            writer.write(toCsv(models));
+                        } catch (IOException e) {
+                            e.printStackTrace(); // todo
                         }
-                        Platform.runLater(() -> {
-                            obsList.add(series);
-                        });
                     }
                     return null;
                 }
-
-                @Override
-                protected void succeeded() {
-                    chartProgressIndicator.setDisable(true);
-                    chartProgressIndicator.setVisible(false);
-                    chart.setDisable(false);
-                    chart.setOpacity(1);
-                }
             };
+            Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
             executor.execute(task);
-        } else {
-            infoLabel.setVisible(true);
-        }
+            dialog.showAndWait();
+        });
+        return menuItem;
+    }
+    
+    private String toCsv(List<PhotometricDataModel> models) {
+        return models.stream().map(PhotometricDataModel::toCsv).reduce("Julian date,Magnitude,Magnitude error", (s1, s2) -> s1 + "\n" + s2);
     }
 
-    public StellarObject getStellarObject() {
+    public StellarObjectModel getStellarObject() {
         return stellarObject;
     }
 
-    public void setStellarObject(StellarObject stellarObject) {
+    public void setStellarObject(StellarObjectModel stellarObject) {
         this.stellarObject = stellarObject;
     }
 

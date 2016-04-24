@@ -11,31 +11,38 @@ import javafx.beans.property.StringProperty;
  * @version 1.0
  * @since 16/04/16
  */
-public class StellarObjectModel implements EntityModel<StellarObject>{
+public class StellarObjectModel implements EntityModel<StellarObject> {
     private StringProperty name;
     private DoubleProperty rightAscension;
     private DoubleProperty declination;
     private DoubleProperty distance;
+    private DoubleProperty epoch;
+    private DoubleProperty period;
+
     private StellarObject object;
 
-    public StellarObjectModel(String name, double rightAscension, double declination, double distance) {
+    public StellarObjectModel(String name, double rightAscension, double declination, double distance, double epoch, double period) {
         this.name = new SimpleStringProperty(name);
         this.rightAscension = new SimpleDoubleProperty(rightAscension);
         this.declination = new SimpleDoubleProperty(declination);
         this.distance = new SimpleDoubleProperty(distance);
+        this.epoch = new SimpleDoubleProperty(epoch);
+        this.period = new SimpleDoubleProperty(period);
     }
 
     public StellarObjectModel(StellarObject stellarObject) {
-        this(String.join(", " ,stellarObject.getNames()),
-                stellarObject.getRightAscension(),
-                stellarObject.getDeclination(),
-                stellarObject.getDistance());
+        this(String.join(", ", stellarObject.getNames()),
+                stellarObject.getRightAscension() != null ? stellarObject.getRightAscension() : 0,
+                stellarObject.getDeclination() != null ? stellarObject.getDeclination() : 0,
+                stellarObject.getDistance() != null ? stellarObject.getDistance() : 0,
+                stellarObject.getEpoch() != null ? stellarObject.getEpoch() : 0,
+                stellarObject.getPeriod() != null ? stellarObject.getPeriod() : 0);
         this.object = stellarObject;
     }
 
     @Override
     public StellarObject toEntity() {
-        if(object != null) return object;
+        if (object != null) return object;
         StellarObject obj = new StellarObject();
         obj.getNames().add(getName());
         obj.setRightAscension(getRightAscension());
@@ -92,4 +99,27 @@ public class StellarObjectModel implements EntityModel<StellarObject>{
         this.distance.set(distance);
     }
 
+    public double getEpoch() {
+        return epoch.get();
+    }
+
+    public DoubleProperty epochProperty() {
+        return epoch;
+    }
+
+    public void setEpoch(double epoch) {
+        this.epoch.set(epoch);
+    }
+
+    public double getPeriod() {
+        return period.get();
+    }
+
+    public DoubleProperty periodProperty() {
+        return period;
+    }
+
+    public void setPeriod(double period) {
+        this.period.set(period);
+    }
 }

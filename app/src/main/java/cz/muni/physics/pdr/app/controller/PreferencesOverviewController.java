@@ -57,10 +57,8 @@ public class PreferencesOverviewController {
     private void initialize() {
         pluginsRootTextField.textProperty().bind(pluginsRoot);
         appDataRootTextField.textProperty().bind(appDataRoot);
-
         appDataRoot.setValue(appDataDirPath);
         pluginsRoot.setValue(pluginsDirPath);
-
         applyButton.disableProperty().bind(changeMade.not());
     }
 

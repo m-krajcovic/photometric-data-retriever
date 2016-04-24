@@ -12,11 +12,11 @@ import java.util.Map;
  */
 public class StellarObject {
     private List<String> names = new ArrayList<>();
+    private Map<String, String> ids = new HashMap<>();
     private Double rightAscension;
     private Double declination;
     private Double epoch;
     private Double period;
-    private Map<String, String> ids = new HashMap<>();
     private Double distance;
 
     public void merge(StellarObject other) {

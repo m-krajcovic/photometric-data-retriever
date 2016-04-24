@@ -49,9 +49,9 @@ public class BackendConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
-        propertySourcesPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(true);
-        return propertySourcesPlaceholderConfigurer;
+        PropertySourcesPlaceholderConfigurer properties = new PropertySourcesPlaceholderConfigurer();
+        properties.setIgnoreUnresolvablePlaceholders(true);
+        return properties;
     }
 
 }

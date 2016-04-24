@@ -91,10 +91,6 @@ public class AppInitializerImpl implements AppInitializer {
                     shutdown = true;
                 }
             });
-//            logger.debug("Plugins folder not found, creating a new one");
-//            if (!pluginsDir.mkdir()) {
-//                initErrors.add("Failed to create plugins directory");
-//            }
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CONFIG_FILE_CHECK);
@@ -165,7 +161,7 @@ public class AppInitializerImpl implements AppInitializer {
                     while (ze != null) {
                         String filePath = appDataDir + File.separator + ze.getName();
                         if (!ze.isDirectory()) {
-                            try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));) {
+                            try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
                                 int read = 0;
                                 while ((read = zis.read(buffer)) != -1) {
                                     bos.write(buffer, 0, read);

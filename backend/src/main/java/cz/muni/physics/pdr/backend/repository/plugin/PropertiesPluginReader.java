@@ -42,9 +42,4 @@ class PropertiesPluginReader implements PluginReader {
         }
         return new Plugin(pluginDir.getName(), mainFile.getPath(), commands.split(";"));
     }
-
-    @Override
-    public void setPluginDir(File pluginDir) {
-        this.pluginDir = pluginDir;
-    }
 }

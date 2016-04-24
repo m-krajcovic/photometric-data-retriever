@@ -51,6 +51,6 @@ public class RootLayoutController {
 
     @FXML
     private void handleCloseMenuItem() {
-        app.close();
+        app.getPrimaryStage().close();
     }
 }

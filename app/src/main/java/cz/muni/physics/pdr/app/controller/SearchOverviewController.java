@@ -7,10 +7,10 @@ import cz.muni.physics.pdr.app.javafx.Shaker;
 import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
+import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.spring.AppConfig;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
@@ -109,7 +109,7 @@ public class SearchOverviewController {
 
     private void initializeQueryParser() {
         queryParser = new SearchQueryParser(coordinates -> {
-            logger.debug("Sending coordinates {} to CoordsSearchService", coordinates);
+            logger.debug("Sending params ra={}, dec={}, rad={} to CoordsSearchService", coordinates);
             coordsSearchService.setCoords(coordinates);
             coordsSearchService.start();
         }, name -> {
@@ -147,12 +147,12 @@ public class SearchOverviewController {
 
     private void initializeStarSurveySearchService() {
         starSurveySearchService.setOnSucceeded(e -> {
-            Map<StarSurvey, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
+            Map<StarSurveyModel, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
             if (data.isEmpty()) {
                 logger.debug("No results found for '{}'", searchTextField.getTextWithPrefix());
                 showErrorMessage("No results found for '" + searchTextField.getTextWithPrefix() + "'");
             } else {
-                app.showPhotometricDataOverview(data, stellarObject);
+                app.showPhotometricDataOverview(data, new StellarObjectModel(stellarObject));
             }
             starSurveySearchService.reset();
             disableElements(false);
@@ -162,7 +162,7 @@ public class SearchOverviewController {
             starSurveySearchService.reset();
             disableElements(false);
         });
-        starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurvey, Boolean>) change -> {
+        starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurveyModel, Boolean>) change -> {
             if (change.wasAdded())
                 Platform.runLater(() -> progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded()));
         });

@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.backend.utils;
+package cz.muni.physics.pdr.app.utils;
 
 import org.apache.commons.lang3.StringUtils;
 

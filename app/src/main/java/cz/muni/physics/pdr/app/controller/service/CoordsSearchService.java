@@ -54,10 +54,6 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
         super.setExecutor(executor);
     }
 
-    public CelestialCoordinates getCoords() {
-        return coords;
-    }
-
     public void setCoords(CelestialCoordinates coords) {
         this.coords = coords;
     }

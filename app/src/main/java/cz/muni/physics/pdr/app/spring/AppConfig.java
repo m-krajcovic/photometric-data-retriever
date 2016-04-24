@@ -16,8 +16,6 @@ import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.model.ValueParameterModel;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManagerImpl;
 import cz.muni.physics.pdr.backend.repository.config.ConfigurationHolder;
@@ -90,7 +88,7 @@ public class AppConfig {
         rootLayout.setCenter(searchView);
     }
 
-    public void showPhotometricDataOverview(Map<StarSurvey, List<PhotometricDataModel>> data, StellarObject object) {
+    public void showPhotometricDataOverview(Map<StarSurveyModel, List<PhotometricDataModel>> data, StellarObjectModel object) {
         SpringFXMLLoader loader = fxmlLoader();
         BorderPane photometricDataOverview = loader.load("/view/PhotometricDataOverview.fxml");
         PhotometricDataOverviewController controller = loader.getController();
@@ -165,7 +163,7 @@ public class AppConfig {
         return controller.getSelected();
     }
 
-    public void showValueParameterOverview(Stage owner){
+    public void showValueParameterOverview(Stage owner) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane dialog = loader.load("/view/ValuesOverview.fxml");
         ValuesOverviewController controller = loader.getController();
@@ -179,7 +177,7 @@ public class AppConfig {
         dialogStage.showAndWait();
     }
 
-    public void showPatternsOverview(Stage owner){
+    public void showPatternsOverview(Stage owner) {
         SpringFXMLLoader loader = fxmlLoader();
         AnchorPane dialog = loader.load("/view/PatternsOverview.fxml");
         PatternsOverviewController controller = loader.getController();
@@ -225,10 +223,6 @@ public class AppConfig {
         return controller.isOkClicked();
     }
 
-    public void close() {
-        primaryStage.close();
-    }
-
     @Bean
     public AppInitializer appInitializer(@Value("${app.data.dir.path}") String appDataDirPath,
                                          @Value("${plugins.dir.path}") String pluginDirPath,
@@ -262,7 +256,7 @@ public class AppConfig {
 
     @Bean
     public StarSurveyManager starSurveyManager(PluginRepository pluginRepository,
-                                               StarSurveyRepository starSurveyRepository){
+                                               StarSurveyRepository starSurveyRepository) {
         return new StarSurveyManagerImpl(pluginRepository, starSurveyRepository);
     }
 
@@ -284,7 +278,7 @@ public class AppConfig {
     }
 
     @Bean
-    public Executor searchServiceExecutor(@Value("${core.pool.size}") int corePoolSize) {
+    public ThreadPoolTaskExecutor searchServiceExecutor(@Value("${core.pool.size}") int corePoolSize) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.prefersShortLivedTasks();
         executor.setCorePoolSize(corePoolSize); // min 2 -> max ?
@@ -296,9 +290,9 @@ public class AppConfig {
     @Bean
     public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() throws IOException {
         PreferencesPlaceholderConfigurer preferences = new PreferencesPlaceholderConfigurer();
-        preferences.setLocations(
-                resourcePatternResolver.getResources("classpath*:application.properties"));
+        preferences.setLocations(resourcePatternResolver.getResources("classpath*:application.properties"));
         preferences.setFileEncoding("UTF-8");
+        preferences.setUserTreePath(AppConfig.class.getName());
         return preferences;
     }
 

@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
-import cz.muni.physics.pdr.backend.entity.StarSurvey;
+import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
@@ -27,14 +27,14 @@ import java.util.concurrent.Executor;
  * @since 06/04/16
  */
 @Component
-public class StarSurveySearchService extends Service<Map<StarSurvey, List<PhotometricDataModel>>> {
+public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<PhotometricDataModel>>> {
 
     private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
 
     private PhotometricDataRetrieverManager retrieverManager;
 
     private StellarObject resolverResult;
-    private ObservableMap<StarSurvey, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
+    private ObservableMap<StarSurveyModel, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Autowired
     public StarSurveySearchService(PhotometricDataRetrieverManagerImpl pluginStarter) {
@@ -52,28 +52,28 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
     }
 
     @Override
-    public Task<Map<StarSurvey, List<PhotometricDataModel>>> createTask() {
+    public Task<Map<StarSurveyModel, List<PhotometricDataModel>>> createTask() {
         if (resolverResult == null) {
             throw new IllegalArgumentException("resolverResult is null.");
         }
         if (starSurveysMap == null) {
             throw new IllegalArgumentException("starSurveysMap is null.");
         }
-        return new Task<Map<StarSurvey, List<PhotometricDataModel>>>() {
+        return new Task<Map<StarSurveyModel, List<PhotometricDataModel>>>() {
             @Override
-            protected Map<StarSurvey, List<PhotometricDataModel>> call() throws ResourceAvailabilityException {
+            protected Map<StarSurveyModel, List<PhotometricDataModel>> call() throws ResourceAvailabilityException {
                 logger.debug("Starting task.");
                 retrieverManager.setOnNoResultsFound(s -> {
-                    starSurveysMap.put(s, false);
+                    starSurveysMap.put(new StarSurveyModel(s), false);
                 });
                 retrieverManager.setOnResultsFound(s -> {
-                    starSurveysMap.put(s, true);
+                    starSurveysMap.put(new StarSurveyModel(s), true);
                 });
-                Map<StarSurvey, List<PhotometricDataModel>> resultMap = new HashMap<>();
+                Map<StarSurveyModel, List<PhotometricDataModel>> resultMap = new HashMap<>();
                 retrieverManager.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
                     List<PhotometricDataModel> list = new ArrayList<>();
                     photometricDatas.forEach(d -> list.add(new PhotometricDataModel(d)));
-                    resultMap.put(starSurvey, list);
+                    resultMap.put(new StarSurveyModel(starSurvey), list);
                 });
                 return resultMap;
             }
@@ -93,11 +93,11 @@ public class StarSurveySearchService extends Service<Map<StarSurvey, List<Photom
         this.resolverResult = resolverResult;
     }
 
-    public ObservableMap<StarSurvey, Boolean> getStarSurveysMap() {
+    public ObservableMap<StarSurveyModel, Boolean> getStarSurveysMap() {
         return starSurveysMap;
     }
 
-    public void setStarSurveysMap(ObservableMap<StarSurvey, Boolean> starSurveysMap) {
+    public void setStarSurveysMap(ObservableMap<StarSurveyModel, Boolean> starSurveysMap) {
         this.starSurveysMap = starSurveysMap;
     }
 }
