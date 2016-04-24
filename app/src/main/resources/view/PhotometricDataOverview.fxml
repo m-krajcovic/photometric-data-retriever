@@ -23,13 +23,13 @@
             </TabPane>
                 <ScatterChart fx:id="chart" layoutX="1.0" layoutY="326.0" prefHeight="274.0" prefWidth="575.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
                     <xAxis>
-                        <NumberAxis forceZeroInRange="false" label="Julian Date" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" upperBound="0.0" />
+                        <NumberAxis forceZeroInRange="false" label="Period" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" upperBound="0.0" />
                     </xAxis>
                     <yAxis>
                         <NumberAxis forceZeroInRange="false" label="Magnitude" lowerBound="10.0" side="LEFT" upperBound="15.0" />
                     </yAxis>
                 </ScatterChart>
-            <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available">
+            <Label fx:id="infoLabel" visible="false" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>

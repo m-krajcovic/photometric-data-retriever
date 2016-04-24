@@ -186,24 +186,31 @@ public class PhotometricDataOverviewController {
             saveMenu.getItems().add(menuItem);
         }
 
-        if (stellarObject.getEpoch() != null && stellarObject.getPeriod() != null) { //todo async this
-            Task task = new Task() {
+        if (stellarObject.getEpoch() != null && stellarObject.getPeriod() != null) {
+            chart.setDisable(true);
+            Task<ObservableList<XYChart.Series<Number, Number>>> task = new Task<ObservableList<XYChart.Series<Number, Number>>>() {
                 @Override
-                protected Object call() throws Exception {
-                    return null;
+                protected ObservableList<XYChart.Series<Number, Number>> call() throws Exception {
+                    ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
+                    for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
+                        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+                        series.setName(entry.getKey().getName());
+                        for (PhotometricDataModel d : entry.getValue()) {
+                            XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1, d.getMagnitude());
+                            series.getData().add(e);
+                        }
+                        obsList.add(series);
+                    }
+                    return obsList;
+                }
+
+                @Override
+                protected void succeeded() {
+                    chart.setDisable(false);
+                    chart.getData().addAll(getValue());
                 }
             };
-            ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
-            for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
-                XYChart.Series<Number, Number> series = new XYChart.Series<>();
-                series.setName(entry.getKey().getName());
-                for (PhotometricDataModel d : entry.getValue()) {
-                    XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1, d.getMagnitude());
-                    series.getData().add(e);
-                }
-                obsList.add(series);
-            }
-            chart.getData().addAll(obsList);
+            executor.execute(task);
         } else {
             chart.setDisable(true);
             chart.setOpacity(0.3);
