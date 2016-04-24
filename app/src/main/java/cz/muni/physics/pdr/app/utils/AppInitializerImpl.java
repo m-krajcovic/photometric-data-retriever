@@ -275,7 +275,7 @@ public class AppInitializerImpl implements AppInitializer {
         }
     }
 
-    private void setExecutor(Executor executor) {
+    public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 

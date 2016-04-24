@@ -21,7 +21,7 @@
         </TableView>
         <ButtonBar layoutX="386.0" layoutY="360.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="14.0">
             <buttons>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="27.0" prefWidth="84.0" text="%button.close" />
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="27.0" prefWidth="84.0" text="%button.cancel" />
                 <Button fx:id="selectButton" layoutX="126.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleSelectButton" prefHeight="27.0" prefWidth="84.0" text="%button.select" />
             </buttons>
         </ButtonBar>

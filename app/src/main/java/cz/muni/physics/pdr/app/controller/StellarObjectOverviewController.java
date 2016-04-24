@@ -8,6 +8,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,9 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class StellarObjectOverviewController {
+
+    private final static Logger logger = LogManager.getLogger(StellarObjectOverviewController.class);
+
     @FXML
     private Button selectButton;
     @FXML

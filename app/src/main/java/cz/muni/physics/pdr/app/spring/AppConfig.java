@@ -154,7 +154,7 @@ public class AppConfig {
         AnchorPane stellarObjectDialog = loader.load("/view/StellarObjectOverview.fxml");
         StellarObjectOverviewController controller = loader.getController();
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Edit Star Survey");
+        dialogStage.setTitle("Choose one stellar object");
         dialogStage.initOwner(primaryStage);
         dialogStage.initModality(Modality.WINDOW_MODAL);
         Scene scene = new Scene(stellarObjectDialog);
@@ -235,13 +235,16 @@ public class AppConfig {
                                          @Value("${config.file.name}") String configFileName,
                                          @Value("${vsx.dat.file.name}") String vsxDatFileName,
                                          @Value("${vsx.ftp.url}") String vsxFtpUrl,
-                                         @Value("${vsx.check.outdated}") boolean checkOutdated) {
-        return new AppInitializerImpl(new File(appDataDirPath),
+                                         @Value("${vsx.check.outdated}") boolean checkOutdated,
+                                         Executor executor) {
+        AppInitializerImpl initializer = new AppInitializerImpl(new File(appDataDirPath),
                 new File(pluginDirPath),
                 new File(appDataDirPath, configFileName),
                 new File(appDataDirPath, vsxDatFileName),
                 vsxFtpUrl,
                 checkOutdated);
+        initializer.setExecutor(executor);
+        return initializer;
     }
 
 

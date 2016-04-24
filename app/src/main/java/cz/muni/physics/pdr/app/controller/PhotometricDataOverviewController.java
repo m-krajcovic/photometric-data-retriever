@@ -27,6 +27,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,6 +53,10 @@ import java.util.zip.ZipOutputStream;
 public class PhotometricDataOverviewController {
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataOverviewController.class);
+
+    @Autowired
+    private Executor executor;
+
     @FXML
     private ResourceBundle resources;
     @FXML
@@ -113,7 +119,7 @@ public class PhotometricDataOverviewController {
             }
         };
         Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
-        new Thread(task).start(); // todo executor
+        executor.execute(task); // todo executor
         dialog.showAndWait();
     }
 
@@ -174,7 +180,7 @@ public class PhotometricDataOverviewController {
                     }
                 };
                 Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
-                new Thread(task).start(); //  todo executor
+                executor.execute(task); //  todo executor
                 dialog.showAndWait();
             });
             saveMenu.getItems().add(menuItem);

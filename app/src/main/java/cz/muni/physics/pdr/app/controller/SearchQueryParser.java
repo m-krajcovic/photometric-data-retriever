@@ -3,6 +3,8 @@ package cz.muni.physics.pdr.app.controller;
 import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
 import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Consumer;
 
@@ -12,6 +14,8 @@ import java.util.function.Consumer;
  * @since 20/04/16
  */
 class SearchQueryParser {
+    private final static Logger logger = LogManager.getLogger(SearchQueryParser.class);
+
     private Consumer<CelestialCoordinates> onCoordinates;
     private Consumer<String> onName;
     private Consumer<String> onError;
@@ -34,11 +38,14 @@ class SearchQueryParser {
 
     void parseQuery(String query, String radius) {
         String searchText = query.trim();
+        logger.debug("Parsing query {}", searchText);
         if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
+            logger.debug("Query has name: prefix, handling name search");
             handleNameSearch(searchText.substring(5).trim(), radius);
             return;
         }
         if (StringUtils.startsWithIgnoreCase(searchText, "coords:")) {
+            logger.debug("Query has coords: prefix, handling coords search");
             handleCoordsSearch(searchText.substring(7).trim(), radius);
             return;
         }
@@ -47,11 +54,14 @@ class SearchQueryParser {
             double ra = Double.parseDouble(spaceSplit[0]);
             double dec = Double.parseDouble(spaceSplit[1]);
             if (ra < 0 || ra > 360 || dec < -90 || dec > 90) {
+                logger.debug("Query does not have valid coords ra={}, dec={}, handling name search", ra, dec);
                 handleNameSearch(searchText, radius);
                 return;
             }
+            logger.debug("Query has valid coords ra={}, dec={}, handling coords search", ra, dec);
             handleCoordsSearch(searchText, radius);
         } else {
+            logger.debug("No number-only query, handling name search");
             handleNameSearch(searchText, radius);
         }
     }

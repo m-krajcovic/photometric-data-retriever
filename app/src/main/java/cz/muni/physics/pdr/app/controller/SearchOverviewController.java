@@ -109,9 +109,11 @@ public class SearchOverviewController {
 
     private void initializeQueryParser() {
         queryParser = new SearchQueryParser(coordinates -> {
+            logger.debug("Sending coordinates {} to CoordsSearchService", coordinates);
             coordsSearchService.setCoords(coordinates);
             coordsSearchService.start();
         }, name -> {
+            logger.debug("Sending name {} to NameSearchService", name);
             nameSearchService.setSearchText(name);
             nameSearchService.start();
         }, error -> {
@@ -168,6 +170,7 @@ public class SearchOverviewController {
 
     private void initializeCoordsSearchService() {
         coordsSearchService.setOnSucceeded(event -> {
+            logger.debug("CoordsSearchService succeeded");
             StellarObjectModel selected;
             List<StellarObjectModel> searchResult = coordsSearchService.getValue();
             if (searchResult.isEmpty()) {
