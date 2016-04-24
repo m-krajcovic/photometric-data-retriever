@@ -4,6 +4,7 @@ import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -17,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -73,6 +75,8 @@ public class PhotometricDataOverviewController {
     private TabPane tabPane;
     @FXML
     private ScatterChart<Number, Number> chart;
+    @FXML
+    private ProgressIndicator chartProgressIndicator;
 
     private Map<StarSurvey, List<PhotometricDataModel>> data;
     private StellarObject stellarObject;
@@ -187,11 +191,13 @@ public class PhotometricDataOverviewController {
         }
 
         if (stellarObject.getEpoch() != null && stellarObject.getPeriod() != null) {
-            chart.setDisable(true);
+            chartProgressIndicator.setVisible(true);
+            chartProgressIndicator.setDisable(false);
+            ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
+            chart.setData(obsList);
             Task<ObservableList<XYChart.Series<Number, Number>>> task = new Task<ObservableList<XYChart.Series<Number, Number>>>() {
                 @Override
                 protected ObservableList<XYChart.Series<Number, Number>> call() throws Exception {
-                    ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
                     for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
                         XYChart.Series<Number, Number> series = new XYChart.Series<>();
                         series.setName(entry.getKey().getName());
@@ -199,21 +205,23 @@ public class PhotometricDataOverviewController {
                             XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1, d.getMagnitude());
                             series.getData().add(e);
                         }
-                        obsList.add(series);
+                        Platform.runLater(() -> {
+                            obsList.add(series);
+                        });
                     }
                     return obsList;
                 }
 
                 @Override
                 protected void succeeded() {
+                    chartProgressIndicator.setDisable(true);
+                    chartProgressIndicator.setVisible(false);
                     chart.setDisable(false);
-                    chart.getData().addAll(getValue());
+                    chart.setOpacity(1);
                 }
             };
             executor.execute(task);
         } else {
-            chart.setDisable(true);
-            chart.setOpacity(0.3);
             infoLabel.setVisible(true);
         }
     }

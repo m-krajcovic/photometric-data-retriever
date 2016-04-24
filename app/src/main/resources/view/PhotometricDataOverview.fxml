@@ -6,11 +6,9 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
@@ -19,9 +17,9 @@
     <center>
         <AnchorPane prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
             <children>
-            <TabPane fx:id="tabPane" tabMaxHeight="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            </TabPane>
-                <ScatterChart fx:id="chart" layoutX="1.0" layoutY="326.0" prefHeight="274.0" prefWidth="575.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
+                <TabPane fx:id="tabPane" tabMaxHeight="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                </TabPane>
+                <ScatterChart fx:id="chart" disable="true" layoutX="1.0" layoutY="326.0" opacity="0.3" prefHeight="274.0" prefWidth="575.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
                     <xAxis>
                         <NumberAxis forceZeroInRange="false" label="Period" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" upperBound="0.0" />
                     </xAxis>
@@ -29,11 +27,12 @@
                         <NumberAxis forceZeroInRange="false" label="Magnitude" lowerBound="10.0" side="LEFT" upperBound="15.0" />
                     </yAxis>
                 </ScatterChart>
-            <Label fx:id="infoLabel" visible="false" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
+                <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available" visible="false">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Label>
+            <ProgressIndicator fx:id="chartProgressIndicator" disable="true" layoutX="284.0" layoutY="372.0" visible="false" />
             </children>
         </AnchorPane>
     </center>
