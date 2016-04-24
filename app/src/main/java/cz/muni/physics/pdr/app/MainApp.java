@@ -44,7 +44,6 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
-            e = e.getCause().getCause();
             logger.error(e.getMessage(), e);
             FXMLUtils.showExceptionAlert("Something went terribly wrong!", "Your best bet is to restart this application", e.getMessage(), e);
         });

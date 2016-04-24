@@ -10,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.CacheHint;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Dialog;
@@ -21,7 +20,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -88,10 +86,6 @@ public class PhotometricDataOverviewController {
             menuBar.useSystemMenuBarProperty().set(true);
         saveAllMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
-
-        chart.setAnimated(false);
-        chart.setCache(true);
-        chart.setCacheHint(CacheHint.SPEED);
     }
 
     @FXML
@@ -123,7 +117,7 @@ public class PhotometricDataOverviewController {
             }
         };
         Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
-        executor.execute(task); // todo executor
+        executor.execute(task);
         dialog.showAndWait();
     }
 
@@ -142,20 +136,7 @@ public class PhotometricDataOverviewController {
         for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
             try {
                 TableView<PhotometricDataModel> table = FXMLLoader.load(this.getClass().getResource("/view/PhotometricDataTable.fxml"), resources);
-
-                TableColumn<PhotometricDataModel, Number> julianDate = new TableColumn<>(resources.getString("photometricdata.jd"));
-                julianDate.setCellValueFactory(param -> param.getValue().julianDateProperty());
-                TableColumn<PhotometricDataModel, Number> magnitude = new TableColumn<>(resources.getString("photometricdata.magnitude"));
-                magnitude.setCellValueFactory(param -> param.getValue().magnitudeProperty());
-                TableColumn<PhotometricDataModel, Number> error = new TableColumn<>(resources.getString("photometricdata.error"));
-                error.setCellValueFactory(param -> param.getValue().errorProperty());
-
-                table.getColumns().set(0, julianDate);
-                table.getColumns().set(1, magnitude);
-                table.getColumns().set(2, error);
-
                 table.getItems().addAll(entry.getValue());
-
                 Tab tab = new Tab(String.format("%s (%d)", entry.getKey().getName(), entry.getValue().size()), table);
                 tab.setClosable(false);
                 tabPane.getTabs().add(tab);
@@ -177,14 +158,14 @@ public class PhotometricDataOverviewController {
                             try (FileWriter writer = new FileWriter(csv)) {
                                 writer.write(toCsv(entry.getValue()));
                             } catch (IOException e) {
-                                e.printStackTrace(); // todo handle
+                                e.printStackTrace();
                             }
                         }
                         return null;
                     }
                 };
                 Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
-                executor.execute(task); //  todo executor
+                executor.execute(task);
                 dialog.showAndWait();
             });
             saveMenu.getItems().add(menuItem);
@@ -195,21 +176,24 @@ public class PhotometricDataOverviewController {
             chartProgressIndicator.setDisable(false);
             ObservableList<XYChart.Series<Number, Number>> obsList = FXCollections.observableArrayList();
             chart.setData(obsList);
-            Task<ObservableList<XYChart.Series<Number, Number>>> task = new Task<ObservableList<XYChart.Series<Number, Number>>>() {
+            Task task = new Task() {
                 @Override
-                protected ObservableList<XYChart.Series<Number, Number>> call() throws Exception {
+                protected Object call() throws Exception {
                     for (Map.Entry<StarSurvey, List<PhotometricDataModel>> entry : data.entrySet()) {
                         XYChart.Series<Number, Number> series = new XYChart.Series<>();
                         series.setName(entry.getKey().getName());
-                        for (PhotometricDataModel d : entry.getValue()) {
-                            XYChart.Data<Number, Number> e = new XYChart.Data<>(((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1, d.getMagnitude());
-                            series.getData().add(e);
+                        int size = entry.getValue().size();
+                        int increment = size > 5000 ? 10 : 1;
+                        for (int i = 0; i < size; i += increment) {
+                            PhotometricDataModel d = entry.getValue().get(i);
+                            double period = ((d.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1;
+                            series.getData().add(new XYChart.Data<>(period, d.getMagnitude()));
                         }
                         Platform.runLater(() -> {
                             obsList.add(series);
                         });
                     }
-                    return obsList;
+                    return null;
                 }
 
                 @Override

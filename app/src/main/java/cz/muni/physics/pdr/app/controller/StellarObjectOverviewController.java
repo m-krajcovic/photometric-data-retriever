@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +35,7 @@ public class StellarObjectOverviewController {
     @FXML
     private TableView<StellarObjectModel> stellarObjectsTable;
     @FXML
-    private Button closeButton;
+    private Button cancelButton;
 
     @FXML
     private TableColumn<StellarObjectModel, Number> distanceColumn;
@@ -64,10 +66,20 @@ public class StellarObjectOverviewController {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
         raColumn.setCellValueFactory(cell -> cell.getValue().rightAscensionProperty());
         decColumn.setCellValueFactory(cell -> cell.getValue().declinationProperty());
+
+        stellarObjectsTable.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                handleSelectButton();
+            } else if (event.getCode().equals(KeyCode.ESCAPE)) {
+                handleCancelButton();
+            }
+        });
+
+        stellarObjectsTable.requestFocus();
     }
 
     @FXML
-    private void handleCloseButton() {
+    private void handleCancelButton() {
         selectedModel = null;
         dialogStage.close();
     }
@@ -77,8 +89,6 @@ public class StellarObjectOverviewController {
         selectedModel = stellarObjectsTable.getSelectionModel().getSelectedItem();
         if (selectedModel != null) {
             dialogStage.close();
-        } else {
-
         }
     }
 
