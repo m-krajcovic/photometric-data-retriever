@@ -8,12 +8,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,12 +19,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Michal Krajčovič
@@ -80,10 +79,22 @@ public class AppInitializerImpl implements AppInitializer {
         mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
         logger.debug("Checking if plugins folder {} exists", pluginsDir.getAbsoluteFile());
         if (!pluginsDir.exists()) {
-            logger.debug("Plugins folder not found, creating a new one");
-            if (!pluginsDir.mkdir()) {
-                initErrors.add("Failed to create plugins directory");
-            }
+            confirmations.add(alert -> {
+                alert.setTitle("Plugins folder not found");
+                alert.setHeaderText("Could not find folder " + pluginsDir.getAbsolutePath());
+                alert.setContentText("Default plugins will be loaded.");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    loadDefaultPlugins();
+                } else {
+                    logger.debug("Plugins info alert was closed and not confirmed, shutting down app");
+                    shutdown = true;
+                }
+            });
+//            logger.debug("Plugins folder not found, creating a new one");
+//            if (!pluginsDir.mkdir()) {
+//                initErrors.add("Failed to create plugins directory");
+//            }
         }
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.CONFIG_FILE_CHECK);
@@ -123,14 +134,12 @@ public class AppInitializerImpl implements AppInitializer {
             });
         } else if (checkOutdated) {
             logger.debug("Checking if vsx.dat file is up to date");
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-            c.set(Calendar.HOUR_OF_DAY, 8);
-            if (vsxDatFile.lastModified() < c.getTimeInMillis()) {
+            if (vsxDatFile.lastModified() + 86400000 < System.currentTimeMillis()) {
                 logger.debug("File vsx.dat is outdated.");
                 confirmations.add(alert -> {
                     alert.setAlertType(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("File vsx.dat is outdated.");
+                    alert.setTitle("vsx.dat is outdated.");
+                    alert.setHeaderText("File vsx.dat is older than 7 days.");
                     alert.setContentText("Do you want to download the current version?");
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -145,12 +154,46 @@ public class AppInitializerImpl implements AppInitializer {
         }
     }
 
+    private void loadDefaultPlugins() {
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                logger.debug("Started loading default plugins.");
+                try (ZipInputStream zis = new ZipInputStream(AppInitializerImpl.class.getResourceAsStream("/plugins.zip"))) {
+                    ZipEntry ze = zis.getNextEntry();
+                    byte[] buffer = new byte[1024];
+                    while (ze != null) {
+                        String filePath = appDataDir + File.separator + ze.getName();
+                        if (!ze.isDirectory()) {
+                            try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));) {
+                                int read = 0;
+                                while ((read = zis.read(buffer)) != -1) {
+                                    bos.write(buffer, 0, read);
+                                }
+                                bos.close();
+                            }
+                        } else {
+                            File dir = new File(filePath);
+                            dir.mkdir();
+                        }
+                        zis.closeEntry();
+                        ze = zis.getNextEntry();
+                    }
+                }
+                return null;
+            }
+        };
+        Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
+        executeTask(task);
+        dialog.showAndWait();
+    }
+
     private void loadDefaultConfigFile() {
         Task task = new Task() {
             @Override
             protected Object call() throws Exception {
                 logger.debug("Started loading default config file");
-                try (InputStream inputStream = AppInitializerImpl.class.getResourceAsStream("/pdr_configuration.xml"); //async
+                try (InputStream inputStream = AppInitializerImpl.class.getResourceAsStream("/pdr_configuration.xml");
                      OutputStream outputStream = new FileOutputStream(configFile)) {
                     int read;
                     byte[] bytes = new byte[1024];
@@ -164,13 +207,8 @@ public class AppInitializerImpl implements AppInitializer {
                 return null;
             }
         };
-        Dialog dialog = FXMLUtils.showProgressDialog(primaryStage, task);
-        task.setOnSucceeded(event -> dialog.close());
-        if (executor != null) {
-            executor.execute(task);
-        } else {
-            new Thread(task).start();
-        }
+        Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
+        executeTask(task);
         dialog.showAndWait();
     }
 
@@ -181,26 +219,17 @@ public class AppInitializerImpl implements AppInitializer {
                 logger.debug("Starting to download vsx.dat file");
                 try {
                     URL url = new URL(vsxDownloadUrl);
-                    long size = 1;
-                    FTPClient ftpClient = new FTPClient();
-                    ftpClient.connect("cdsarc.u-strasbg.fr");
-                    ftpClient.enterLocalPassiveMode();
-                    ftpClient.login("anonymous", "");
-                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                    for (FTPFile ftpFile : ftpClient.listFiles("/pub/cats/B/vsx/vsx.dat.gz")) {
-                        size = ftpFile.getSize() * 5;
-                    }
+                    long size = 71597;
                     try (GZIPInputStream gzis = new GZIPInputStream(url.openStream());
                          FileOutputStream out = new FileOutputStream(vsxDatFile)) {
                         byte[] buffer = new byte[1024];
-                        long prog = 0;
-                        int len;
-                        int i = 0;
-                        while ((len = gzis.read(buffer)) > 0) {
-                            out.write(buffer, 0, len);
-                            prog += buffer.length;
-                            updateProgress(prog, size);
-                            double p = (prog / (double) size);
+                        long i = 0;
+                        int read;
+                        while ((read = gzis.read(buffer)) > 0) {
+                            out.write(buffer, 0, read);
+                            i++;
+                            updateProgress(i, size);
+                            double p = (i / (double) size);
                             if (p > 1) p = 1;
                             updateMessage(String.format("%.1f", 100 * p) + "%");
                         }
@@ -213,14 +242,17 @@ public class AppInitializerImpl implements AppInitializer {
                 return null;
             }
         };
-        Dialog dialog = FXMLUtils.showProgressDialog(primaryStage, task);
-        task.setOnSucceeded(event -> dialog.close());
+        Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
+        executeTask(task);
+        dialog.showAndWait();
+    }
+
+    private void executeTask(Task task) {
         if (executor != null) {
             executor.execute(task);
         } else {
             new Thread(task).start();
         }
-        dialog.showAndWait();
     }
 
     private void showInitExceptions() {

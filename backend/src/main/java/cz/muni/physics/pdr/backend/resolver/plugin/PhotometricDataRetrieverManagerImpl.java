@@ -56,7 +56,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             }
             Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, resolverResult, new ArrayList<>(starSurveyManager.getAllPatterns().values()), starSurveyManager.getAllValueParameters());
             futures.add(run(survey.getPlugin(), params)
-                    .thenAcceptAsync(data -> {
+                    .thenAccept(data -> {
                         logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
                         if (!data.isEmpty()) {
                             resultMap.put(survey, data);
@@ -66,7 +66,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                             if (onNoResultsFound != null)
                                 onNoResultsFound.accept(survey);
                         }
-                    }, executor));
+                    }));
         }
         CompletableFuture[] cfs = futures.toArray(new CompletableFuture[futures.size()]);
         try {

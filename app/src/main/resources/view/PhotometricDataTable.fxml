@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<TableView xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:id="photometricDataTableView"
+           editable="true" maxHeight="-Infinity" maxWidth="601.0" minHeight="-Infinity" minWidth="600"
+           prefHeight="240.0" prefWidth="600.0">
+    <columns>
+        <TableColumn fx:id="julianDate" prefWidth="68.0" text="%photometricdata.jd"/>
+        <TableColumn fx:id="magnitude" prefWidth="163.0" text="%photometricdata.magnitude"/>
+        <TableColumn fx:id="error" prefWidth="258.0" text="%photometricdata.error"/>
+    </columns>
+    <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+    </columnResizePolicy>
+</TableView>
+

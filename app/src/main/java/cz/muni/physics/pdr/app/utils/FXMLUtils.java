@@ -113,14 +113,14 @@ public class FXMLUtils {
         alert.showAndWait();
     }
 
-    public static Dialog showProgressDialog(Stage owner, Task task){
+    public static Dialog getProgressDialog(Window owner, Task task){
         Dialog dialog = new Dialog();
         dialog.initStyle(StageStyle.UNDECORATED);
         dialog.initOwner(owner);
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefSize(300, 30);
         Label progressLabel = new Label();
-        progressLabel.setPrefSize(300, 10);
+        progressLabel.setPrefWidth(300);
         progressLabel.setAlignment(Pos.BASELINE_CENTER);
         VBox vBox = new VBox(progressBar, progressLabel);
         vBox.setFillWidth(true);
@@ -132,6 +132,7 @@ public class FXMLUtils {
         Node closeButton = dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
         closeButton.managedProperty().bind(closeButton.visibleProperty());
         closeButton.setVisible(false);
+        task.setOnSucceeded(event -> dialog.close());
         return dialog;
     }
 }
