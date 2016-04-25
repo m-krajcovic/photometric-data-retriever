@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -66,7 +67,7 @@ public class PreferencesOverviewController extends StageController {
             String oldPath = appDataRoot.getValue();
             String newPath = chosen.getAbsolutePath();
             if (pluginsRoot.getValue().startsWith(oldPath)) {
-                pluginsRoot.setValue(pluginsRoot.getValue().replaceAll(oldPath, newPath));
+                pluginsRoot.setValue(newPath + pluginsRoot.getValue().substring(oldPath.length()));
             }
             appDataRoot.set(newPath);
             changeMade.setValue(true);

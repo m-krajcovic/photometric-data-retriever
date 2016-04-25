@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.spring;
 
 import com.thoughtworks.xstream.XStream;
+import cz.muni.physics.pdr.app.MainApp;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
 import cz.muni.physics.pdr.backend.manager.PluginManager;
@@ -53,7 +54,8 @@ public class AppConfig {
         PreferencesPlaceholderConfigurer preferences = new PreferencesPlaceholderConfigurer();
         preferences.setLocations(resourcePatternResolver.getResources("classpath*:application.properties"));
         preferences.setFileEncoding("UTF-8");
-        preferences.setUserTreePath(AppConfig.class.getName());
+        preferences.setUserTreePath(Preferences.userNodeForPackage(MainApp.class).absolutePath());
+        preferences.afterPropertiesSet();
         return preferences;
     }
 
@@ -127,7 +129,7 @@ public class AppConfig {
 
     @Bean
     public Preferences preferences() {
-        return Preferences.userRoot().node(AppConfig.class.getName());
+        return Preferences.userNodeForPackage(MainApp.class);
     }
 
 }

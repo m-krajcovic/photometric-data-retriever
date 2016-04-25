@@ -28,7 +28,7 @@
             <children>
                 <Label text="%label.app.data.dir"/>
                 <Label text="%label.plugins.root" GridPane.rowIndex="1"/>
-                <TextField fx:id="appDataRootTextField" editable="false" prefHeight="27.0" prefWidth="219.0"
+                <TextField fx:id="appDataRootTextField" editable="false"
                            styleClass="input-group-left" GridPane.columnIndex="1"/>
                 <TextField fx:id="pluginsRootTextField" editable="false" styleClass="input-group-left"
                            GridPane.columnIndex="1" GridPane.rowIndex="1"/>
