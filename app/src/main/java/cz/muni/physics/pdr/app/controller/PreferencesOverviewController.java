@@ -1,20 +1,20 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.nio.file.FileSystems;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -30,10 +30,10 @@ import static cz.muni.physics.pdr.app.utils.FXMLUtils.showDirChooser;
 @Scope("prototype")
 public class PreferencesOverviewController extends StageController {
 
-    @Value("${app.data.dir.path}")
-    private String appDataDirPath;
-    @Value("${plugins.dir.path}")
-    private String pluginsDirPath;
+    @Autowired
+    private File appDataDir;
+    @Autowired
+    private File pluginsDir;
 
     @Autowired
     private Preferences preferences;
@@ -55,8 +55,8 @@ public class PreferencesOverviewController extends StageController {
     private void initialize() {
         pluginsRootTextField.textProperty().bind(pluginsRoot);
         appDataRootTextField.textProperty().bind(appDataRoot);
-        appDataRoot.setValue(appDataDirPath);
-        pluginsRoot.setValue(pluginsDirPath);
+        appDataRoot.setValue(appDataDir.getAbsolutePath());
+        pluginsRoot.setValue(pluginsDir.getAbsolutePath());
         applyButton.disableProperty().bind(changeMade.not());
     }
 
@@ -96,6 +96,7 @@ public class PreferencesOverviewController extends StageController {
         preferences.put("app.data.dir.path", appDataRoot.getValue());
         preferences.put("plugins.dir.path", pluginsRoot.getValue());
         changeMade.setValue(false);
+        FXMLUtils.alert("Restart needed", "Application restart needed", "You need to restart this application for changes to take effect.", Alert.AlertType.INFORMATION).showAndWait();
     }
 
     private void resetToDefaults() {

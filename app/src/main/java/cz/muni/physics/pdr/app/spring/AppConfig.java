@@ -19,6 +19,7 @@ import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManag
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolverImpl;
 import cz.muni.physics.pdr.backend.utils.BackendConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -49,6 +51,9 @@ public class AppConfig {
 
     private static ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
+    @Autowired
+    private Environment environment;
+
     @Bean
     public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() throws IOException {
         PreferencesPlaceholderConfigurer preferences = new PreferencesPlaceholderConfigurer();
@@ -60,17 +65,17 @@ public class AppConfig {
     }
 
     @Bean
-    public AppInitializer appInitializer(@Value("${app.data.dir.path}") String appDataDirPath,
-                                         @Value("${plugins.dir.path}") String pluginDirPath,
+    public AppInitializer appInitializer(File appDataDir,
+                                         File pluginsDir,
                                          @Value("${config.file.name}") String configFileName,
                                          @Value("${vsx.dat.file.name}") String vsxDatFileName,
                                          @Value("${vsx.ftp.url}") String vsxFtpUrl,
                                          @Value("${vsx.check.outdated}") boolean checkOutdated,
                                          Executor executor) {
-        AppInitializerImpl initializer = new AppInitializerImpl(new File(appDataDirPath),
-                new File(pluginDirPath),
-                new File(appDataDirPath, configFileName),
-                new File(appDataDirPath, vsxDatFileName),
+        AppInitializerImpl initializer = new AppInitializerImpl(appDataDir,
+                pluginsDir,
+                new File(appDataDir, configFileName),
+                new File(appDataDir, vsxDatFileName),
                 vsxFtpUrl,
                 checkOutdated);
         initializer.setExecutor(executor);
@@ -78,15 +83,26 @@ public class AppConfig {
     }
 
     @Bean
-    public ConfigurationHolder configurationHolder(XStream xStream,
-                                                   @Value("${app.data.dir.path}") String appDataDirPath,
-                                                   @Value("${config.file.name}") String configFileName) {
-        return new ConfigurationHolderImpl(xStream, new File(appDataDirPath, configFileName));
+    public File appDataDir(@Value("${app.data.dir.path}") String appDataDirPath) {
+        return new File(appDataDirPath);
+
     }
 
     @Bean
-    public PluginRepository pluginRepository(@Value("${plugins.dir.path}") String pluginDirPath) {
-        return new PluginRepositoryImpl(new File(pluginDirPath));
+    public File pluginsDir(@Value("${plugins.dir.path}") String pluginDirPath) {
+        return new File(pluginDirPath);
+    }
+
+    @Bean
+    public ConfigurationHolder configurationHolder(XStream xStream,
+                                                   File appDataDir,
+                                                   @Value("${config.file.name}") String configFileName) {
+        return new ConfigurationHolderImpl(xStream, new File(appDataDir, configFileName));
+    }
+
+    @Bean
+    public PluginRepository pluginRepository(File pluginsDir) {
+        return new PluginRepositoryImpl(pluginsDir);
     }
 
     @Bean
@@ -106,9 +122,9 @@ public class AppConfig {
     }
 
     @Bean
-    public VSXStarResolver vsxStarResolver(@Value("${app.data.dir.path}") String appDataDirPath,
+    public VSXStarResolver vsxStarResolver(File appDataDir,
                                            @Value("${vsx.dat.file.name}") String vsxDatFileName) {
-        return new VSXStarResolverImpl(new File(appDataDirPath, vsxDatFileName));
+        return new VSXStarResolverImpl(new File(appDataDir, vsxDatFileName));
     }
 
     @Bean
