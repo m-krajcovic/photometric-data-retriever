@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -108,7 +109,7 @@ public class PhotometricDataOverviewController {
                             out.closeEntry();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace(); //todo handle
+                        errorAlert();
                     }
                 }
                 return null;
@@ -185,7 +186,7 @@ public class PhotometricDataOverviewController {
                         try (FileWriter writer = new FileWriter(csv)) {
                             writer.write(toCsv(models));
                         } catch (IOException e) {
-                            e.printStackTrace(); // todo
+                            errorAlert();
                         }
                     }
                     return null;
@@ -196,6 +197,10 @@ public class PhotometricDataOverviewController {
             dialog.showAndWait();
         });
         return menuItem;
+    }
+
+    private void errorAlert(){
+        FXMLUtils.alert("Error", "Failed to export data", "Try again and/or try to restart application", Alert.AlertType.ERROR);
     }
     
     private String toCsv(List<PhotometricDataModel> models) {

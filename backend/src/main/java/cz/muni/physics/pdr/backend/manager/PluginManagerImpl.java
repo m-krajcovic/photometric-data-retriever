@@ -2,8 +2,6 @@ package cz.muni.physics.pdr.backend.manager;
 
 import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -13,12 +11,10 @@ import java.util.function.Predicate;
  * @version 1.0
  * @since 14/04/16
  */
-@Component
 public class PluginManagerImpl implements PluginManager {
 
     private PluginRepository pluginRepository;
 
-    @Autowired
     public PluginManagerImpl(PluginRepository pluginRepository){
         this.pluginRepository = pluginRepository;
     }

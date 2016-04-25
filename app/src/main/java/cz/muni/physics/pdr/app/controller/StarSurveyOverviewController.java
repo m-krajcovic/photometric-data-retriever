@@ -54,8 +54,7 @@ public class StarSurveyOverviewController {
         try {
             starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
         } catch (ResourceAvailabilityException e) {
-            FXMLUtils.alert("This is bad!", "Have you tried turning it off and on again?", "Failed to load star surveys from app data", Alert.AlertType.ERROR)
-                    .showAndWait();
+            errorAlert();
         }
         starSurveys.setItems(list);
     }
@@ -69,7 +68,7 @@ public class StarSurveyOverviewController {
                 starSurveys.getItems().add(tempStarSurvey);
                 starSurveyManager.insert(tempStarSurvey.toEntity());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); //todo
+                errorAlert();
             }
             starSurveys.refresh();
         }
@@ -84,7 +83,7 @@ public class StarSurveyOverviewController {
                 try {
                     starSurveyManager.insert(selectedRecord.toEntity());
                 } catch (ResourceAvailabilityException e) {
-                    e.printStackTrace(); //todo
+                    errorAlert();
                 }
                 starSurveys.refresh();
             }
@@ -101,7 +100,7 @@ public class StarSurveyOverviewController {
                 starSurveys.getItems().remove(selectedRecord);
                 starSurveyManager.delete(selectedRecord.toEntity());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); // todo
+                errorAlert();
             }
             starSurveys.refresh();
         } else {
@@ -117,6 +116,10 @@ public class StarSurveyOverviewController {
     @FXML
     private void handlePatternsButton() {
         app.showPatternsOverview(dialogStage);
+    }
+
+    private void errorAlert() {
+        FXMLUtils.alert("Resource not available", "Configuration file is broken.", "Try deleting config file and reloading application.", Alert.AlertType.ERROR).showAndWait();
     }
 
     private void showNoSelectionDialog() {

@@ -8,9 +8,6 @@ import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.backend.utils.ParameterUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +23,6 @@ import java.util.function.Consumer;
  * @version 1.0
  * @since 08/04/16
  */
-@Component
-@Scope("prototype")
 public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetrieverManager {
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataRetrieverManagerImpl.class);
@@ -39,7 +34,6 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     private Consumer<StarSurvey> onResultsFound;
     private List<CompletableFuture> futures = null;
 
-    @Autowired
     public PhotometricDataRetrieverManagerImpl(StarSurveyManager starSurveyManager,
                                                Executor executor) {
         this.starSurveyManager = starSurveyManager;

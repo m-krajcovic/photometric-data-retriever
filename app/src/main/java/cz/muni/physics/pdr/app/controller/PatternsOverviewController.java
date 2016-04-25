@@ -51,8 +51,7 @@ public class PatternsOverviewController {
         try {
             starSurveyManager.getAllPatterns().forEach((k, v) -> list.add(new PatternModel(k,v)));
         } catch (ResourceAvailabilityException e) {
-            FXMLUtils.alert("This is bad!", "Have you tried turning it off and on again?", "Failed to load star surveys from app data", Alert.AlertType.ERROR)
-                    .showAndWait();
+            errorAlert();
         }
         tableView.setItems(list);
     }
@@ -66,7 +65,7 @@ public class PatternsOverviewController {
                 tableView.getItems().add(patternModel);
                 starSurveyManager.insertPattern(patternModel.key(), patternModel.getValue().get());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); //todo
+                errorAlert();
             }
             tableView.refresh();
         }
@@ -82,7 +81,7 @@ public class PatternsOverviewController {
                 try {
                     starSurveyManager.insertPattern(selectedRecord.key(), selectedRecord.getValue().get());
                 } catch (ResourceAvailabilityException e) {
-                    e.printStackTrace(); //todo
+                    errorAlert();
                 }
                 tableView.refresh();
             }
@@ -99,12 +98,16 @@ public class PatternsOverviewController {
                 tableView.getItems().remove(selectedRecord);
                 starSurveyManager.removePattern(selectedRecord.key());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); // todo
+                errorAlert();
             }
             tableView.refresh();
         } else {
             showNoSelectionDialog();
         }
+    }
+
+    private void errorAlert() {
+        FXMLUtils.alert("Resource not available", "Configuration file is broken.", "Try deleting config file and reloading application.", Alert.AlertType.ERROR).showAndWait();
     }
 
 

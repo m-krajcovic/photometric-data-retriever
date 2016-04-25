@@ -50,8 +50,7 @@ public class ValuesOverviewController {
         try {
             starSurveyManager.getAllValueParameters().forEach((k, v) -> list.add(new ValueParameterModel(k, v)));
         } catch (ResourceAvailabilityException e) {
-            FXMLUtils.alert("This is bad!", "Have you tried turning it off and on again?", "Failed to load star surveys from app data", Alert.AlertType.ERROR)
-                    .showAndWait();
+            errorAlert();
         }
         tableView.setItems(list);
     }
@@ -65,7 +64,7 @@ public class ValuesOverviewController {
                 tableView.getItems().add(model);
                 starSurveyManager.insertValueParameter(model.key(), model.value());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); //todo
+                errorAlert();
             }
             tableView.refresh();
         }
@@ -81,7 +80,7 @@ public class ValuesOverviewController {
                 try {
                     starSurveyManager.insertValueParameter(model.key(), model.value());
                 } catch (ResourceAvailabilityException e) {
-                    e.printStackTrace(); //todo
+                    errorAlert();
                 }
                 tableView.refresh();
             }
@@ -98,7 +97,7 @@ public class ValuesOverviewController {
                 tableView.getItems().remove(selectedRecord);
                 starSurveyManager.removeValueParameter(selectedRecord.key());
             } catch (ResourceAvailabilityException e) {
-                e.printStackTrace(); // todo
+                errorAlert();
             }
             tableView.refresh();
         } else {
@@ -106,6 +105,9 @@ public class ValuesOverviewController {
         }
     }
 
+    private void errorAlert() {
+        FXMLUtils.alert("Resource not available", "Configuration file is broken.", "Try deleting config file and reloading application.", Alert.AlertType.ERROR).showAndWait();
+    }
 
     private void showNoSelectionDialog() {
         Alert alert = FXMLUtils.alert(resources.getString("alert.noselection"),

@@ -8,6 +8,9 @@ import cz.muni.physics.pdr.backend.entity.Plugin;
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataProcessStarter;
 import cz.muni.physics.pdr.backend.resolver.plugin.ProcessStarter;
+import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
+import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolverImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Lazy;
@@ -45,6 +48,13 @@ public class BackendConfig {
     @Bean
     public RestOperations restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public SesameNameResolver sesameNameResolver(RestOperations restTemplate,
+                                                     @Value("${sesame.resolver.url}") String resolverUrl,
+                                                     @Value("${sesame.test.url}") String testUrl){
+        return new SesameNameResolverImpl(restTemplate, resolverUrl, testUrl);
     }
 
     @Bean

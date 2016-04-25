@@ -287,10 +287,7 @@ public class AppInitializerImpl implements AppInitializer {
         showInitExceptions();
         showInitErrors();
         showAlerts();
-        if (shutdown) try {
+        if (shutdown)
             primaryStage.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

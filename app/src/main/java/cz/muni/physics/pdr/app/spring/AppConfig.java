@@ -16,6 +16,8 @@ import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.model.ValueParameterModel;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
+import cz.muni.physics.pdr.backend.manager.PluginManager;
+import cz.muni.physics.pdr.backend.manager.PluginManagerImpl;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManagerImpl;
 import cz.muni.physics.pdr.backend.repository.config.ConfigurationHolder;
@@ -24,6 +26,8 @@ import cz.muni.physics.pdr.backend.repository.plugin.PluginRepository;
 import cz.muni.physics.pdr.backend.repository.plugin.PluginRepositoryImpl;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryConfigImpl;
+import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
+import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManagerImpl;
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
 import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolverImpl;
 import cz.muni.physics.pdr.backend.utils.BackendConfig;
@@ -249,23 +253,6 @@ public class AppConfig {
     }
 
     @Bean
-    public VSXStarResolver vsxStarResolver(@Value("${app.data.dir.path}") String appDataDirPath,
-                                           @Value("${vsx.dat.file.name}") String vsxDatFileName) {
-        return new VSXStarResolverImpl(new File(appDataDirPath, vsxDatFileName));
-    }
-
-    @Bean
-    public StarSurveyManager starSurveyManager(PluginRepository pluginRepository,
-                                               StarSurveyRepository starSurveyRepository) {
-        return new StarSurveyManagerImpl(pluginRepository, starSurveyRepository);
-    }
-
-    @Bean
-    public StarSurveyRepository starSurveyRepository(ConfigurationHolder configurationHolder) {
-        return new StarSurveyRepositoryConfigImpl(configurationHolder);
-    }
-
-    @Bean
     public ConfigurationHolder configurationHolder(XStream xStream,
                                                    @Value("${app.data.dir.path}") String appDataDirPath,
                                                    @Value("${config.file.name}") String configFileName) {
@@ -275,6 +262,34 @@ public class AppConfig {
     @Bean
     public PluginRepository pluginRepository(@Value("${plugins.dir.path}") String pluginDirPath) {
         return new PluginRepositoryImpl(new File(pluginDirPath));
+    }
+
+    @Bean
+    public StarSurveyRepository starSurveyRepository(ConfigurationHolder configurationHolder) {
+        return new StarSurveyRepositoryConfigImpl(configurationHolder);
+    }
+
+    @Bean
+    public PluginManager pluginManager(PluginRepository pluginRepository) {
+        return new PluginManagerImpl(pluginRepository);
+    }
+
+    @Bean
+    public StarSurveyManager starSurveyManager(PluginRepository pluginRepository,
+                                               StarSurveyRepository starSurveyRepository) {
+        return new StarSurveyManagerImpl(pluginRepository, starSurveyRepository);
+    }
+
+    @Bean
+    public VSXStarResolver vsxStarResolver(@Value("${app.data.dir.path}") String appDataDirPath,
+                                           @Value("${vsx.dat.file.name}") String vsxDatFileName) {
+        return new VSXStarResolverImpl(new File(appDataDirPath, vsxDatFileName));
+    }
+
+    @Bean
+    public PhotometricDataRetrieverManager photometricDataRetrieverManager(StarSurveyManager starSurveyManager,
+                                                                           Executor executor) {
+        return new PhotometricDataRetrieverManagerImpl(starSurveyManager, executor);
     }
 
     @Bean

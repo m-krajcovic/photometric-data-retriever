@@ -5,7 +5,6 @@ import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
-import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManagerImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Service;
@@ -37,7 +36,7 @@ public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<P
     private ObservableMap<StarSurveyModel, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
 
     @Autowired
-    public StarSurveySearchService(PhotometricDataRetrieverManagerImpl pluginStarter) {
+    public StarSurveySearchService(PhotometricDataRetrieverManager pluginStarter) {
         this.retrieverManager = pluginStarter;
         super.setOnCancelled(event -> {
             pluginStarter.cancelAll();
