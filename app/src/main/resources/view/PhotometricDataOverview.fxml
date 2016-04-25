@@ -12,27 +12,35 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65"
+            fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
     <center>
         <AnchorPane prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="tabPane" tabMaxHeight="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TabPane fx:id="tabPane" tabMaxHeight="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                         AnchorPane.topAnchor="0.0">
                 </TabPane>
-                <ScatterChart fx:id="chart" animated="false" cache="true" cacheShape="true" disable="true" layoutX="1.0" layoutY="326.0" opacity="0.3" prefHeight="274.0" prefWidth="575.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
+                <ScatterChart fx:id="chart" animated="false" cache="true" cacheShape="true" disable="true" layoutX="1.0"
+                              layoutY="326.0" opacity="0.3" prefHeight="274.0" prefWidth="575.0"
+                              AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0"
+                              AnchorPane.topAnchor="265.0">
                     <xAxis>
-                        <NumberAxis autoRanging="false" forceZeroInRange="false" label="Period" lowerBound="0" minorTickCount="1" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" tickLabelGap="5.0" tickLength="5.0" tickUnit="0.25" upperBound="1" />
+                        <NumberAxis autoRanging="false" forceZeroInRange="false" label="Period" lowerBound="0"
+                                    minorTickCount="1" prefHeight="42.0" prefWidth="548.0" side="BOTTOM"
+                                    tickLabelGap="5.0" tickLength="5.0" tickUnit="0.25" upperBound="1"/>
                     </xAxis>
                     <yAxis>
-                        <NumberAxis autoRanging="true" forceZeroInRange="false" label="Magnitude" side="LEFT" />
+                        <NumberAxis autoRanging="true" forceZeroInRange="false" label="Magnitude" side="LEFT"/>
                     </yAxis>
                 </ScatterChart>
-                <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available" visible="false">
+                <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0"
+                       text="No Period and Epoch available" visible="false">
                     <font>
-                        <Font name="System Bold" size="13.0" />
+                        <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-            <ProgressIndicator fx:id="chartProgressIndicator" disable="true" layoutX="284.0" layoutY="372.0" visible="false" />
+                <ProgressIndicator fx:id="chartProgressIndicator" disable="true" layoutX="284.0" layoutY="372.0"
+                                   visible="false"/>
             </children>
         </AnchorPane>
     </center>
@@ -41,10 +49,12 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#handleSaveAllMenuItem" text="%menu.item.save.all" />
-                        <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem" text="%menu.item.close" />
+                        <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#handleSaveAllMenuItem"
+                                  text="%menu.item.save.all"/>
+                        <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem"
+                                  text="%menu.item.close"/>
                     </items>
                 </Menu>
             </menus>

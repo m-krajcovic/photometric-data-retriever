@@ -7,7 +7,7 @@ import cz.muni.physics.pdr.backend.entity.StellarObject;
  * @version 1.0
  * @since 19/04/16
  */
-public interface SesameNameResolver{
+public interface SesameNameResolver {
     StellarObject findByName(String name);
 
     boolean isAvailable();

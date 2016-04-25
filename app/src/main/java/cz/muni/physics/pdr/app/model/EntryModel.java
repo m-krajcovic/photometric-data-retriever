@@ -5,7 +5,7 @@ package cz.muni.physics.pdr.app.model;
  * @version 1.0
  * @since 23/04/16
  */
-public abstract class EntryModel<K , V> {
+public abstract class EntryModel<K, V> {
 
     protected K key;
     protected V value;
@@ -35,7 +35,10 @@ public abstract class EntryModel<K , V> {
     }
 
     public abstract void key(String keyString);
+
     public abstract void value(String valueString);
+
     public abstract String key();
+
     public abstract String value();
 }

@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @Component
 @Scope("prototype")
-public class StellarObjectOverviewController {
+public class StellarObjectOverviewController extends StageController {
 
     private final static Logger logger = LogManager.getLogger(StellarObjectOverviewController.class);
 
@@ -47,8 +48,6 @@ public class StellarObjectOverviewController {
     private TableColumn<StellarObjectModel, Number> decColumn;
 
     private StellarObjectModel selectedModel;
-
-    private Stage dialogStage;
 
     @FXML
     private void initialize() {
@@ -75,20 +74,20 @@ public class StellarObjectOverviewController {
             }
         });
 
-        stellarObjectsTable.requestFocus();
+        Platform.runLater(() -> stellarObjectsTable.requestFocus());
     }
 
     @FXML
     private void handleCancelButton() {
         selectedModel = null;
-        dialogStage.close();
+        stage.close();
     }
 
     @FXML
     private void handleSelectButton() {
         selectedModel = stellarObjectsTable.getSelectionModel().getSelectedItem();
         if (selectedModel != null) {
-            dialogStage.close();
+            stage.close();
         }
     }
 
@@ -99,13 +98,10 @@ public class StellarObjectOverviewController {
         stellarObjectsTable.getSelectionModel().selectFirst();
     }
 
-    public Stage getDialogStage() {
-        return dialogStage;
-    }
-
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
-        dialogStage.setOnCloseRequest(event -> {
+    @Override
+    public void setStage(Stage stage) {
+        super.setStage(stage);
+        this.stage.setOnCloseRequest(event -> {
             selectedModel = null;
         });
     }

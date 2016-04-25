@@ -16,7 +16,7 @@ public class FileWatcher {
         this.timeStamp = file.lastModified();
     }
 
-    public FileWatcher(File file){
+    public FileWatcher(File file) {
         this.file = file;
         this.timeStamp = file.lastModified();
     }

@@ -24,7 +24,7 @@ class PropertiesPluginReader implements PluginReader {
     }
 
     @Override
-    public Plugin readPlugin() throws PluginReaderException{
+    public Plugin readPlugin() throws PluginReaderException {
         Properties props = new Properties();
         try (InputStream is = new FileInputStream(new File(pluginDir, "plugin.properties"))) {
             props.load(is);

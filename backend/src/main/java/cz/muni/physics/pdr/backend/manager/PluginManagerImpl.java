@@ -15,7 +15,7 @@ public class PluginManagerImpl implements PluginManager {
 
     private PluginRepository pluginRepository;
 
-    public PluginManagerImpl(PluginRepository pluginRepository){
+    public PluginManagerImpl(PluginRepository pluginRepository) {
         this.pluginRepository = pluginRepository;
     }
 
@@ -30,22 +30,22 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     @Override
-    public Collection<Plugin> getAll()  {
+    public Collection<Plugin> getAll() {
         return pluginRepository.getAll();
     }
 
     @Override
-    public Plugin searchFor(Predicate<Plugin> predicate)  {
+    public Plugin searchFor(Predicate<Plugin> predicate) {
         return pluginRepository.searchFor(predicate);
     }
 
     @Override
-    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate)  {
+    public Collection<Plugin> searchForAll(Predicate<Plugin> predicate) {
         return pluginRepository.searchForAll(predicate);
     }
 
     @Override
-    public Plugin getById(String s)  {
+    public Plugin getById(String s) {
         return pluginRepository.getById(s);
     }
 }

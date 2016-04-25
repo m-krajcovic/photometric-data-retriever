@@ -2,14 +2,16 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.manager.PluginManager;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("prototype")
-public class StarSurveyEditDialogController {
+public class StarSurveyEditDialogController extends StageController {
 
     @Autowired
     private PluginManager pluginManager;
@@ -35,7 +37,6 @@ public class StarSurveyEditDialogController {
     @FXML
     private TextArea urlTextArea;
 
-    private Stage dialogStage;
     private StarSurveyModel starSurvey;
     private boolean okClicked = false;
 
@@ -56,6 +57,7 @@ public class StarSurveyEditDialogController {
         ObservableList<PluginModel> list = FXCollections.observableArrayList();
         pluginManager.getAll().forEach(p -> list.add(new PluginModel(p)));
         pluginChoiceBox.setItems(list);
+        Platform.runLater(() -> nameTextField.requestFocus());
     }
 
     @FXML
@@ -65,7 +67,9 @@ public class StarSurveyEditDialogController {
             starSurvey.setPlugin(pluginChoiceBox.getValue());
 
             okClicked = true;
-            dialogStage.close();
+            stage.close();
+        } else {
+            FXMLUtils.alert("Input error", "Input is not valid", "Please check your input and try again", Alert.AlertType.ERROR).showAndWait();
         }
     }
 
@@ -76,7 +80,7 @@ public class StarSurveyEditDialogController {
 
     @FXML
     private void handleCancel() {
-        dialogStage.close();
+        stage.close();
     }
 
     public void setStarSurvey(StarSurveyModel starSurvey) {
@@ -90,7 +94,4 @@ public class StarSurveyEditDialogController {
         return okClicked;
     }
 
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
-    }
 }

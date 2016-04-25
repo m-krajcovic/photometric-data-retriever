@@ -11,38 +11,48 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/style.css"
+            xmlns="http://javafx.com/javafx/8.0.65"
+            fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
         <VBox fx:id="searchBox" layoutX="107.0" layoutY="254.0">
             <children>
                 <HBox disable="false" prefHeight="27.0" prefWidth="375.0">
                     <children>
-                        <TitledTextFieldBox fx:id="searchTextField" promptText="%textfield.search.prompt" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" maxWidth="234.0">
+                        <TitledTextFieldBox fx:id="searchTextField" promptText="%textfield.search.prompt"
+                                            onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0"
+                                            maxWidth="234.0">
                             <HBox.margin>
-                                <Insets right="5.0" />
+                                <Insets right="5.0"/>
                             </HBox.margin>
                         </TitledTextFieldBox>
-                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="%textfield.radius.prompt">
+                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0"
+                                   prefWidth="63.0" promptText="%textfield.radius.prompt">
                             <HBox.margin>
-                                <Insets right="5.0" />
+                                <Insets right="5.0"/>
                             </HBox.margin>
                         </TextField>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="%button.search" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction"
+                                prefHeight="27.0" prefWidth="69.0" text="%button.search"/>
                     </children>
                 </HBox>
-                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
+                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0"
+                       text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
                     <VBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="5.0"/>
                     </VBox.margin>
                 </Label>
             </children>
         </VBox>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="76.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="76.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/planet.png" />
+                <Image url="@../images/planet.png"/>
             </image>
         </ImageView>
-        <ProgressIndicator fx:id="searchProgressIndicator" layoutX="274.0" layoutY="299.0" visible="false" />
-        <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="359.0" prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false" />
+        <ProgressIndicator fx:id="searchProgressIndicator" layoutX="274.0" layoutY="299.0" visible="false"/>
+        <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="359.0"
+               prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false"/>
     </children>
 </AnchorPane>

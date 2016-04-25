@@ -3,7 +3,7 @@ package cz.muni.physics.pdr.app.controller;
 import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
-import cz.muni.physics.pdr.app.spring.AppConfig;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +24,10 @@ import java.util.ResourceBundle;
  * @since 31/03/16
  */
 @Component
-public class StarSurveyOverviewController {
+public class StarSurveyOverviewController extends StageController {
 
     @Autowired
-    private AppConfig app;
+    private Screens app;
     @Autowired
     private StarSurveyManager starSurveyManager;
 
@@ -41,7 +40,6 @@ public class StarSurveyOverviewController {
     @FXML
     private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
 
-    private Stage dialogStage;
 
     @FXML
     private void initialize() {
@@ -62,7 +60,7 @@ public class StarSurveyOverviewController {
     @FXML
     private void handleNewButton() {
         StarSurveyModel tempStarSurvey = new StarSurveyModel();
-        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, dialogStage);
+        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, stage);
         if (okClicked) {
             try {
                 starSurveys.getItems().add(tempStarSurvey);
@@ -78,7 +76,7 @@ public class StarSurveyOverviewController {
     private void handleEditButton() {
         StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
-            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, dialogStage);
+            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, stage);
             if (okClicked) {
                 try {
                     starSurveyManager.insert(selectedRecord.toEntity());
@@ -110,12 +108,12 @@ public class StarSurveyOverviewController {
 
     @FXML
     private void handleValuesButton() {
-        app.showValueParameterOverview(dialogStage);
+        app.showValueParameterOverview(stage);
     }
 
     @FXML
     private void handlePatternsButton() {
-        app.showPatternsOverview(dialogStage);
+        app.showPatternsOverview(stage);
     }
 
     private void errorAlert() {
@@ -127,12 +125,8 @@ public class StarSurveyOverviewController {
                 "No Star Survey Selected",
                 "Please select a Star Survey in the table.",
                 Alert.AlertType.WARNING);
-        alert.initOwner(dialogStage);
+        alert.initOwner(stage);
         alert.showAndWait();
-    }
-
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
     }
 
 }

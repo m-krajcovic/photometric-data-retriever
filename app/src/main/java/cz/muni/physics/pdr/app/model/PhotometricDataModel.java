@@ -39,36 +39,36 @@ public class PhotometricDataModel implements EntityModel<PhotometricData> {
         return julianDate.get();
     }
 
-    public DoubleProperty julianDateProperty() {
-        return julianDate;
-    }
-
     public void setJulianDate(double julianDate) {
         this.julianDate.set(julianDate);
+    }
+
+    public DoubleProperty julianDateProperty() {
+        return julianDate;
     }
 
     public double getMagnitude() {
         return magnitude.get();
     }
 
-    public DoubleProperty magnitudeProperty() {
-        return magnitude;
-    }
-
     public void setMagnitude(double magnitude) {
         this.magnitude.set(magnitude);
+    }
+
+    public DoubleProperty magnitudeProperty() {
+        return magnitude;
     }
 
     public double getError() {
         return error.get();
     }
 
-    public DoubleProperty errorProperty() {
-        return error;
-    }
-
     public void setError(double error) {
         this.error.set(error);
+    }
+
+    public DoubleProperty errorProperty() {
+        return error;
     }
 
     @Override

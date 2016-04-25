@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * @since 14/04/16
  */
 public interface PhotometricDataRetrieverManager {
-    Map<StarSurvey, List<PhotometricData>> runAll(StellarObject result) ;
+    Map<StarSurvey, List<PhotometricData>> runAll(StellarObject result);
 
     void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound);
 

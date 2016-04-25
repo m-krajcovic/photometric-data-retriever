@@ -25,7 +25,7 @@ public class PhotometricData {
         this.error = error;
     }
 
-    public String toCsv(){
+    public String toCsv() {
         return julianDate + "," + magnitude + "," + error;
     }
 

@@ -55,71 +55,71 @@ public class StellarObjectModel implements EntityModel<StellarObject> {
         return name.get();
     }
 
-    public StringProperty nameProperty() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
     public double getRightAscension() {
         return rightAscension.get();
     }
 
-    public DoubleProperty rightAscensionProperty() {
-        return rightAscension;
-    }
-
     public void setRightAscension(double rightAscension) {
         this.rightAscension.set(rightAscension);
+    }
+
+    public DoubleProperty rightAscensionProperty() {
+        return rightAscension;
     }
 
     public double getDeclination() {
         return declination.get();
     }
 
-    public DoubleProperty declinationProperty() {
-        return declination;
-    }
-
     public void setDeclination(double declination) {
         this.declination.set(declination);
+    }
+
+    public DoubleProperty declinationProperty() {
+        return declination;
     }
 
     public double getDistance() {
         return distance.get();
     }
 
-    public DoubleProperty distanceProperty() {
-        return distance;
-    }
-
     public void setDistance(double distance) {
         this.distance.set(distance);
+    }
+
+    public DoubleProperty distanceProperty() {
+        return distance;
     }
 
     public double getEpoch() {
         return epoch.get();
     }
 
-    public DoubleProperty epochProperty() {
-        return epoch;
-    }
-
     public void setEpoch(double epoch) {
         this.epoch.set(epoch);
+    }
+
+    public DoubleProperty epochProperty() {
+        return epoch;
     }
 
     public double getPeriod() {
         return period.get();
     }
 
-    public DoubleProperty periodProperty() {
-        return period;
-    }
-
     public void setPeriod(double period) {
         this.period.set(period);
+    }
+
+    public DoubleProperty periodProperty() {
+        return period;
     }
 }

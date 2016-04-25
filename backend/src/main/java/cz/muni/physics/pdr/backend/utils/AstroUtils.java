@@ -12,7 +12,7 @@ public class AstroUtils {
         return area.getRadius() >= distance(rightAscension, declination, area.getRightAscension(), area.getDeclination());
     }
 
-    public static double distance(double ra1, double de1, double ra2, double de2){
+    public static double distance(double ra1, double de1, double ra2, double de2) {
         return Math.hypot(ra1 - ra2, de1 - de2);
     }
 }

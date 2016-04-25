@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -28,7 +27,7 @@ import static cz.muni.physics.pdr.app.utils.FXMLUtils.showDirChooser;
  */
 @Component
 @Scope("prototype")
-public class PreferencesOverviewController {
+public class PreferencesOverviewController extends StageController {
 
     @Value("${app.data.dir.path}")
     private String appDataDirPath;
@@ -51,8 +50,6 @@ public class PreferencesOverviewController {
     private StringProperty appDataRoot = new SimpleStringProperty();
     private StringProperty pluginsRoot = new SimpleStringProperty();
 
-    private Stage dialogStage;
-
     @FXML
     private void initialize() {
         pluginsRootTextField.textProperty().bind(pluginsRoot);
@@ -64,7 +61,7 @@ public class PreferencesOverviewController {
 
     @FXML
     private void handleAppDataRootButton() {
-        File chosen = showDirChooser(resources.getString("dir.chooser.app.data.title"), appDataRootTextField.getText(), dialogStage);
+        File chosen = showDirChooser(resources.getString("dir.chooser.app.data.title"), appDataRootTextField.getText(), stage);
         if (chosen != null) {
             String oldPath = appDataRoot.getValue();
             String newPath = chosen.getAbsolutePath();
@@ -78,7 +75,7 @@ public class PreferencesOverviewController {
 
     @FXML
     private void handlePluginsRootButton() {
-        File chosen = showDirChooser(resources.getString("dir.chooser.plugins.title"), pluginsRootTextField.getText(), dialogStage);
+        File chosen = showDirChooser(resources.getString("dir.chooser.plugins.title"), pluginsRootTextField.getText(), stage);
         if (chosen != null) {
             pluginsRoot.setValue(chosen.getAbsolutePath());
             changeMade.setValue(true);
@@ -90,7 +87,7 @@ public class PreferencesOverviewController {
         if (changeMade.getValue()) {
             handleApplyButton();
         }
-        dialogStage.close();
+        stage.close();
     }
 
     @FXML
@@ -111,11 +108,7 @@ public class PreferencesOverviewController {
     @FXML
     private void handleCancelButton(ActionEvent actionEvent) {
         changeMade.setValue(false);
-        dialogStage.close();
-    }
-
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
+        stage.close();
     }
 
 }

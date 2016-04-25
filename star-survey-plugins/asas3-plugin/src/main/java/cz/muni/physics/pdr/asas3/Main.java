@@ -43,7 +43,7 @@ public class Main {
                 if (line.startsWith("#")) continue;
                 String[] csv = line.split("\\s+");
                 if (csv.length == 14) {
-                    if(csv[12].trim().equals("A") || csv[12].trim().equals("B")){
+                    if (csv[12].trim().equals("A") || csv[12].trim().equals("B")) {
                         AsasData data = new AsasData(csv);
                         for (int i = 0; i < avgErr.length; i++) {
                             avgErr[i] += data.getErrs()[i];
@@ -72,16 +72,21 @@ public class Main {
         return index;
     }
 
-    private class AsasData{
+    private String searchFor(String text) {
+        //http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3
+        return "";
+    }
+
+    private class AsasData {
         private double hjd;
         private double[] mags = new double[5];
         private double[] errs = new double[5];
 
-        private AsasData(String[] csv){
+        private AsasData(String[] csv) {
             this.hjd = Double.parseDouble(csv[1]) + 2450000;
             for (int i = 0; i < 5; i++) {
-                mags[i] = Double.parseDouble(csv[i+2]);
-                errs[i] = Double.parseDouble(csv[i+7]);
+                mags[i] = Double.parseDouble(csv[i + 2]);
+                errs[i] = Double.parseDouble(csv[i + 7]);
             }
         }
 
@@ -108,10 +113,5 @@ public class Main {
         public void setErrs(double[] errs) {
             this.errs = errs;
         }
-    }
-
-    private String searchFor(String text) {
-        //http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3
-        return "";
     }
 }

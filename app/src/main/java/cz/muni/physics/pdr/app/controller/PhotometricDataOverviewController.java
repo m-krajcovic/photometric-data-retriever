@@ -50,7 +50,7 @@ import java.util.zip.ZipOutputStream;
  */
 @Component
 @Scope("prototype")
-public class PhotometricDataOverviewController {
+public class PhotometricDataOverviewController extends StageController {
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataOverviewController.class);
 
@@ -93,7 +93,7 @@ public class PhotometricDataOverviewController {
         File zip = FXMLUtils.showSaveFileChooser("Choose your destiny",
                 System.getProperty("user.home"),
                 "pdr-export " + coords + ".zip",
-                menuBar.getScene().getWindow(),
+                stage,
                 new FileChooser.ExtensionFilter("Zip file(*.zip)", "*.zip"));
         Task task = new Task() {
             @Override
@@ -115,7 +115,7 @@ public class PhotometricDataOverviewController {
                 return null;
             }
         };
-        Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
+        Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
         executor.execute(task);
         dialog.showAndWait();
     }
@@ -177,7 +177,7 @@ public class PhotometricDataOverviewController {
             File csv = FXMLUtils.showSaveFileChooser("Choose your destiny",
                     System.getProperty("user.home"),
                     name + " " + coords + ".csv",
-                    menuBar.getScene().getWindow(),
+                    stage,
                     new FileChooser.ExtensionFilter("Csv file(*.csv)", "*.csv"));
             Task task = new Task() {
                 @Override
@@ -192,17 +192,17 @@ public class PhotometricDataOverviewController {
                     return null;
                 }
             };
-            Dialog dialog = FXMLUtils.getProgressDialog(menuBar.getScene().getWindow(), task);
+            Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
             executor.execute(task);
             dialog.showAndWait();
         });
         return menuItem;
     }
 
-    private void errorAlert(){
+    private void errorAlert() {
         FXMLUtils.alert("Error", "Failed to export data", "Try again and/or try to restart application", Alert.AlertType.ERROR);
     }
-    
+
     private String toCsv(List<PhotometricDataModel> models) {
         return models.stream().map(PhotometricDataModel::toCsv).reduce("Julian date,Magnitude,Magnitude error", (s1, s2) -> s1 + "\n" + s2);
     }

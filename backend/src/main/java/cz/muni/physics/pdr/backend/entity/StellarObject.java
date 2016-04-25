@@ -31,11 +31,11 @@ public class StellarObject {
         }
     }
 
-    public Double getDeclinationInHours(){
+    public Double getDeclinationInHours() {
         return declination / 15;
     }
 
-    public Double getRightAscensionInHours(){
+    public Double getRightAscensionInHours() {
         return rightAscension / 15;
     }
 
@@ -110,7 +110,7 @@ public class StellarObject {
     public String toLines() {
         String output = "";
         output += String.join("\n", names);
-        for (Map.Entry<String, String> id : ids.entrySet()){
+        for (Map.Entry<String, String> id : ids.entrySet()) {
             output += id.getKey() + ":" + id.getValue() + "\n";
         }
         output += rightAscension + "\n"

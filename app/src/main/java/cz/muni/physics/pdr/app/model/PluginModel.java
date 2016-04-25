@@ -11,7 +11,7 @@ import javafx.collections.ObservableList;
  * @version 1.0
  * @since 29/03/16
  */
-public class PluginModel implements EntityModel<Plugin>{
+public class PluginModel implements EntityModel<Plugin> {
     private StringProperty name = new SimpleStringProperty("");
     private StringProperty mainFile = new SimpleStringProperty("");
     private ObservableList<String> commands = FXCollections.observableArrayList();
@@ -19,7 +19,7 @@ public class PluginModel implements EntityModel<Plugin>{
     public PluginModel() {
     }
 
-    public PluginModel(Plugin plugin){
+    public PluginModel(Plugin plugin) {
         setName(plugin.getName());
         setMainFile(plugin.getMainFile());
         commands.addAll(plugin.getCommands());

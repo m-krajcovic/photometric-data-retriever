@@ -32,6 +32,13 @@ import org.springframework.web.client.RestTemplate;
 public class BackendConfig {
 
     @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer properties = new PropertySourcesPlaceholderConfigurer();
+        properties.setIgnoreUnresolvablePlaceholders(true);
+        return properties;
+    }
+
+    @Bean
     @Scope("prototype")
     public ProcessStarter<PhotometricData> photometricDataPluginStarter() {
         return new PhotometricDataProcessStarter();
@@ -52,16 +59,9 @@ public class BackendConfig {
 
     @Bean
     public SesameNameResolver sesameNameResolver(RestOperations restTemplate,
-                                                     @Value("${sesame.resolver.url}") String resolverUrl,
-                                                     @Value("${sesame.test.url}") String testUrl){
+                                                 @Value("${sesame.resolver.url}") String resolverUrl,
+                                                 @Value("${sesame.test.url}") String testUrl) {
         return new SesameNameResolverImpl(restTemplate, resolverUrl, testUrl);
-    }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer properties = new PropertySourcesPlaceholderConfigurer();
-        properties.setIgnoreUnresolvablePlaceholders(true);
-        return properties;
     }
 
 }

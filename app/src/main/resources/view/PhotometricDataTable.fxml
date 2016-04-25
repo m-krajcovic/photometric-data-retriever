@@ -2,11 +2,12 @@
 
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<TableView xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:id="photometricDataTableView"
+<TableView xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65" fx:id="photometricDataTableView"
            editable="true" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="600"
-           prefHeight="240.0" prefWidth="600.0" fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataTableController">
+           prefHeight="240.0" prefWidth="600.0"
+           fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataTableController">
     <columns>
-        <TableColumn  fx:id="julianDate" prefWidth="68.0" text="%photometricdata.jd"/>
+        <TableColumn fx:id="julianDate" prefWidth="68.0" text="%photometricdata.jd"/>
         <TableColumn fx:id="magnitude" prefWidth="163.0" text="%photometricdata.magnitude"/>
         <TableColumn fx:id="error" prefWidth="258.0" text="%photometricdata.error"/>
     </columns>

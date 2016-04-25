@@ -9,7 +9,7 @@ import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
-import cz.muni.physics.pdr.app.spring.AppConfig;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;
@@ -39,12 +39,12 @@ import java.util.Map;
  * @since 20/03/16
  */
 @Component
-public class SearchOverviewController {
+public class SearchOverviewController extends StageController {
 
     private final static Logger logger = LogManager.getLogger(SearchOverviewController.class);
 
     @Autowired
-    private AppConfig app;
+    private Screens app;
     @Autowired
     private CoordsSearchService coordsSearchService;
     @Autowired

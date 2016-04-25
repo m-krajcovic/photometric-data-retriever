@@ -10,15 +10,15 @@ import java.util.function.Predicate;
  * @since 14/04/16
  */
 public interface GenericEntityManager<T, ID extends Serializable> {
-    void insert(T entity) ;
+    void insert(T entity);
 
-    void delete(T entity) ;
+    void delete(T entity);
 
-    Collection<T> getAll() ;
+    Collection<T> getAll();
 
-    T searchFor(Predicate<T> predicate) ;
+    T searchFor(Predicate<T> predicate);
 
-    Collection<T> searchForAll(Predicate<T> predicate) ;
+    Collection<T> searchForAll(Predicate<T> predicate);
 
-    T getById(ID id) ;
+    T getById(ID id);
 }

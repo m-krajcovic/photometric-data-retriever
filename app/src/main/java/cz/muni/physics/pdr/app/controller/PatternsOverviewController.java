@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.model.PatternModel;
-import cz.muni.physics.pdr.app.spring.AppConfig;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
@@ -11,12 +11,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
+import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @author Michal Krajčovič
@@ -24,10 +26,10 @@ import java.util.regex.Pattern;
  * @since 23/04/16
  */
 @Component
-public class PatternsOverviewController {
+public class PatternsOverviewController extends StageController {
 
     @Autowired
-    private AppConfig app;
+    private Screens app;
     @Autowired
     private StarSurveyManager starSurveyManager;
 
@@ -40,7 +42,7 @@ public class PatternsOverviewController {
     @FXML
     private TableColumn<PatternModel, Pattern> valueTableColumn;
 
-    private Stage dialogStage;
+    private BiPredicate<TextField, TextField> validCheck;
 
     @FXML
     private void initialize() {
@@ -49,17 +51,29 @@ public class PatternsOverviewController {
 
         ObservableList<PatternModel> list = FXCollections.observableArrayList();
         try {
-            starSurveyManager.getAllPatterns().forEach((k, v) -> list.add(new PatternModel(k,v)));
+            starSurveyManager.getAllPatterns().forEach((k, v) -> list.add(new PatternModel(k, v)));
         } catch (ResourceAvailabilityException e) {
             errorAlert();
         }
         tableView.setItems(list);
+
+        validCheck = (key, value) -> {
+            boolean isRegex;
+            try {
+                Pattern.compile(value.getText());
+                isRegex = true;
+            } catch (PatternSyntaxException e) {
+                isRegex = false;
+            }
+            return !key.getText().isEmpty()
+                    && isRegex;
+        };
     }
 
     @FXML
     private void handleNewButton() {
         PatternModel patternModel = new PatternModel();
-        boolean okClicked = app.showPatternEditDialog(patternModel, dialogStage);
+        boolean okClicked = app.showEntryEditDialog(patternModel, stage, validCheck);
         if (okClicked) {
             try {
                 tableView.getItems().add(patternModel);
@@ -76,7 +90,7 @@ public class PatternsOverviewController {
     private void handleEditButton() {
         PatternModel selectedRecord = tableView.getSelectionModel().getSelectedItem();
         if (selectedRecord != null) {
-            boolean okClicked = app.showPatternEditDialog(selectedRecord, dialogStage);
+            boolean okClicked = app.showEntryEditDialog(selectedRecord, stage, validCheck);
             if (okClicked) {
                 try {
                     starSurveyManager.insertPattern(selectedRecord.key(), selectedRecord.getValue().get());
@@ -110,17 +124,13 @@ public class PatternsOverviewController {
         FXMLUtils.alert("Resource not available", "Configuration file is broken.", "Try deleting config file and reloading application.", Alert.AlertType.ERROR).showAndWait();
     }
 
-
     private void showNoSelectionDialog() {
         Alert alert = FXMLUtils.alert(resources.getString("alert.noselection"),
                 "No Pattern selected",
                 "Please select a row in the table.",
                 Alert.AlertType.WARNING);
-        alert.initOwner(dialogStage);
+        alert.initOwner(stage);
         alert.showAndWait();
     }
 
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
-    }
 }

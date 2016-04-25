@@ -1,6 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.spring.AppConfig;
+import cz.muni.physics.pdr.app.spring.Screens;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RootLayoutController {
     @Autowired
-    private AppConfig app;
+    private Screens app;
     @FXML
     private MenuBar menuBar;
     @FXML

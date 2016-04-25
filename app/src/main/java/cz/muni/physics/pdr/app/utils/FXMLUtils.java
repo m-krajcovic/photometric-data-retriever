@@ -113,7 +113,7 @@ public class FXMLUtils {
         alert.showAndWait();
     }
 
-    public static Dialog getProgressDialog(Window owner, Task task){
+    public static Dialog getProgressDialog(Window owner, Task task) {
         Dialog dialog = new Dialog();
         dialog.initStyle(StageStyle.UNDECORATED);
         dialog.initOwner(owner);

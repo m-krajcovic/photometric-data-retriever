@@ -121,12 +121,12 @@ public class TitledTextFieldBox extends HBox {
         textField.getStyleClass().add("titled-text-field");
     }
 
-    public void setPromptText(String value) {
-        textField.setPromptText(value);
-    }
-
     public String getPromptText() {
         return textField.getPromptText();
+    }
+
+    public void setPromptText(String value) {
+        textField.setPromptText(value);
     }
 
     public Label getTitle() {
@@ -137,12 +137,12 @@ public class TitledTextFieldBox extends HBox {
         return textField;
     }
 
-    public void setOnAction(EventHandler<ActionEvent> onAction) {
-        textField.setOnAction(onAction);
-    }
-
     public EventHandler<ActionEvent> getOnAction() {
         return textField.getOnAction();
+    }
+
+    public void setOnAction(EventHandler<ActionEvent> onAction) {
+        textField.setOnAction(onAction);
     }
 
     public boolean isUseAutoTitles() {

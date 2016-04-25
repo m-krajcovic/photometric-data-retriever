@@ -50,7 +50,7 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
     }
 
     @Autowired
-    public void setTaskExecutor(Executor executor){
+    public void setTaskExecutor(Executor executor) {
         super.setExecutor(executor);
     }
 
