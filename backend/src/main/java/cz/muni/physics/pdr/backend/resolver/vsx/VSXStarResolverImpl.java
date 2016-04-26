@@ -26,8 +26,8 @@ public class VSXStarResolverImpl implements VSXStarResolver {
     }
 
     @Override
-    public StellarObject findByName(String name) {
-        return getResults(obj -> obj.getNames().get(0).equalsIgnoreCase(name)).get(0);
+    public List<StellarObject> findByName(String name) {
+        return getResults(obj -> obj.getNames().get(0).equalsIgnoreCase(name));
     }
 
     @Override

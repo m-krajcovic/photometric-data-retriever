@@ -11,7 +11,7 @@ import java.util.List;
  * @since 19/04/16
  */
 public interface VSXStarResolver {
-    StellarObject findByName(String name);
+    List<StellarObject> findByName(String name);
 
     List<StellarObject> findByCoordinates(CelestialCoordinates coordinates);
 

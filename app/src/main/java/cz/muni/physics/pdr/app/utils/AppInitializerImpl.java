@@ -17,13 +17,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,9 +36,6 @@ public class AppInitializerImpl implements AppInitializer {
     private File appDataDir;
     private File pluginsDir;
     private File configFile;
-    private File vsxDatFile;
-    private String vsxDownloadUrl;
-    private boolean checkOutdated;
 
     private Application mainApp;
 
@@ -52,13 +47,10 @@ public class AppInitializerImpl implements AppInitializer {
     private Executor executor;
     private Stage primaryStage;
 
-    public AppInitializerImpl(File appDataDir, File pluginsDir, File configFile, File vsxDatFile, String vsxDownloadUrl, boolean checkOutdated) {
+    public AppInitializerImpl(File appDataDir, File pluginsDir, File configFile) {
         this.appDataDir = appDataDir;
         this.pluginsDir = pluginsDir;
         this.configFile = configFile;
-        this.vsxDatFile = vsxDatFile;
-        this.vsxDownloadUrl = vsxDownloadUrl;
-        this.checkOutdated = checkOutdated;
     }
 
     @Override
@@ -111,6 +103,7 @@ public class AppInitializerImpl implements AppInitializer {
             });
         }
 
+        /*
         mainApp.notifyPreloader(PreloaderHandlerEvent.VSX_DAT_CHECK);
         logger.debug("Checking if vsx.dat file {} exists", vsxDatFile.getAbsoluteFile());
         if (!vsxDatFile.exists()) {
@@ -147,7 +140,7 @@ public class AppInitializerImpl implements AppInitializer {
             }
         } else {
             logger.debug("Checking for outdated vsx.dat file is turned off, skipping");
-        }
+        }*/
     }
 
     private void loadDefaultPlugins() {
@@ -208,6 +201,7 @@ public class AppInitializerImpl implements AppInitializer {
         dialog.showAndWait();
     }
 
+    /*
     private void downloadVsxDatFile() {
         Task task = new Task() {
             @Override
@@ -241,7 +235,7 @@ public class AppInitializerImpl implements AppInitializer {
         Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
         executeTask(task);
         dialog.showAndWait();
-    }
+    }*/
 
     private void executeTask(Task task) {
         if (executor != null) {

@@ -25,6 +25,7 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
 
     private VSXStarResolver vsxStarResolver;
 
+
     private CelestialCoordinates coords;
 
     @Autowired

@@ -3,6 +3,7 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
+import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -25,10 +27,13 @@ public class NameSearchService extends Service<StellarObject> {
     private String searchText;
 
     private SesameNameResolver sesameNameResolver;
+    private VSXStarResolver vsxStarResolver;
 
     @Autowired
-    public NameSearchService(SesameNameResolver sesameNameResolver) {
+    public NameSearchService(SesameNameResolver sesameNameResolver,
+                             VSXStarResolver vsxStarResolver) {
         this.sesameNameResolver = sesameNameResolver;
+        this.vsxStarResolver = vsxStarResolver;
     }
 
     @Override
@@ -40,7 +45,12 @@ public class NameSearchService extends Service<StellarObject> {
             @Override
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
-                return sesameNameResolver.findByName(searchText);
+                StellarObject sesameResult = sesameNameResolver.findByName(searchText);
+                List<StellarObject> vsxResult = vsxStarResolver.findByName(searchText);
+                if (vsxResult.size() == 1) {
+                    sesameResult.merge(vsxResult.get(0));
+                }
+                return sesameResult;
             }
         };
     }

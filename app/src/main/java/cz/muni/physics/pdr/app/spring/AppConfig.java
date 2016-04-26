@@ -16,10 +16,7 @@ import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepository;
 import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryConfigImpl;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManagerImpl;
-import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
-import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolverImpl;
 import cz.muni.physics.pdr.backend.utils.BackendConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -28,7 +25,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -51,9 +47,6 @@ public class AppConfig {
 
     private static ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
-    @Autowired
-    private Environment environment;
-
     @Bean
     public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() throws IOException {
         PreferencesPlaceholderConfigurer preferences = new PreferencesPlaceholderConfigurer();
@@ -68,16 +61,10 @@ public class AppConfig {
     public AppInitializer appInitializer(File appDataDir,
                                          File pluginsDir,
                                          @Value("${config.file.name}") String configFileName,
-                                         @Value("${vsx.dat.file.name}") String vsxDatFileName,
-                                         @Value("${vsx.ftp.url}") String vsxFtpUrl,
-                                         @Value("${vsx.check.outdated}") boolean checkOutdated,
                                          Executor executor) {
         AppInitializerImpl initializer = new AppInitializerImpl(appDataDir,
                 pluginsDir,
-                new File(appDataDir, configFileName),
-                new File(appDataDir, vsxDatFileName),
-                vsxFtpUrl,
-                checkOutdated);
+                new File(appDataDir, configFileName));
         initializer.setExecutor(executor);
         return initializer;
     }
@@ -119,12 +106,6 @@ public class AppConfig {
     public StarSurveyManager starSurveyManager(PluginRepository pluginRepository,
                                                StarSurveyRepository starSurveyRepository) {
         return new StarSurveyManagerImpl(pluginRepository, starSurveyRepository);
-    }
-
-    @Bean
-    public VSXStarResolver vsxStarResolver(File appDataDir,
-                                           @Value("${vsx.dat.file.name}") String vsxDatFileName) {
-        return new VSXStarResolverImpl(new File(appDataDir, vsxDatFileName));
     }
 
     @Bean
