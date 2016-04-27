@@ -12,8 +12,7 @@ Throughout the development you ought to use iterative approach during which you 
 
 # Installation
 
-> Installation packages will be available later. For now, follow these steps:
+> Go to release tab for installation package
 
-1. `git clone` this project.
-2. Build at project root with `mvn clean install`. Maven will install plugins to `${user.home}/.pdr/plugins` folder by default.
-3. Start application. You will be asked if you want to load default settings of star surveys and vsx.dat file will be downloaded
+1. Install package
+2. Default settings and plugins will be loaded on first startup
