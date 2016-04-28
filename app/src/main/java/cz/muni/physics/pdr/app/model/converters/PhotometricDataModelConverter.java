@@ -16,7 +16,7 @@ public abstract class PhotometricDataModelConverter extends StringConverter<Phot
 
     static {
         PhotometricDataModelConverter csvConverter = new PhotometricDataModelCsvConverter();
-        PhotometricDataModelConverter asciiConverter = new PhotometricDataModelFixedLengthAsciiConverter();
+        PhotometricDataModelConverter asciiConverter = new PhotometricDataModelZeroFillAsciiConverter();
 
         converters.put("csv", csvConverter);
         converters.put("ascii", asciiConverter);

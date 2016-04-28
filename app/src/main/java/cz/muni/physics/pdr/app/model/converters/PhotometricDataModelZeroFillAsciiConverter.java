@@ -25,9 +25,9 @@ public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataM
         int magDecPMax = 0;
         int errDecPMax = 0;
         for (PhotometricDataModel model : models) {
-            int jdDecP = Double.toString(model.getJulianDate()).split("\\.")[1].length();
-            int magDecP = Double.toString(model.getMagnitude()).split("\\.")[1].length();
-            int errDecP = Double.toString(model.getError()).split("\\.")[1].length();
+            int jdDecP = Double.toString(model.getJulianDate()).length();
+            int magDecP = Double.toString(model.getMagnitude()).length();
+            int errDecP = Double.toString(model.getError()).length();
             if (jdDecP > jdDecPMax) jdDecPMax = jdDecP;
             if (magDecP > magDecPMax) magDecPMax = magDecP;
             if (errDecP > errDecPMax) errDecPMax = errDecP;
@@ -39,10 +39,9 @@ public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataM
     }
 
     private String toString(PhotometricDataModel object, int jd, int mag, int err) {
-        String jdString = String.format("%." + jd + "f", object.getJulianDate());
-        String magString = String.format("%." + mag + "f", object.getMagnitude());
-        String errString = String.format("%." + err + "f", object.getError());
-
+        String jdString = String.format("%" + (-jd) + "s", object.getJulianDate()).replace(' ' , '0');
+        String magString = String.format("%" + (-mag) + "s", object.getMagnitude()).replace(' ' , '0');
+        String errString = String.format("%" + (-err) + "s", object.getError()).replace(' ' , '0');
         return String.format("%s\t%s\t%s", jdString, magString, errString);
     }
 
