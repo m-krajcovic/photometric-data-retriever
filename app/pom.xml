@@ -61,6 +61,7 @@
             <version>${spring.version}</version>
         </dependency>
         <!--SPRING END -->
+
     </dependencies>
 
     <pluginRepositories>
@@ -91,6 +92,9 @@
                 <configuration>
                     <bundleArguments>
                         <runtime/>
+                        <win.menuGroup>PDR</win.menuGroup>
+                        <title>PDR</title>
+                        <description>Tool for retrieving photometric data of stellar objects</description>
                     </bundleArguments>
                     <mainClass>cz.muni.physics.pdr.app.MainApp</mainClass>
                     <preLoader>cz.muni.physics.pdr.app.MainPreloader</preLoader>

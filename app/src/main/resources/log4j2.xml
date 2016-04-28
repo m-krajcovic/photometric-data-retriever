@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+    <Properties>
+        <Property name="log-path">${sys:user.home}\.pdr\logs</Property>
+    </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n}"/>
         </Console>
+
+        <RollingFile name="file-log" fileName="${log-path}/log.log"
+                     filePattern="${log-path}/log-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="2"/>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.springframework" level="info"/>
         <Root level="debug">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="file-log"/>
         </Root>
     </Loggers>
 </Configuration>
