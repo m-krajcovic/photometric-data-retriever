@@ -22,7 +22,7 @@ class PeriodPhotometricChartData extends PhotometricChartDataFactory {
     @Override
     public XYChart.Data<Number, Number> getData(PhotometricDataModel model) {
         double period = ((((model.getJulianDate() - stellarObject.getEpoch()) / stellarObject.getPeriod()) % 1) + 1) % 1;
-        return new XYChart.Data<>(period, model.getMagnitude());
+        return new XYChart.Data<>(period, -model.getMagnitude());
     }
 
     @Override
@@ -30,10 +30,12 @@ class PeriodPhotometricChartData extends PhotometricChartDataFactory {
         NumberAxis xAxis = (NumberAxis) chart.getXAxis();
         NumberAxis yAxis = (NumberAxis) chart.getYAxis();
         xAxis.setLabel(resources.getString("photometricdata.period"));
+        xAxis.setAutoRanging(false);
         xAxis.setTickUnit(0.25);
         xAxis.setLowerBound(0);
         xAxis.setUpperBound(1);
         yAxis.setLabel(resources.getString("photometricdata.magnitude"));
         yAxis.setAutoRanging(true);
+        yAxis.setTickLabelFormatter(invertedNegative(yAxis));
     }
 }

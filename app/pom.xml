@@ -91,7 +91,6 @@
                 <version>8.4.0</version>
                 <configuration>
                     <bundleArguments>
-                        <runtime/>
                         <win.menuGroup>PDR</win.menuGroup>
                         <title>PDR</title>
                         <description>Tool for retrieving photometric data of stellar objects</description>

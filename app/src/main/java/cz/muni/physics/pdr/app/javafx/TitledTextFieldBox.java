@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.javafx;
 
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -20,7 +21,7 @@ import java.util.function.UnaryOperator;
  * @since 20/04/16
  */
 public class TitledTextFieldBox extends HBox {
-    private Label title;
+    private Label titleLabel;
     private TextField textField;
     private UnaryOperator<TextFormatter.Change> filter = c -> c;
     private String delimiter;
@@ -29,12 +30,12 @@ public class TitledTextFieldBox extends HBox {
 
     public TitledTextFieldBox() {
         super();
-        title = new Label();
-        title.getStyleClass().add("titled-label");
-        title.setFocusTraversable(false);
-        title.setVisible(false);
-        title.setMinWidth(Region.USE_PREF_SIZE);
-        title.setMaxWidth(Region.USE_PREF_SIZE);
+        titleLabel = new Label();
+        titleLabel.getStyleClass().add("titled-label");
+        titleLabel.setFocusTraversable(false);
+        titleLabel.setVisible(false);
+        titleLabel.setMinWidth(Region.USE_PREF_SIZE);
+        titleLabel.setMaxWidth(Region.USE_PREF_SIZE);
         textField = new TextField();
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -43,23 +44,27 @@ public class TitledTextFieldBox extends HBox {
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
             textField.setPrefHeight(newValue.doubleValue());
-            title.setPrefHeight(newValue.doubleValue());
+            titleLabel.setPrefHeight(newValue.doubleValue());
         });
 
-        title.textProperty().addListener((ov, prevText, currText) -> {
+        titleLabel.textProperty().addListener((ov, prevText, currText) -> {
             Platform.runLater(() -> {
                 if (currText.isEmpty()) {
-                    title.setPrefWidth(0);
+                    titleLabel.setPrefWidth(0);
                     this.textField.setPrefWidth(getWidth());
+                    titleLabel.setVisible(false);
+                    textField.getStyleClass().remove("titled-text-field");
                 } else {
                     Text text = new Text(currText);
-                    text.setFont(title.getFont());
+                    text.setFont(titleLabel.getFont());
                     double width = text.getLayoutBounds().getWidth()
-                            + title.getPadding().getLeft() + title.getPadding().getRight()
+                            + titleLabel.getPadding().getLeft() + titleLabel.getPadding().getRight()
                             + 2d;
                     width = Math.ceil(width);
-                    title.setPrefWidth(width);
+                    titleLabel.setPrefWidth(width);
                     this.textField.setPrefWidth(getWidth() - width);
+                    titleLabel.setVisible(true);
+                    this.textField.getStyleClass().add("titled-text-field");
                 }
             });
         });
@@ -74,7 +79,7 @@ public class TitledTextFieldBox extends HBox {
             }
         });
 
-        getChildren().addAll(title, textField);
+        getChildren().addAll(titleLabel, textField);
     }
 
     public void setAutomaticTitles(String delimiter, Map<String, String> automaticTitles) {
@@ -90,11 +95,11 @@ public class TitledTextFieldBox extends HBox {
         }
         filter = value.getFilter();
         textField.setTextFormatter(new TextFormatter<>(change -> {
-            if (useAutoTitles && title.getText().isEmpty()) {
+            if (useAutoTitles && titleLabel.getText().isEmpty()) {
                 if (change.getText().equals(delimiter)) {
                     for (Map.Entry<String, String> entry : autoTitles.entrySet()) {
                         if (change.getControlText().equalsIgnoreCase(entry.getKey())) {
-                            TitledTextFieldBox.this.showTitle(entry.getValue());
+                            TitledTextFieldBox.this.setTitle(entry.getValue());
                             textField.setText("");
                             return null;
                         }
@@ -106,19 +111,11 @@ public class TitledTextFieldBox extends HBox {
     }
 
     public String getTextWithPrefix() {
-        return title.getText() + textField.getText();
+        return titleLabel.getText() + textField.getText();
     }
 
     public void hideTitle() {
-        title.setText("");
-        title.setVisible(false);
-        textField.getStyleClass().remove("titled-text-field");
-    }
-
-    public void showTitle(String text) {
-        title.setText(text);
-        title.setVisible(true);
-        textField.getStyleClass().add("titled-text-field");
+        titleLabel.setText("");
     }
 
     public String getPromptText() {
@@ -129,8 +126,16 @@ public class TitledTextFieldBox extends HBox {
         textField.setPromptText(value);
     }
 
-    public Label getTitle() {
-        return title;
+    public void setTitle(String title) {
+        this.titleLabel.setText(title);
+    }
+
+    public String getTitle() {
+        return this.titleLabel.getText();
+    }
+
+    public Label getTitleLabel() {
+        return titleLabel;
     }
 
     public TextField getTextField() {

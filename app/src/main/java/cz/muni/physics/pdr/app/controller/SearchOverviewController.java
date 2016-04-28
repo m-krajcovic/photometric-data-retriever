@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +58,7 @@ public class SearchOverviewController extends StageController {
     @FXML
     private Label infoLabel;
     @FXML
-    private VBox searchBox;
+    private HBox searchBox;
     @FXML
     private Button searchButton;
     @FXML

@@ -1,9 +1,11 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.javafx.PhotometricChartDataFactory;
+import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.model.converters.PhotometricDataModelConverter;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -12,19 +14,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
+import javafx.util.converter.NumberStringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +28,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -57,6 +50,11 @@ public class PhotometricDataOverviewController extends StageController {
     @Autowired
     private Executor executor;
 
+
+    @FXML
+    private TitledTextFieldBox epochTextField;
+    @FXML
+    private TitledTextFieldBox periodTextField;
     @FXML
     private ResourceBundle resources;
     @FXML
@@ -89,35 +87,21 @@ public class PhotometricDataOverviewController extends StageController {
 
     @FXML
     private void handleSaveAllMenuItem() {
+        String entryFormat = ".csv";
+        String[] choices = {"CSV file .csv", "Ascii table .txt"};
+        Optional<String> result = FXMLUtils.showOptionDialog(stage, Arrays.asList(choices), "Choose output format", "Choose output format",
+                "Output format: ");
+        if (result.isPresent()) {
+            entryFormat = result.get();
+        }
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-        File zip = FXMLUtils.showSaveFileChooser("Choose your destiny",
+        File zip = FXMLUtils.showSaveFileChooser("Choose output file",
                 System.getProperty("user.home"),
-                "pdr-export " + coords + ".zip",
+                "pdr-export-" + coords,
                 stage,
-                new FileChooser.ExtensionFilter("Zip file(*.zip)", "*.zip"));
-        Task task = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                if (zip != null) {
-                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-                        for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
-                            ZipEntry e = new ZipEntry(MessageFormat.format("{0} {1}.csv", entry.getKey().getName(), coords));
-                            out.putNextEntry(e);
-                            String csv = toCsv(entry.getValue());
-                            byte[] byteArray = csv.getBytes();
-                            out.write(byteArray, 0, byteArray.length);
-                            out.closeEntry();
-                        }
-                    } catch (IOException e) {
-                        errorAlert();
-                    }
-                }
-                return null;
-            }
-        };
-        Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
-        executor.execute(task);
-        dialog.showAndWait();
+                new FileChooser.ExtensionFilter("Zip file (*.zip)", "*.zip"));
+        if (zip != null)
+            toZip(zip, coords + entryFormat);
     }
 
     @FXML
@@ -132,6 +116,12 @@ public class PhotometricDataOverviewController extends StageController {
             tabPane.getTabs().add(getTab(entry.getKey().getName(), entry.getValue()));
             saveMenu.getItems().add(getMenuItem(entry.getKey().getName(), entry.getValue()));
         }
+        drawChart();
+    }
+
+    @FXML
+    private void drawChart() {
+        chart.getData().clear();
         PhotometricChartDataFactory dataFactory = PhotometricChartDataFactory.getInstance(stellarObject);
         dataFactory.setUpChart(chart, resources);
         chartProgressIndicator.setVisible(true);
@@ -173,21 +163,51 @@ public class PhotometricDataOverviewController extends StageController {
     private MenuItem getMenuItem(String name, List<PhotometricDataModel> models) {
         MenuItem menuItem = new MenuItem(name);
         menuItem.setOnAction(event -> {
-            String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-            File csv = FXMLUtils.showSaveFileChooser("Choose your destiny",
-                    System.getProperty("user.home"),
-                    name + " " + coords + ".csv",
-                    stage,
-                    new FileChooser.ExtensionFilter("Csv file(*.csv)", "*.csv"));
+            toFile(name, models);
+        });
+        return menuItem;
+    }
+
+    private void toZip(final File zip, String entrySuffix) {
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
+                    PhotometricDataModelConverter converter = PhotometricDataModelConverter.get(entrySuffix);
+                    for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
+                        ZipEntry e = new ZipEntry(MessageFormat.format("{0}{1}", entry.getKey().getName(), converter.getExtension()));
+                        out.putNextEntry(e);
+                        write(out, entry.getValue(), converter);
+                        out.closeEntry();
+                    }
+                } catch (IOException e) {
+                    errorAlert();
+                }
+                return null;
+            }
+        };
+        Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
+        executor.execute(task);
+        dialog.showAndWait();
+    }
+
+    private void toFile(String name, List<PhotometricDataModel> models) {
+        String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
+        File file = FXMLUtils.showSaveFileChooser("Choose output file",
+                System.getProperty("user.home"),
+                name + "-" + coords,
+                stage,
+                new FileChooser.ExtensionFilter("Csv file (*.csv)", "*.csv"),
+                new FileChooser.ExtensionFilter("Ascii table (*.txt)", "*.txt"));
+        if (file != null) {
+            PhotometricDataModelConverter converter = PhotometricDataModelConverter.get(file.getName());
             Task task = new Task() {
                 @Override
                 protected Object call() throws Exception {
-                    if (csv != null) {
-                        try (FileWriter writer = new FileWriter(csv)) {
-                            writer.write(toCsv(models));
-                        } catch (IOException e) {
-                            errorAlert();
-                        }
+                    try (OutputStream out = new FileOutputStream(file)) {
+                        write(out, models, converter);
+                    } catch (IOException e) {
+                        errorAlert();
                     }
                     return null;
                 }
@@ -195,16 +215,16 @@ public class PhotometricDataOverviewController extends StageController {
             Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
             executor.execute(task);
             dialog.showAndWait();
-        });
-        return menuItem;
+        }
+    }
+
+    private void write(OutputStream out, List<PhotometricDataModel> models, PhotometricDataModelConverter converter) throws IOException {
+        byte[] byteArray = converter.toString(models).getBytes();
+        out.write(byteArray, 0, byteArray.length);
     }
 
     private void errorAlert() {
         FXMLUtils.alert("Error", "Failed to export data", "Try again and/or try to restart application", Alert.AlertType.ERROR);
-    }
-
-    private String toCsv(List<PhotometricDataModel> models) {
-        return models.stream().map(PhotometricDataModel::toCsv).reduce("Julian date,Magnitude,Magnitude error", (s1, s2) -> s1 + "\n" + s2);
     }
 
     public StellarObjectModel getStellarObject() {
@@ -213,6 +233,8 @@ public class PhotometricDataOverviewController extends StageController {
 
     public void setStellarObject(StellarObjectModel stellarObject) {
         this.stellarObject = stellarObject;
+        this.epochTextField.getTextField().textProperty().bindBidirectional(stellarObject.epochProperty(), new NumberStringConverter("#.####"));
+        this.periodTextField.getTextField().textProperty().bindBidirectional(stellarObject.periodProperty(), new NumberStringConverter("#.##########"));
     }
 
 

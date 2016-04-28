@@ -30,11 +30,7 @@ public class PhotometricDataModel implements EntityModel<PhotometricData> {
         this.magnitude.setValue(magnitude);
         this.error.setValue(error);
     }
-
-    public String toCsv() {
-        return getJulianDate() + "," + getMagnitude() + "," + getError();
-    }
-
+    
     public double getJulianDate() {
         return julianDate.get();
     }

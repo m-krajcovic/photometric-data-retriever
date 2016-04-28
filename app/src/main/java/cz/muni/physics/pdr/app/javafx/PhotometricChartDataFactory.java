@@ -2,7 +2,9 @@ package cz.muni.physics.pdr.app.javafx;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.util.StringConverter;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -32,6 +34,15 @@ public abstract class PhotometricChartDataFactory {
             series.getData().add(getData(d));
         }
         return series;
+    }
+
+    protected StringConverter<Number> invertedNegative(NumberAxis yAxis) {
+        return new NumberAxis.DefaultFormatter(yAxis) {
+            @Override
+            public String toString(Number value) {
+                return String.format("%7.1f", -value.doubleValue());
+            }
+        };
     }
 
     public abstract XYChart.Data<Number, Number> getData(PhotometricDataModel model);

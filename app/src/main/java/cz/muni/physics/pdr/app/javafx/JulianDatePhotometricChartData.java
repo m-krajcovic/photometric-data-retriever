@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 class JulianDatePhotometricChartData extends PhotometricChartDataFactory {
     @Override
     public XYChart.Data<Number, Number> getData(PhotometricDataModel model) {
-        return new XYChart.Data<>(model.getJulianDate(), model.getMagnitude());
+        return new XYChart.Data<>(model.getJulianDate(), -model.getMagnitude());
     }
 
     @Override
@@ -26,5 +26,6 @@ class JulianDatePhotometricChartData extends PhotometricChartDataFactory {
         xAxis.setTickUnit(1000);
         yAxis.setLabel(resources.getString("photometricdata.magnitude"));
         yAxis.setAutoRanging(true);
+        yAxis.setTickLabelFormatter(invertedNegative(yAxis));
     }
 }

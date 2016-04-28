@@ -2,23 +2,20 @@
 
 <?import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/style.css"
-            xmlns="http://javafx.com/javafx/8.0.65"
-            fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
+<?import javafx.scene.layout.*?>
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
-        <VBox fx:id="searchBox" layoutX="107.0" layoutY="254.0">
+        <VBox alignment="BASELINE_CENTER">
             <children>
-                <HBox disable="false" prefHeight="27.0" prefWidth="375.0">
+              <ImageView fitHeight="150.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../images/planet.png" />
+                  </image>
+              </ImageView>
+                <HBox fx:id="searchBox" disable="false" prefHeight="27.0" prefWidth="375.0">
                     <children>
                         <TitledTextFieldBox fx:id="searchTextField" promptText="%textfield.search.prompt"
                                             onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0"
@@ -27,32 +24,25 @@
                                 <Insets right="5.0"/>
                             </HBox.margin>
                         </TitledTextFieldBox>
-                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0"
-                                   prefWidth="63.0" promptText="%textfield.radius.prompt">
+                        <TextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="%textfield.radius.prompt">
                             <HBox.margin>
-                                <Insets right="5.0"/>
+                                <Insets right="5.0" />
                             </HBox.margin>
                         </TextField>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction"
-                                prefHeight="27.0" prefWidth="69.0" text="%button.search"/>
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="%button.search" />
                     </children>
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
                 </HBox>
-                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0"
-                       text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
+                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
                     <VBox.margin>
-                        <Insets top="5.0"/>
+                        <Insets top="5.0" />
                     </VBox.margin>
                 </Label>
+              <ProgressIndicator fx:id="searchProgressIndicator" visible="false" />
+              <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false" />
             </children>
         </VBox>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="76.0" pickOnBounds="true"
-                   preserveRatio="true">
-            <image>
-                <Image url="@../images/planet.png"/>
-            </image>
-        </ImageView>
-        <ProgressIndicator fx:id="searchProgressIndicator" layoutX="274.0" layoutY="299.0" visible="false"/>
-        <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="359.0"
-               prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false"/>
     </children>
 </AnchorPane>
