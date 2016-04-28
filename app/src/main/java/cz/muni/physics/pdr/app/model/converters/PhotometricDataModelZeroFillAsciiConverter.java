@@ -54,4 +54,8 @@ public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataM
     public String getExtension() {
         return ".txt";
     }
+
+    public static void main(String[] args) {
+        System.out.println(String.format("%2s", 2d));
+    }
 }

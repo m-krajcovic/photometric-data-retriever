@@ -11,20 +11,16 @@ import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
+import cz.muni.physics.pdr.backend.entity.Radius;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,9 +105,9 @@ public class SearchOverviewController extends StageController {
     }
 
     private void initializeQueryParser() {
-        queryParser = new SearchQueryParser(coordinates -> {
-            logger.debug("Sending params ra={}, dec={}, rad={} to CoordsSearchService", coordinates);
-            coordsSearchService.setCoords(coordinates);
+        queryParser = new SearchQueryParser((query, radius) -> {
+            logger.debug("Sending params query={}, radius={} to CoordsSearchService", query, radius);
+            coordsSearchService.setQuery(new VizierQuery(query, new Radius(radius, Radius.Unit.DEG)));
             coordsSearchService.start();
         }, name -> {
             logger.debug("Sending name {} to NameSearchService", name);
@@ -132,7 +128,7 @@ public class SearchOverviewController extends StageController {
     private void initializeNameSearchService() {
         nameSearchService.setOnSucceeded(e -> {
             logger.debug("Succeeded in retrieving star resolver data.");
-            stellarObject.merge(nameSearchService.getValue());
+            stellarObject = nameSearchService.getValue();
             starSurveySearchService.setResolverResult(stellarObject);
             starSurveySearchService.start();
             nameSearchService.reset();
@@ -153,7 +149,13 @@ public class SearchOverviewController extends StageController {
                 logger.debug("No results found for '{}'", searchTextField.getTextWithPrefix());
                 showErrorMessage("No results found for '" + searchTextField.getTextWithPrefix() + "'");
             } else {
-                app.showPhotometricDataOverview(data, new StellarObjectModel(stellarObject));
+                StellarObjectModel model = new StellarObjectModel(stellarObject.getNames().get(0),
+                        Double.toString(stellarObject.getRightAscension()),
+                        Double.toString(stellarObject.getDeclination()),
+                        stellarObject.getDistance(),
+                        stellarObject.getEpoch(),
+                        stellarObject.getPeriod());
+                app.showPhotometricDataOverview(data, model);
             }
             starSurveySearchService.reset();
             disableElements(false);
@@ -180,7 +182,6 @@ public class SearchOverviewController extends StageController {
             } else {
                 selected = app.showStellarObjects(searchResult);
                 if (selected != null) {
-                    stellarObject.merge(selected.toEntity());
                     nameSearchService.setSearchText(selected.getName());
                     nameSearchService.start();
                 } else {

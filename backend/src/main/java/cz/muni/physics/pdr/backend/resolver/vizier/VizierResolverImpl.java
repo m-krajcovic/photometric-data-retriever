@@ -1,7 +1,7 @@
-package cz.muni.physics.pdr.backend.resolver.vsx;
+package cz.muni.physics.pdr.backend.resolver.vizier;
 
-import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.entity.VizierQuery;
+import cz.muni.physics.pdr.backend.entity.VizierResult;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -14,25 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Michal Krajčovič
- * @version 1.0
- * @since 26/04/16
+ * Created by Michal on 28-Apr-16.
  */
-public class VizierVSXStarResolver implements VSXStarResolver {
+public class VizierResolverImpl implements VizierResolver {
 
     private String url;
+    private String catalogue;
 
-    public VizierVSXStarResolver(String url) {
+    public VizierResolverImpl(String url, String catalogue) {
         this.url = url;
+        this.catalogue = catalogue;
     }
 
-    @Override
-    public List<StellarObject> findByName(String name) {
-        List<StellarObject> result = new ArrayList<>();
+    public List<VizierResult> findByQuery(VizierQuery query) {
+        List<VizierResult> result = new ArrayList<>();
         try {
-            Document doc = getTemplate()
-                    .data("-c", name)
-                    .post();
+            Connection con = getTemplate()
+                    .data("-c", query.getQuery());
+            if (query.getRadius() != null) {
+                con.data("-c.r", Double.toString(query.getRadius().getRadius()));
+                con.data("-c.u", query.getRadius().getUnit().toString());
+            }
+            Document doc = con.post();
             result.addAll(parseDoc(doc));
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,53 +43,37 @@ public class VizierVSXStarResolver implements VSXStarResolver {
         return result;
     }
 
-    @Override
-    public List<StellarObject> findByCoordinates(CelestialCoordinates coordinates) {
-        List<StellarObject> result = new ArrayList<>();
-        try {
-            Document doc = getTemplate()
-                    .data("-c", String.format("%s %s", coordinates.getRightAscension(), coordinates.getDeclination()))
-                    .data("-c.r", Double.toString(coordinates.getRadius()))
-                    .post();
-            result.addAll(parseDoc(doc));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    @Override
     public boolean isAvailable() {
         return true;
     }
 
-    private List<StellarObject> parseDoc(Document doc) {
-        List<StellarObject> result = new ArrayList<>();
+    protected List<VizierResult> parseDoc(Document doc) {
+        List<VizierResult> result = new ArrayList<>();
         Elements objects = doc.getElementsByClass("tuple-2");
         for (Element object : objects) {
-            StellarObject obj = new StellarObject();
+            VizierResult obj = new VizierResult();
             Elements cols = object.getElementsByTag("td");
+            obj.setName(cols.get(3).text());
             obj.setDistance(Double.parseDouble(cols.get(1).text()));
             if (NumberUtils.isParsable(cols.get(4).text()))
                 obj.setEpoch(Double.parseDouble(cols.get(4).text()));
             if (NumberUtils.isParsable(cols.get(5).text()))
                 obj.setPeriod(Double.parseDouble(cols.get(5).text()));
-            obj.setRightAscension(Double.parseDouble(cols.get(6).text()));
-            obj.setDeclination(Double.parseDouble(cols.get(7).text()));
-            obj.getNames().add(cols.get(3).text());
-            obj.getIds().put("vsx", cols.get(2).text().trim());
+            obj.setRightAscension(cols.get(6).text());
+            obj.setDeclination(cols.get(7).text());
             result.add(obj);
         }
         return result;
     }
 
-    private Connection getTemplate() {
+    protected Connection getTemplate() {
         return Jsoup.connect(url)
                 .data("-to", "4")
                 .data("-from", "-3")
                 .data("-this", "-3")
-                .data("source", "B/vsx/vsx")
-                .data("tables", "B/vsx/vsx")
+                .data("source", catalogue)
+                .data("tables", catalogue)
+                .data("-source", catalogue)
                 .data("-out.max", "50")
                 .data("CDSportal", "http://cdsportal.u-strasbg.fr/StoreVizierData.html")
                 .data("-out.form", "HTML Table")
@@ -95,9 +82,7 @@ public class VizierVSXStarResolver implements VSXStarResolver {
                 .data("-sort", "_r")
                 .data("-oc.form", "dec")
                 .data("-c.eq", "J2000")
-                .data("-c.u", "deg")
                 .data("-c.geom", "r")
-                .data("-source", "B/vsx/vsx")
                 .data("-order", "I")
                 .data("-out", "OID")
                 .data("-out", "Name")

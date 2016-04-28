@@ -1,9 +1,11 @@
 package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.entity.VizierQuery;
+import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
-import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
+import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -27,13 +29,13 @@ public class NameSearchService extends Service<StellarObject> {
     private String searchText;
 
     private SesameNameResolver sesameNameResolver;
-    private VSXStarResolver vsxStarResolver;
+    private VizierResolver vsxVizierResolver;
 
     @Autowired
     public NameSearchService(SesameNameResolver sesameNameResolver,
-                             VSXStarResolver vsxStarResolver) {
+                             VizierResolver vsxVizierResolver) {
         this.sesameNameResolver = sesameNameResolver;
-        this.vsxStarResolver = vsxStarResolver;
+        this.vsxVizierResolver = vsxVizierResolver;
     }
 
     @Override
@@ -46,9 +48,11 @@ public class NameSearchService extends Service<StellarObject> {
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
                 StellarObject sesameResult = sesameNameResolver.findByName(searchText);
-                List<StellarObject> vsxResult = vsxStarResolver.findByName(searchText);
+                List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchText));
                 if (vsxResult.size() == 1) {
-                    sesameResult.merge(vsxResult.get(0));
+                    sesameResult.getNames().add(vsxResult.get(0).getName());
+                    sesameResult.setEpoch(vsxResult.get(0).getEpoch());
+                    sesameResult.setPeriod(vsxResult.get(0).getPeriod());
                 }
                 return sesameResult;
             }

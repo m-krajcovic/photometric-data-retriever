@@ -1,10 +1,10 @@
 package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
-import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
+import cz.muni.physics.pdr.backend.entity.VizierQuery;
+import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
-import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
+import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +23,34 @@ import java.util.stream.Collectors;
 @Component
 public class CoordsSearchService extends Service<List<StellarObjectModel>> {
 
-    private VSXStarResolver vsxStarResolver;
+    private VizierResolver vsxVizierResolver;
 
-
-    private CelestialCoordinates coords;
+    private VizierQuery query;
 
     @Autowired
-    public CoordsSearchService(VSXStarResolver vsxStarResolver) {
-        this.vsxStarResolver = vsxStarResolver;
+    public CoordsSearchService(VizierResolver vsxVizierResolver) {
+        this.vsxVizierResolver = vsxVizierResolver;
     }
 
     @Override
     protected Task<List<StellarObjectModel>> createTask() {
-        if (coords == null) {
+        if (query == null) {
             throw new IllegalArgumentException("coords cannot be null.");
         }
 
         return new Task<List<StellarObjectModel>>() {
             @Override
             protected List<StellarObjectModel> call() throws ResourceAvailabilityException {
-                List<StellarObject> results = vsxStarResolver.findByCoordinates(coords);
+                List<VizierResult> results = vsxVizierResolver.findByQuery(query);
                 List<StellarObjectModel> models = new ArrayList<>(results.size());
-                models.addAll(results.stream().map(StellarObjectModel::new).collect(Collectors.toList()));
+                models.addAll(results.stream().map(r -> {
+                    return new StellarObjectModel(r.getName(),
+                            r.getRightAscension(),
+                            r.getDeclination(),
+                            r.getDistance(),
+                            r.getEpoch(),
+                            r.getPeriod());
+                }).collect(Collectors.toList()));
                 return models;
             }
         };
@@ -55,7 +61,7 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
         super.setExecutor(executor);
     }
 
-    public void setCoords(CelestialCoordinates coords) {
-        this.coords = coords;
+    public void setQuery(VizierQuery query) {
+        this.query = query;
     }
 }

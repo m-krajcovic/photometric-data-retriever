@@ -1,12 +1,16 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.utils.DefaultHashMap;
 import cz.muni.physics.pdr.app.utils.NumberUtils;
-import cz.muni.physics.pdr.backend.entity.CelestialCoordinates;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Michal Krajčovič
@@ -16,11 +20,12 @@ import java.util.function.Consumer;
 class SearchQueryParser {
     private final static Logger logger = LogManager.getLogger(SearchQueryParser.class);
 
-    private Consumer<CelestialCoordinates> onCoordinates;
+    private BiConsumer<String, Double> onCoordinates;
     private Consumer<String> onName;
     private Consumer<String> onError;
+    private Map<Pattern, BiConsumer<String, String>> strategies;
 
-    SearchQueryParser(Consumer<CelestialCoordinates> onCoordinates, Consumer<String> onName, Consumer<String> onError) {
+    SearchQueryParser(BiConsumer<String, Double> onCoordinates, Consumer<String> onName, Consumer<String> onError) {
         if (onCoordinates == null) {
             throw new IllegalArgumentException("onCoordinates cannot be null.");
         }
@@ -30,6 +35,11 @@ class SearchQueryParser {
         if (onError == null) {
             throw new IllegalArgumentException("onError cannot be null.");
         }
+
+        strategies = new DefaultHashMap<>(this::handleNameSearch);
+        strategies.put(Pattern.compile("(\\d+\\.?\\d*)\\s([\\+\\-]?\\d+\\.?\\d*)"), this::handleDegreesCoordsSearch);
+        strategies.put(Pattern.compile("(\\d{2}\\s\\d{2}\\s\\d{2}\\.?\\d*)\\s([\\+\\-]?\\d{2}\\s\\d{2}\\s\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
+        strategies.put(Pattern.compile("(\\d{2}:\\d{2}:\\d{2}\\.?\\d*)\\s([\\+\\-]?\\d{2}:\\d{2}:\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
 
         this.onCoordinates = onCoordinates;
         this.onName = onName;
@@ -46,28 +56,24 @@ class SearchQueryParser {
         }
         if (StringUtils.startsWithIgnoreCase(searchText, "coords:")) {
             logger.debug("Query has coords: prefix, handling coords search");
-            handleCoordsSearch(searchText.substring(7).trim(), radius);
+            handleDegreesCoordsSearch(searchText.substring(7).trim(), radius);
             return;
         }
-        String[] spaceSplit = searchText.split(" ");
-        if (spaceSplit.length == 2 && NumberUtils.isParsable(spaceSplit[0]) && NumberUtils.isParsable(spaceSplit[1])) {
-            double ra = Double.parseDouble(spaceSplit[0]);
-            double dec = Double.parseDouble(spaceSplit[1]);
-            if (ra < 0 || ra > 360 || dec < -90 || dec > 90) {
-                logger.debug("Query does not have valid coords ra={}, dec={}, handling name search", ra, dec);
-                handleNameSearch(searchText, radius);
+
+        for (Pattern pattern : strategies.keySet()) {
+            Matcher m = pattern.matcher(query);
+            if (m.matches()) {
+                logger.debug("Query '{}' matches pattern '{}'", query, pattern.pattern());
+                strategies.get(pattern).accept(query, radius);
                 return;
             }
-            logger.debug("Query has valid coords ra={}, dec={}, handling coords search", ra, dec);
-            handleCoordsSearch(searchText, radius);
-        } else {
-            logger.debug("No number-only query, handling name search");
-            handleNameSearch(searchText, radius);
         }
+        logger.debug("Query '{}' doesn't match any pattern, using default", query);
+        strategies.get(null).accept(query, radius);
     }
 
 
-    private void handleCoordsSearch(String query, String radius) {
+    private void handleDegreesCoordsSearch(String query, String radius) {
         if (query.isEmpty()) {
             onError.accept("Query is empty. Insert coords in format '118.77167 +22.00139'");
         } else {
@@ -90,9 +96,18 @@ class SearchQueryParser {
                 } else {
                     rad = Double.parseDouble(radius);
                 }
-                onCoordinates.accept(new CelestialCoordinates(ra, dec, rad));
+                onCoordinates.accept(query, rad);
             }
         }
+    }
+
+    private void handleCoordsSearch(String query, String radius) {
+        // todo validate this
+        double rad = 0.05;
+        if (!radius.isEmpty() && NumberUtils.isParsable(radius)) {
+            rad = Double.parseDouble(radius);
+        }
+        onCoordinates.accept(query, rad);
     }
 
     private void handleNameSearch(String query, String radius) {

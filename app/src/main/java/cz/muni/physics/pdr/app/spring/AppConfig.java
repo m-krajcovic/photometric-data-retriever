@@ -20,11 +20,7 @@ import cz.muni.physics.pdr.backend.utils.BackendConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -72,7 +68,6 @@ public class AppConfig {
     @Bean
     public File appDataDir(@Value("${app.data.dir.path}") String appDataDirPath) {
         return new File(appDataDirPath);
-
     }
 
     @Bean

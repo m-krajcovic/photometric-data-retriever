@@ -44,16 +44,14 @@ public class ParameterUtils {
     }
 
     public static Map<String, String> resolveStarResolverParameters(StellarObject result, Map<String, String> params) {
-        if (result.getRightAscension() != null) {
-            params.put("radeg", result.getRightAscension().toString());
-            params.put("rah", result.getRightAscensionInHours().toString());
+        if (result.getRightAscension() != 0) {
+            params.put("radeg", Double.toString(result.getRightAscension()));
+//            params.put("rah", result.getRightAscensionInHours().toString());
         }
-        if (result.getDeclination() != null) {
-            params.put("decdeg", result.getDeclination().toString());
-            params.put("dech", result.getDeclinationInHours().toString());
+        if (result.getDeclination() != 0) {
+            params.put("decdeg", Double.toString(result.getDeclination()));
+//            params.put("dech", result.getDeclinationInHours().toString());
         }
-        if (result.getPeriod() != null) params.put("period", result.getPeriod().toString());
-        if (result.getEpoch() != null) params.put("epoch", result.getEpoch().toString());
         params.putAll(result.getIds());
         return params;
     }
