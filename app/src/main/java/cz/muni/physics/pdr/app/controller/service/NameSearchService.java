@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.controller.service;
 
+import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
@@ -26,7 +27,7 @@ public class NameSearchService extends Service<StellarObject> {
 
     private final static Logger logger = LogManager.getLogger(NameSearchService.class);
 
-    private String searchText;
+    private SearchModel searchModel;
 
     private SesameNameResolver sesameNameResolver;
     private VizierResolver vsxVizierResolver;
@@ -40,15 +41,15 @@ public class NameSearchService extends Service<StellarObject> {
 
     @Override
     protected Task<StellarObject> createTask() {
-        if (searchText == null) {
-            throw new IllegalArgumentException("searchText cannot be null.");
+        if (searchModel == null) {
+            throw new IllegalArgumentException("search model cannot be null.");
         }
         return new Task<StellarObject>() {
             @Override
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
-                StellarObject sesameResult = sesameNameResolver.findByName(searchText);
-                List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchText));
+                StellarObject sesameResult = sesameNameResolver.findByName(searchModel.getQuery());
+                List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
                 if (vsxResult.size() == 1) {
                     sesameResult.getNames().add(vsxResult.get(0).getName());
                     sesameResult.setEpoch(vsxResult.get(0).getEpoch());
@@ -64,11 +65,7 @@ public class NameSearchService extends Service<StellarObject> {
         super.setExecutor(executor);
     }
 
-    public String getSearchText() {
-        return searchText;
-    }
-
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
+    public void setModel(SearchModel model) {
+        this.searchModel = model;
     }
 }

@@ -36,12 +36,12 @@
     -fx-background-radius: 0 3 3 0;
 }
 
-.text-input.input-group-left {
+.input-group-left {
     -fx-border-radius: 3 0 0 3;
     -fx-background-radius: 3 0 0 3;
 }
 
-.button.input-group-right {
+.input-group-right {
     -fx-border-radius: 0 3 3 0;
     -fx-background-radius: 0 3 3 0;
 }

@@ -4,17 +4,15 @@ import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
 import cz.muni.physics.pdr.app.controller.service.NameSearchService;
 import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
 import cz.muni.physics.pdr.app.javafx.Shaker;
-import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
-import cz.muni.physics.pdr.app.javafx.formatter.RadiusFilter;
-import cz.muni.physics.pdr.app.model.PhotometricDataModel;
-import cz.muni.physics.pdr.app.model.StarSurveyModel;
-import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.javafx.control.DecimalTextField;
+import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
+import cz.muni.physics.pdr.app.javafx.formatter.DecimalFilter;
+import cz.muni.physics.pdr.app.model.*;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.backend.entity.Radius;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -50,6 +48,8 @@ public class SearchOverviewController extends StageController {
     private StarSurveySearchService starSurveySearchService;
 
     @FXML
+    private ChoiceBox<RadiusModel.Unit> radiusUnitChoiceBox;
+    @FXML
     private AnchorPane mainPane;
     @FXML
     private Label infoLabel;
@@ -60,12 +60,13 @@ public class SearchOverviewController extends StageController {
     @FXML
     private TitledTextFieldBox searchTextField;
     @FXML
-    private TextField radiusTextField;
+    private DecimalTextField radiusTextField;
     @FXML
     private ProgressIndicator searchProgressIndicator;
     @FXML
     private Label progressLabel;
 
+    private SearchModel searchModel = new SearchModel();
     private StellarObject stellarObject = new StellarObject();
     private SearchQueryParser queryParser;
     private Shaker shaker;
@@ -78,9 +79,8 @@ public class SearchOverviewController extends StageController {
             }
         });
         shaker = new Shaker(mainPane);
-        radiusTextField.setTextFormatter(new TextFormatter<>(new RadiusFilter()));
         initializeServices();
-        initializeTitledTextField();
+        initializeFields();
         initializeQueryParser();
     }
 
@@ -88,10 +88,10 @@ public class SearchOverviewController extends StageController {
     private void handleSearchButtonAction() {
         stellarObject = new StellarObject();
         disableElements(true);
-        queryParser.parseQuery(searchTextField.getTextWithPrefix(), radiusTextField.getText());
+        queryParser.parseQuery(searchModel);
     }
 
-    private void initializeTitledTextField() {
+    private void initializeFields() {
         Map<String, String> textFieldChanges = new HashMap<>();
         textFieldChanges.put("name", "Name:");
         textFieldChanges.put("coords", "Coords:");
@@ -102,16 +102,21 @@ public class SearchOverviewController extends StageController {
                 removeErrorInfo();
             }
         });
+
+        radiusTextField.setTextFormatter(new TextFormatter<>(new DecimalFilter()));
+        radiusUnitChoiceBox.setItems(FXCollections.observableArrayList(RadiusModel.Unit.values()));
+        radiusUnitChoiceBox.getSelectionModel().selectFirst();
+        searchTextField.textWithPrefixProperty().addListener((observable, oldValue, newValue) -> searchModel.setQuery(newValue));
+        searchModel.getRadius().unitProperty().bind(radiusUnitChoiceBox.selectionModelProperty().get().selectedItemProperty());
+        searchModel.getRadius().radiusProperty().bind(radiusTextField.valueProperty());
     }
 
     private void initializeQueryParser() {
-        queryParser = new SearchQueryParser((query, radius) -> {
-            logger.debug("Sending params query={}, radius={} to CoordsSearchService", query, radius);
-            coordsSearchService.setQuery(new VizierQuery(query, new Radius(radius, Radius.Unit.DEG)));
+        queryParser = new SearchQueryParser((model) -> {
+            logger.debug("Sending params query={}, radius={} to CoordsSearchService", model);
             coordsSearchService.start();
-        }, name -> {
-            logger.debug("Sending name {} to NameSearchService", name);
-            nameSearchService.setSearchText(name);
+        }, model -> {
+            logger.debug("Sending name {} to NameSearchService", model);
             nameSearchService.start();
         }, error -> {
             showErrorMessage(error);
@@ -126,6 +131,7 @@ public class SearchOverviewController extends StageController {
     }
 
     private void initializeNameSearchService() {
+        nameSearchService.setModel(searchModel);
         nameSearchService.setOnSucceeded(e -> {
             logger.debug("Succeeded in retrieving star resolver data.");
             stellarObject = nameSearchService.getValue();
@@ -172,6 +178,7 @@ public class SearchOverviewController extends StageController {
     }
 
     private void initializeCoordsSearchService() {
+        coordsSearchService.setModel(searchModel);
         coordsSearchService.setOnSucceeded(event -> {
             logger.debug("CoordsSearchService succeeded");
             StellarObjectModel selected;
@@ -182,7 +189,7 @@ public class SearchOverviewController extends StageController {
             } else {
                 selected = app.showStellarObjects(searchResult);
                 if (selected != null) {
-                    nameSearchService.setSearchText(selected.getName());
+                    searchModel.setQuery(selected.getName());
                     nameSearchService.start();
                 } else {
                     disableElements(false);

@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
  * @version 1.0
  * @since 17/04/16
  */
-public class RadiusFilter implements UnaryOperator<TextFormatter.Change> {
+public class DecimalFilter implements UnaryOperator<TextFormatter.Change> {
 
     private DecimalFormat format = new DecimalFormat("#.0");
 

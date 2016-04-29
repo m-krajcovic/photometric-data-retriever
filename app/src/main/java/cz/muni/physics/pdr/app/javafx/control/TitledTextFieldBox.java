@@ -1,6 +1,7 @@
-package cz.muni.physics.pdr.app.javafx;
+package cz.muni.physics.pdr.app.javafx.control;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,6 +28,7 @@ public class TitledTextFieldBox extends HBox {
     private String delimiter;
     private Map<String, String> autoTitles;
     private boolean useAutoTitles = false;
+    private StringProperty textWithPrefix = new SimpleStringProperty("");
 
     public TitledTextFieldBox() {
         super();
@@ -67,7 +69,10 @@ public class TitledTextFieldBox extends HBox {
                     this.textField.getStyleClass().add("titled-text-field");
                 }
             });
+            updateTextWithPrefix();
         });
+
+        textField.textProperty().addListener((observable, oldValue, newValue) -> updateTextWithPrefix());
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
@@ -110,8 +115,20 @@ public class TitledTextFieldBox extends HBox {
         }));
     }
 
+    private void updateTextWithPrefix() {
+        textWithPrefix.setValue(titleLabel.getText() + textField.getText());
+    }
+
     public String getTextWithPrefix() {
-        return titleLabel.getText() + textField.getText();
+        return textWithPrefix.get();
+    }
+
+    public StringProperty textWithPrefixProperty() {
+        return textWithPrefix;
+    }
+
+    public void setTextWithPrefix(String textWithPrefix) {
+        this.textWithPrefix.set(textWithPrefix);
     }
 
     public void hideTitle() {

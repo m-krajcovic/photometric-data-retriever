@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<?import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox?>
+<?import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox?>
 <BorderPane prefHeight="595.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController">
     <center>
         <AnchorPane prefHeight="538.0" prefWidth="600.0" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">

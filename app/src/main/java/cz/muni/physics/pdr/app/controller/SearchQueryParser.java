@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.utils.DefaultHashMap;
 import cz.muni.physics.pdr.app.utils.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -7,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,12 +20,12 @@ import java.util.regex.Pattern;
 class SearchQueryParser {
     private final static Logger logger = LogManager.getLogger(SearchQueryParser.class);
 
-    private BiConsumer<String, Double> onCoordinates;
-    private Consumer<String> onName;
+    private Consumer<SearchModel> onCoordinates;
+    private Consumer<SearchModel> onName;
     private Consumer<String> onError;
-    private Map<Pattern, BiConsumer<String, String>> strategies;
+    private Map<Pattern, Consumer<SearchModel>> strategies;
 
-    SearchQueryParser(BiConsumer<String, Double> onCoordinates, Consumer<String> onName, Consumer<String> onError) {
+    SearchQueryParser(Consumer<SearchModel> onCoordinates, Consumer<SearchModel> onName, Consumer<String> onError) {
         if (onCoordinates == null) {
             throw new IllegalArgumentException("onCoordinates cannot be null.");
         }
@@ -46,44 +46,45 @@ class SearchQueryParser {
         this.onError = onError;
     }
 
-    void parseQuery(String query, String radius) {
-        String searchText = query.trim();
+    void parseQuery(SearchModel model) {
+        String searchText = model.getQuery().trim();
         logger.debug("Parsing query {}", searchText);
         if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
             logger.debug("Query has name: prefix, handling name search");
-            handleNameSearch(searchText.substring(5).trim(), radius);
+            model.setQuery(searchText.substring(5).trim());
+            handleNameSearch(model);
             return;
         }
         if (StringUtils.startsWithIgnoreCase(searchText, "coords:")) {
             logger.debug("Query has coords: prefix, handling coords search");
-            handleDegreesCoordsSearch(searchText.substring(7).trim(), radius);
+            model.setQuery(searchText.substring(7).trim());
+            handleDegreesCoordsSearch(model);
             return;
         }
 
         for (Pattern pattern : strategies.keySet()) {
-            Matcher m = pattern.matcher(query);
+            Matcher m = pattern.matcher(model.getQuery());
             if (m.matches()) {
-                logger.debug("Query '{}' matches pattern '{}'", query, pattern.pattern());
-                strategies.get(pattern).accept(query, radius);
+                logger.debug("Query '{}' matches pattern '{}'", model.getQuery(), pattern.pattern());
+                strategies.get(pattern).accept(model);
                 return;
             }
         }
-        logger.debug("Query '{}' doesn't match any pattern, using default", query);
-        strategies.get(null).accept(query, radius);
+        logger.debug("Query '{}' doesn't match any pattern, using default", model.getQuery());
+        strategies.get(null).accept(model);
     }
 
 
-    private void handleDegreesCoordsSearch(String query, String radius) {
-        if (query.isEmpty()) {
+    private void handleDegreesCoordsSearch(SearchModel model) {
+        if (model.getQuery().isEmpty()) {
             onError.accept("Query is empty. Insert coords in format '118.77167 +22.00139'");
         } else {
-            String[] degrees = query.split(" ");
+            String[] degrees = model.getQuery().split(" ");
             if (degrees.length != 2 || !NumberUtils.isParsable(degrees[0]) || !NumberUtils.isParsable(degrees[1])) {
                 onError.accept("Wrong format use degrees like '118.77167 +22.00139'");
             } else {
                 double ra = Double.parseDouble(degrees[0]);
                 double dec = Double.parseDouble(degrees[1]);
-                double rad = 0.05;
                 if (ra < 0 || ra > 360) {
                     onError.accept("Right Ascension must be from interval [0, 360]'");
                     return;
@@ -91,30 +92,22 @@ class SearchQueryParser {
                     onError.accept("Declination must be from interval [-90, +90]'");
                     return;
                 }
-                if (!NumberUtils.isParsable(radius) || radius.isEmpty()) {
-                    rad = 0.05;
-                } else {
-                    rad = Double.parseDouble(radius);
-                }
-                onCoordinates.accept(query, rad);
+                model.setQuery(ra + " " + dec);
+                onCoordinates.accept(model);
             }
         }
     }
 
-    private void handleCoordsSearch(String query, String radius) {
+    private void handleCoordsSearch(SearchModel model) {
         // todo validate this
-        double rad = 0.05;
-        if (!radius.isEmpty() && NumberUtils.isParsable(radius)) {
-            rad = Double.parseDouble(radius);
-        }
-        onCoordinates.accept(query, rad);
+        onCoordinates.accept(model);
     }
 
-    private void handleNameSearch(String query, String radius) {
-        if (query.isEmpty()) {
+    private void handleNameSearch(SearchModel model) {
+        if (model.getQuery().isEmpty()) {
             onError.accept("Query is empty");
         } else {
-            onName.accept(query);
+            onName.accept(model);
         }
     }
 }

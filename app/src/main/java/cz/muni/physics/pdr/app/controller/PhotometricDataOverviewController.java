@@ -1,7 +1,7 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.javafx.PhotometricChartDataFactory;
-import cz.muni.physics.pdr.app.javafx.TitledTextFieldBox;
+import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
