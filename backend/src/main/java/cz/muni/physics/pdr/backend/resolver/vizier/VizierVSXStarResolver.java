@@ -3,9 +3,9 @@ package cz.muni.physics.pdr.backend.resolver.vizier;
 /**
  * Created by Michal on 28-Apr-16.
  */
-public class VizierVSXStarResolver extends VizierResolverImpl {
+public class VizierVSXStarResolver extends VizierResolverTsvImpl {
 
-    public VizierVSXStarResolver(String url) {
-        super(url, "B/vsx/vsx");
+    public VizierVSXStarResolver() {
+        super("http://vizier.u-strasbg.fr/viz-bin/asu-tsv", "B/vsx/vsx");
     }
 }

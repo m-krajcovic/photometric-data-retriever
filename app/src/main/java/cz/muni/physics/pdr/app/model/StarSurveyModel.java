@@ -13,7 +13,7 @@ import javafx.collections.ObservableList;
  * @version 1.0
  * @since 31/03/16
  */
-public class StarSurveyModel implements EntityModel<StarSurvey> {
+public class StarSurveyModel {
     private StringProperty name = new SimpleStringProperty("");
     private ObjectProperty<PluginModel> plugin = new SimpleObjectProperty<>();
     private ObservableList<String> urls = FXCollections.observableArrayList();

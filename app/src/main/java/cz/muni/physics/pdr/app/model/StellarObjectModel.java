@@ -1,6 +1,5 @@
 package cz.muni.physics.pdr.app.model;
 
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,8 +17,6 @@ public class StellarObjectModel {
     private DoubleProperty distance;
     private DoubleProperty epoch;
     private DoubleProperty period;
-
-    private StellarObject object;
 
     public StellarObjectModel(String name, String rightAscension, String declination, double distance, double epoch, double period) {
         this.name = new SimpleStringProperty(name);

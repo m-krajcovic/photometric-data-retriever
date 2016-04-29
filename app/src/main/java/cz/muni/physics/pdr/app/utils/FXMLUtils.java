@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Michal Krajčovič
@@ -126,7 +125,7 @@ public class FXMLUtils {
         return dialog;
     }
 
-    public static Optional<String> showOptionDialog(Window owner, List<String> choices,
+    public static ChoiceDialog<String> showOptionDialog(Window owner, List<String> choices,
                                                     String title,
                                                     String header,
                                                     String content){
@@ -134,6 +133,6 @@ public class FXMLUtils {
         dialog.setTitle(title);
         dialog.setHeaderText(header);
         dialog.setContentText(content);
-        return dialog.showAndWait();
+        return dialog;
     }
 }

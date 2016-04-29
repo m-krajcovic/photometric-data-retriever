@@ -38,8 +38,7 @@ class SearchQueryParser {
 
         strategies = new DefaultHashMap<>(this::handleNameSearch);
         strategies.put(Pattern.compile("(\\d+\\.?\\d*)\\s([\\+\\-]?\\d+\\.?\\d*)"), this::handleDegreesCoordsSearch);
-        strategies.put(Pattern.compile("(\\d{2}\\s\\d{2}\\s\\d{2}\\.?\\d*)\\s([\\+\\-]?\\d{2}\\s\\d{2}\\s\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
-        strategies.put(Pattern.compile("(\\d{2}:\\d{2}:\\d{2}\\.?\\d*)\\s([\\+\\-]?\\d{2}:\\d{2}:\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
+        strategies.put(Pattern.compile("(\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*),?\\s([\\+\\-]?\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
 
         this.onCoordinates = onCoordinates;
         this.onName = onName;

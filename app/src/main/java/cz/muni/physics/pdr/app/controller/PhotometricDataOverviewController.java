@@ -89,11 +89,12 @@ public class PhotometricDataOverviewController extends StageController {
     private void handleSaveAllMenuItem() {
         String entryFormat = ".csv";
         String[] choices = {"CSV file .csv", "Ascii table .txt"};
-        Optional<String> result = FXMLUtils.showOptionDialog(stage, Arrays.asList(choices), "Choose output format", "Choose output format",
+        ChoiceDialog<String> dialog = FXMLUtils.showOptionDialog(stage, Arrays.asList(choices), "Choose output format", "Choose output format",
                 "Output format: ");
+        Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             entryFormat = result.get();
-        }
+
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
         File zip = FXMLUtils.showSaveFileChooser("Choose output file",
                 System.getProperty("user.home"),
@@ -102,6 +103,7 @@ public class PhotometricDataOverviewController extends StageController {
                 new FileChooser.ExtensionFilter("Zip file (*.zip)", "*.zip"));
         if (zip != null)
             toZip(zip, coords + entryFormat);
+        }
     }
 
     @FXML

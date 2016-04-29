@@ -12,14 +12,8 @@ import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolverImpl;
 import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
 import cz.muni.physics.pdr.backend.resolver.vizier.VizierVSXStarResolver;
-import cz.muni.physics.pdr.backend.resolver.vsx.VSXStarResolver;
-import cz.muni.physics.pdr.backend.resolver.vsx.VizierVSXStarResolverImpl;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
@@ -69,13 +63,8 @@ public class BackendConfig {
     }
 
     @Bean
-    public VSXStarResolver vsxStarResolver(@Value("${vizier.url}") String vizierUrl) {
-        return new VizierVSXStarResolverImpl(vizierUrl);
-    }
-
-    @Bean
-    public VizierResolver vsxVizierResolver(@Value("${vizier.url}") String vizierUrl) {
-        return new VizierVSXStarResolver(vizierUrl);
+    public VizierResolver vsxVizierResolver() {
+        return new VizierVSXStarResolver();
     }
 
 }

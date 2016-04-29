@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 /**
  * @author Michal Krajčovič
@@ -23,20 +24,22 @@ import java.util.concurrent.Executor;
  * @since 06/04/16
  */
 @Component
-public class NameSearchService extends Service<StellarObject> {
-
-    private final static Logger logger = LogManager.getLogger(NameSearchService.class);
-
+public class NameSearchTaskService extends Service<StellarObject> {
+    private final static Logger logger = LogManager.getLogger(NameSearchTaskService.class);
     private SearchModel searchModel;
-
     private SesameNameResolver sesameNameResolver;
     private VizierResolver vsxVizierResolver;
+    private Callback onDone;
+    private Consumer<String> onError;
+    private StarSurveySearchTaskService starSurveySearchTaskService;
 
     @Autowired
-    public NameSearchService(SesameNameResolver sesameNameResolver,
-                             VizierResolver vsxVizierResolver) {
+    public NameSearchTaskService(SesameNameResolver sesameNameResolver,
+                                 VizierResolver vsxVizierResolver,
+                                 StarSurveySearchTaskService starSurveySearchTaskService) {
         this.sesameNameResolver = sesameNameResolver;
         this.vsxVizierResolver = vsxVizierResolver;
+        this.starSurveySearchTaskService = starSurveySearchTaskService;
     }
 
     @Override
@@ -60,12 +63,47 @@ public class NameSearchService extends Service<StellarObject> {
         };
     }
 
-    @Autowired
-    public void setTaskExecutor(Executor executor) {
-        super.setExecutor(executor);
+    @Override
+    protected void succeeded() {
+        logger.debug("Succeeded in retrieving star resolver data.");
+        starSurveySearchTaskService.setResolverResult(getValue());
+        starSurveySearchTaskService.start();
+        reset();
+    }
+
+    @Override
+    protected void failed() {
+        logger.error("Failed to finish task", getException());
+        if (onError != null)
+            onError.accept("Error occured");
+        if (onDone != null) {
+            onDone.call();
+        }
+        reset();
+    }
+
+    public Consumer<String> getOnError() {
+        return onError;
+    }
+
+    public void setOnError(Consumer<String> onError) {
+        this.onError = onError;
+    }
+
+    public Callback getOnDone() {
+        return onDone;
+    }
+
+    public void setOnDone(Callback onDone) {
+        this.onDone = onDone;
     }
 
     public void setModel(SearchModel model) {
         this.searchModel = model;
+    }
+
+    @Autowired
+    public void setTaskExecutor(Executor executor) {
+        super.setExecutor(executor);
     }
 }

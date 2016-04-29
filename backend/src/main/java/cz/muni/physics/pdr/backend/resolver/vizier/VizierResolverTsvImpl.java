@@ -5,9 +5,6 @@ import cz.muni.physics.pdr.backend.entity.VizierResult;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,12 +13,12 @@ import java.util.List;
 /**
  * Created by Michal on 28-Apr-16.
  */
-public class VizierResolverImpl implements VizierResolver {
+public class VizierResolverTsvImpl implements VizierResolver {
 
     private String url;
     private String catalogue;
 
-    public VizierResolverImpl(String url, String catalogue) {
+    public VizierResolverTsvImpl(String url, String catalogue) {
         this.url = url;
         this.catalogue = catalogue;
     }
@@ -35,8 +32,7 @@ public class VizierResolverImpl implements VizierResolver {
                 con.data("-c.r", Double.toString(query.getRadius().getRadius()));
                 con.data("-c.u", query.getRadius().getUnit().toString());
             }
-            Document doc = con.post();
-            result.addAll(parseDoc(doc));
+            result.addAll(parseDoc(con.method(Connection.Method.POST).execute().body()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,21 +43,27 @@ public class VizierResolverImpl implements VizierResolver {
         return true;
     }
 
-    protected List<VizierResult> parseDoc(Document doc) {
+    protected List<VizierResult> parseDoc(String string) {
         List<VizierResult> result = new ArrayList<>();
-        Elements objects = doc.getElementsByClass("tuple-2");
-        for (Element object : objects) {
-            VizierResult obj = new VizierResult();
-            Elements cols = object.getElementsByTag("td");
-            obj.setName(cols.get(3).text());
-            obj.setDistance(Double.parseDouble(cols.get(1).text()));
-            if (NumberUtils.isParsable(cols.get(4).text()))
-                obj.setEpoch(Double.parseDouble(cols.get(4).text()));
-            if (NumberUtils.isParsable(cols.get(5).text()))
-                obj.setPeriod(Double.parseDouble(cols.get(5).text()));
-            obj.setRightAscension(cols.get(6).text());
-            obj.setDeclination(cols.get(7).text());
-            result.add(obj);
+        for (String s : string.split("\n")) {
+            if (!s.startsWith("#") && !s.isEmpty()) {
+                String[] row = s.split(";");
+                for (int i = 0; i < row.length; i++) {
+                    row[i] = row[i].trim();
+                }
+                if (NumberUtils.isParsable(row[0])) {
+                    VizierResult obj = new VizierResult();
+                    obj.setDistance(Double.parseDouble(row[0]));
+                    obj.setName(row[2]);
+                    if (NumberUtils.isParsable(row[3]))
+                        obj.setEpoch(Double.parseDouble(row[3]));
+                    if (NumberUtils.isParsable(row[4]))
+                        obj.setPeriod(Double.parseDouble(row[4]));
+                    obj.setRightAscension(row[5]);
+                    obj.setDeclination(row[6]);
+                    result.add(obj);
+                }
+            }
         }
         return result;
     }
@@ -76,7 +78,7 @@ public class VizierResolverImpl implements VizierResolver {
                 .data("-source", catalogue)
                 .data("-out.max", "50")
                 .data("CDSportal", "http://cdsportal.u-strasbg.fr/StoreVizierData.html")
-                .data("-out.form", "HTML Table")
+                .data("-out.form", "; -Separated-Values")
                 .data("-out.add", "_r")
                 .data("outaddvalue", "default")
                 .data("-sort", "_r")
@@ -88,8 +90,7 @@ public class VizierResolverImpl implements VizierResolver {
                 .data("-out", "Name")
                 .data("-out", "Epoch")
                 .data("-out", "Period")
-                .data("-out", "RAJ2000")
-                .data("-out", "DEJ2000")
+                .data("-out", "_RAJ,_DEJ")
                 .data("noneucd1p", "on")
                 .data("-file", ".")
                 .data("-meta.ucd", "2")

@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  * @version 1.0
  * @since 25/03/16
  */
-public class PhotometricDataModel implements EntityModel<PhotometricData> {
+public class PhotometricDataModel {
     private DoubleProperty julianDate = new SimpleDoubleProperty();
     private DoubleProperty magnitude = new SimpleDoubleProperty();
     private DoubleProperty error = new SimpleDoubleProperty();
@@ -97,7 +97,6 @@ public class PhotometricDataModel implements EntityModel<PhotometricData> {
         return result;
     }
 
-    @Override
     public PhotometricData toEntity() {
         return new PhotometricData(getJulianDate(), getMagnitude(), getError());
     }

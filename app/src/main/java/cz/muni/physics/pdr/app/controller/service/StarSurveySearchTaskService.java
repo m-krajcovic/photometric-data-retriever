@@ -2,6 +2,8 @@ package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
+import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 /**
  * @author Michal Krajčovič
@@ -26,20 +29,30 @@ import java.util.concurrent.Executor;
  * @since 06/04/16
  */
 @Component
-public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<PhotometricDataModel>>> {
+public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, List<PhotometricDataModel>>> {
 
-    private final static Logger logger = LogManager.getLogger(StarSurveySearchService.class);
+    private final static Logger logger = LogManager.getLogger(StarSurveySearchTaskService.class);
 
+    private Screens app;
     private PhotometricDataRetrieverManager retrieverManager;
-
     private StellarObject resolverResult;
     private ObservableMap<StarSurveyModel, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
+    private Callback onDone;
+    private Consumer<String> onError;
 
     @Autowired
-    public StarSurveySearchService(PhotometricDataRetrieverManager pluginStarter) {
-        this.retrieverManager = pluginStarter;
+    public StarSurveySearchTaskService(Screens app,
+                                       PhotometricDataRetrieverManager retrieverManager) {
+        this.app = app;
+        this.retrieverManager = retrieverManager;
         super.setOnCancelled(event -> {
-            pluginStarter.cancelAll();
+            retrieverManager.cancelAll();
+        });
+        retrieverManager.setOnNoResultsFound(s -> {
+            starSurveysMap.put(new StarSurveyModel(s), false);
+        });
+        retrieverManager.setOnResultsFound(s -> {
+            starSurveysMap.put(new StarSurveyModel(s), true);
         });
     }
 
@@ -62,12 +75,6 @@ public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<P
             @Override
             protected Map<StarSurveyModel, List<PhotometricDataModel>> call() throws ResourceAvailabilityException {
                 logger.debug("Starting task.");
-                retrieverManager.setOnNoResultsFound(s -> {
-                    starSurveysMap.put(new StarSurveyModel(s), false);
-                });
-                retrieverManager.setOnResultsFound(s -> {
-                    starSurveysMap.put(new StarSurveyModel(s), true);
-                });
                 Map<StarSurveyModel, List<PhotometricDataModel>> resultMap = new HashMap<>();
                 retrieverManager.runAll(resolverResult).forEach((starSurvey, photometricDatas) -> {
                     List<PhotometricDataModel> list = new ArrayList<>();
@@ -77,6 +84,37 @@ public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<P
                 return resultMap;
             }
         };
+    }
+
+    @Override
+    protected void succeeded() {
+        Map<StarSurveyModel, List<PhotometricDataModel>> data = getValue();
+        if (data.isEmpty()) {
+            if (onError != null)
+                onError.accept("No results found.");
+        } else {
+            StellarObjectModel model = new StellarObjectModel(resolverResult.getNames().get(0),
+                    Double.toString(resolverResult.getRightAscension()),
+                    Double.toString(resolverResult.getDeclination()),
+                    resolverResult.getDistance(),
+                    resolverResult.getEpoch(),
+                    resolverResult.getPeriod());
+            app.showPhotometricDataOverview(data, model);
+        }
+        if (onDone != null)
+            onDone.call();
+        reset();
+    }
+
+    @Override
+    protected void failed() {
+        logger.error("Failed to finish task", getException());
+        if (onError != null)
+            onError.accept("Error occured");
+        if (onDone != null) {
+            onDone.call();
+        }
+        reset();
     }
 
     @Autowired
@@ -98,5 +136,21 @@ public class StarSurveySearchService extends Service<Map<StarSurveyModel, List<P
 
     public void setStarSurveysMap(ObservableMap<StarSurveyModel, Boolean> starSurveysMap) {
         this.starSurveysMap = starSurveysMap;
+    }
+
+    public Callback getOnDone() {
+        return onDone;
+    }
+
+    public void setOnDone(Callback onDone) {
+        this.onDone = onDone;
+    }
+
+    public Consumer<String> getOnError() {
+        return onError;
+    }
+
+    public void setOnError(Consumer<String> onError) {
+        this.onError = onError;
     }
 }

@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.backend.entity.Radius;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -25,15 +27,23 @@ import java.util.stream.Collectors;
  * @since 16/04/16
  */
 @Component
-public class CoordsSearchService extends Service<List<StellarObjectModel>> {
-    private final static Logger logger = LogManager.getLogger(CoordsSearchService.class);
+public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
+    private final static Logger logger = LogManager.getLogger(CoordsSearchTaskService.class);
 
+    private Screens app;
     private VizierResolver vsxVizierResolver;
     private SearchModel searchModel;
+    private Callback onDone;
+    private Consumer<String> onError;
+    private NameSearchTaskService nameSearchTaskService;
 
     @Autowired
-    public CoordsSearchService(VizierResolver vsxVizierResolver) {
+    public CoordsSearchTaskService(Screens app,
+                                   VizierResolver vsxVizierResolver,
+                                   NameSearchTaskService nameSearchTaskService) {
+        this.app = app;
         this.vsxVizierResolver = vsxVizierResolver;
+        this.nameSearchTaskService = nameSearchTaskService;
     }
 
     @Override
@@ -60,9 +70,39 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
         };
     }
 
-    @Autowired
-    public void setTaskExecutor(Executor executor) {
-        super.setExecutor(executor);
+    @Override
+    protected void succeeded() {
+        logger.debug("CoordsSearchService succeeded");
+        List<StellarObjectModel> searchResult = getValue();
+        if (searchResult.isEmpty()) {
+            if (onError != null)
+                onError.accept("No results found");
+            if (onDone != null) {
+                onDone.call();
+            }
+        } else {
+            StellarObjectModel selected = app.showStellarObjects(searchResult);
+            if (selected != null) {
+                searchModel.setQuery(selected.getName());
+                nameSearchTaskService.start();
+            } else {
+                if (onDone != null) {
+                    onDone.call();
+                }
+            }
+        }
+        reset();
+    }
+
+    @Override
+    protected void failed() {
+        logger.error("Failed to finish task", getException());
+        if (onError != null)
+            onError.accept("Error occured");
+        if (onDone != null) {
+            onDone.call();
+        }
+        reset();
     }
 
     private VizierQuery parseModel() {
@@ -84,4 +124,26 @@ public class CoordsSearchService extends Service<List<StellarObjectModel>> {
     public void setModel(SearchModel searchModel) {
         this.searchModel = searchModel;
     }
+
+    public Callback getOnDone() {
+        return onDone;
+    }
+
+    public void setOnDone(Callback onDone) {
+        this.onDone = onDone;
+    }
+
+    public Consumer<String> getOnError() {
+        return onError;
+    }
+
+    public void setOnError(Consumer<String> onError) {
+        this.onError = onError;
+    }
+
+    @Autowired
+    public void setTaskExecutor(Executor executor) {
+        super.setExecutor(executor);
+    }
+
 }

@@ -1,16 +1,16 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.controller.service.CoordsSearchService;
-import cz.muni.physics.pdr.app.controller.service.NameSearchService;
-import cz.muni.physics.pdr.app.controller.service.StarSurveySearchService;
+import cz.muni.physics.pdr.app.controller.service.CoordsSearchTaskService;
+import cz.muni.physics.pdr.app.controller.service.NameSearchTaskService;
+import cz.muni.physics.pdr.app.controller.service.StarSurveySearchTaskService;
 import cz.muni.physics.pdr.app.javafx.Shaker;
 import cz.muni.physics.pdr.app.javafx.control.DecimalTextField;
 import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.javafx.formatter.DecimalFilter;
-import cz.muni.physics.pdr.app.model.*;
+import cz.muni.physics.pdr.app.model.RadiusModel;
+import cz.muni.physics.pdr.app.model.SearchModel;
+import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.spring.Screens;
-import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import cz.muni.physics.pdr.backend.entity.StellarObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,11 +40,11 @@ public class SearchOverviewController extends StageController {
     @Autowired
     private Screens app;
     @Autowired
-    private CoordsSearchService coordsSearchService;
+    private CoordsSearchTaskService coordsSearchTaskService;
     @Autowired
-    private NameSearchService nameSearchService;
+    private NameSearchTaskService nameSearchTaskService;
     @Autowired
-    private StarSurveySearchService starSurveySearchService;
+    private StarSurveySearchTaskService starSurveySearchService;
 
     @FXML
     private ChoiceBox<RadiusModel.Unit> radiusUnitChoiceBox;
@@ -67,7 +66,6 @@ public class SearchOverviewController extends StageController {
     private Label progressLabel;
 
     private SearchModel searchModel = new SearchModel();
-    private StellarObject stellarObject = new StellarObject();
     private SearchQueryParser queryParser;
     private Shaker shaker;
 
@@ -86,7 +84,6 @@ public class SearchOverviewController extends StageController {
 
     @FXML
     private void handleSearchButtonAction() {
-        stellarObject = new StellarObject();
         disableElements(true);
         queryParser.parseQuery(searchModel);
     }
@@ -114,10 +111,10 @@ public class SearchOverviewController extends StageController {
     private void initializeQueryParser() {
         queryParser = new SearchQueryParser((model) -> {
             logger.debug("Sending params query={}, radius={} to CoordsSearchService", model);
-            coordsSearchService.start();
+            coordsSearchTaskService.start();
         }, model -> {
             logger.debug("Sending name {} to NameSearchService", model);
-            nameSearchService.start();
+            nameSearchTaskService.start();
         }, error -> {
             showErrorMessage(error);
             disableElements(false);
@@ -131,46 +128,14 @@ public class SearchOverviewController extends StageController {
     }
 
     private void initializeNameSearchService() {
-        nameSearchService.setModel(searchModel);
-        nameSearchService.setOnSucceeded(e -> {
-            logger.debug("Succeeded in retrieving star resolver data.");
-            stellarObject = nameSearchService.getValue();
-            starSurveySearchService.setResolverResult(stellarObject);
-            starSurveySearchService.start();
-            nameSearchService.reset();
-        });
-        nameSearchService.setOnFailed(e -> {
-            logger.error("Failed to get data from Name Resolvers", nameSearchService.getException());
-            FXMLUtils.alert("Error", null, "Failed to get data from Name Resolvers", Alert.AlertType.ERROR);
-            nameSearchService.reset();
-            disableElements(false);
-            nameSearchService.reset();
-        });
+        nameSearchTaskService.setModel(searchModel);
+        nameSearchTaskService.setOnError(this::showErrorMessage);
+        nameSearchTaskService.setOnDone(() -> disableElements(false));
     }
 
     private void initializeStarSurveySearchService() {
-        starSurveySearchService.setOnSucceeded(e -> {
-            Map<StarSurveyModel, List<PhotometricDataModel>> data = starSurveySearchService.getValue();
-            if (data.isEmpty()) {
-                logger.debug("No results found for '{}'", searchTextField.getTextWithPrefix());
-                showErrorMessage("No results found for '" + searchTextField.getTextWithPrefix() + "'");
-            } else {
-                StellarObjectModel model = new StellarObjectModel(stellarObject.getNames().get(0),
-                        Double.toString(stellarObject.getRightAscension()),
-                        Double.toString(stellarObject.getDeclination()),
-                        stellarObject.getDistance(),
-                        stellarObject.getEpoch(),
-                        stellarObject.getPeriod());
-                app.showPhotometricDataOverview(data, model);
-            }
-            starSurveySearchService.reset();
-            disableElements(false);
-        });
-        starSurveySearchService.setOnFailed(e -> {
-            logger.debug("Failed", starSurveySearchService.getException());
-            starSurveySearchService.reset();
-            disableElements(false);
-        });
+        starSurveySearchService.setOnError(this::showErrorMessage);
+        starSurveySearchService.setOnDone(() -> disableElements(false));
         starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurveyModel, Boolean>) change -> {
             if (change.wasAdded())
                 Platform.runLater(() -> progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded()));
@@ -178,32 +143,9 @@ public class SearchOverviewController extends StageController {
     }
 
     private void initializeCoordsSearchService() {
-        coordsSearchService.setModel(searchModel);
-        coordsSearchService.setOnSucceeded(event -> {
-            logger.debug("CoordsSearchService succeeded");
-            StellarObjectModel selected;
-            List<StellarObjectModel> searchResult = coordsSearchService.getValue();
-            if (searchResult.isEmpty()) {
-                showErrorMessage("No results found");
-                disableElements(false);
-            } else {
-                selected = app.showStellarObjects(searchResult);
-                if (selected != null) {
-                    searchModel.setQuery(selected.getName());
-                    nameSearchService.start();
-                } else {
-                    disableElements(false);
-                }
-            }
-            coordsSearchService.reset();
-        });
-
-        coordsSearchService.setOnFailed(event -> {
-            logger.error("Failed to get data from Coords Resolvers", coordsSearchService.getException());
-            FXMLUtils.alert("Error", null, "Failed to get data from Coords Resolvers", Alert.AlertType.ERROR);
-            disableElements(false);
-            coordsSearchService.reset();
-        });
+        coordsSearchTaskService.setModel(searchModel);
+        coordsSearchTaskService.setOnError(this::showErrorMessage);
+        coordsSearchTaskService.setOnDone(() -> disableElements(false));
     }
 
 
@@ -234,13 +176,13 @@ public class SearchOverviewController extends StageController {
 
     private void cancelSearch() {
         logger.debug("Canceled search");
-        if (coordsSearchService.isRunning()) {
-            coordsSearchService.cancel();
-            coordsSearchService.reset();
+        if (coordsSearchTaskService.isRunning()) {
+            coordsSearchTaskService.cancel();
+            coordsSearchTaskService.reset();
         }
-        if (nameSearchService.isRunning()) {
-            nameSearchService.cancel();
-            nameSearchService.reset();
+        if (nameSearchTaskService.isRunning()) {
+            nameSearchTaskService.cancel();
+            nameSearchTaskService.reset();
         }
         if (starSurveySearchService.isRunning()) {
             starSurveySearchService.cancel();
