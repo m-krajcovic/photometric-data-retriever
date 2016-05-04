@@ -28,7 +28,7 @@ public class VizierResolverTsvImpl implements VizierResolver {
         try {
             Connection con = getTemplate()
                     .data("-c", query.getQuery());
-            if (query.getRadius() != null) {
+            if (query.getRadius() != null && query.getRadius().getRadius() != 0) {
                 con.data("-c.r", Double.toString(query.getRadius().getRadius()));
                 con.data("-c.u", query.getRadius().getUnit().toString());
             }

@@ -12,7 +12,7 @@ import javafx.scene.control.TextFormatter;
  */
 public class DecimalTextField extends TextField {
 
-    private DoubleProperty value = new SimpleDoubleProperty(0.05);
+    private DoubleProperty value = new SimpleDoubleProperty(0);
 
     public DecimalTextField() {
         super.setTextFormatter(new TextFormatter<>(new DecimalFilter()));
@@ -21,7 +21,7 @@ public class DecimalTextField extends TextField {
                 newValue = newValue.substring(0, newValue.length() - 1);
             }
             if (newValue.isEmpty()) {
-                newValue = "0.05";
+                newValue = "0";
             }
             value.setValue(Double.parseDouble(newValue));
         });
