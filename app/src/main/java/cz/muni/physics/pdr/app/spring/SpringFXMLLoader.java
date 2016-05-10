@@ -24,6 +24,8 @@ public class SpringFXMLLoader {
     private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
     @Autowired
     private ApplicationContext context;
+    @Autowired
+    private ResourceBundle resources;
     private FXMLLoader fxmlLoader = new FXMLLoader();
 
     public SpringFXMLLoader() {
@@ -35,7 +37,7 @@ public class SpringFXMLLoader {
         try {
             URL fxml = SpringFXMLLoader.class.getResource(url);
             fxmlLoader.setLocation(fxml);
-            fxmlLoader.setResources(ResourceBundle.getBundle("i18n/bundle"));
+            fxmlLoader.setResources(resources);
             return fxmlLoader.load();
         } catch (IOException ioException) {
             throw new RuntimeException(ioException.getMessage(), ioException);

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * @author Michal Krajčovič
@@ -31,6 +32,8 @@ public class StellarObjectOverviewController extends StageController {
 
     private final static Logger logger = LogManager.getLogger(StellarObjectOverviewController.class);
 
+    @FXML
+    private ResourceBundle resources;
     @FXML
     private Button selectButton;
     @FXML

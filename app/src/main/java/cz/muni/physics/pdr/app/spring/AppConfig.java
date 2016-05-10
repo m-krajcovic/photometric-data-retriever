@@ -27,6 +27,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.prefs.Preferences;
 
@@ -110,13 +111,19 @@ public class AppConfig {
     }
 
     @Bean
-    public ThreadPoolTaskExecutor searchServiceExecutor(@Value("${core.pool.size}") int corePoolSize) {
+    public ThreadPoolTaskExecutor searchServiceExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.prefersShortLivedTasks();
-        executor.setCorePoolSize(corePoolSize); // min 2 -> max ?
+        int cores = Runtime.getRuntime().availableProcessors();
+        executor.setCorePoolSize(cores >= 2 ? cores : 2);
         executor.setDaemon(true);
         executor.setThreadNamePrefix("Backend Thread-");
         return executor;
+    }
+
+    @Bean
+    public ResourceBundle resources(){
+        return ResourceBundle.getBundle("i18n/bundle");
     }
 
     @Bean

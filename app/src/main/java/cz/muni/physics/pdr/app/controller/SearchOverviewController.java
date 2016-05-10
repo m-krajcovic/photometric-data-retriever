@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * @author Michal Krajčovič
@@ -46,6 +47,8 @@ public class SearchOverviewController extends StageController {
     @Autowired
     private StarSurveySearchTaskService starSurveySearchService;
 
+    @FXML
+    private ResourceBundle resources;
     @FXML
     private ChoiceBox<RadiusModel.Unit> radiusUnitChoiceBox;
     @FXML
@@ -68,6 +71,7 @@ public class SearchOverviewController extends StageController {
     private SearchModel searchModel = new SearchModel();
     private SearchQueryParser queryParser;
     private Shaker shaker;
+
 
     @FXML
     private void initialize() {
@@ -118,7 +122,7 @@ public class SearchOverviewController extends StageController {
         }, error -> {
             showErrorMessage(error);
             disableElements(false);
-        });
+        }, resources);
     }
 
     private void initializeServices() {

@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ResourceBundle;
 import java.util.function.BiPredicate;
 
 /**
@@ -20,6 +21,8 @@ import java.util.function.BiPredicate;
 @Scope("prototype")
 public class EntryEditDialogController extends StageController {
 
+    @FXML
+    private ResourceBundle resources;
     @FXML
     private TextField keyTextField;
     @FXML
@@ -43,7 +46,7 @@ public class EntryEditDialogController extends StageController {
             okClicked = true;
             stage.close();
         } else {
-            FXMLUtils.alert("Input error", "Input is not valid", "Please check your input and try again", Alert.AlertType.ERROR).showAndWait();
+            FXMLUtils.alert(resources.getString("input.error"), resources.getString("input.is.not.valid"), resources.getString("check.try.input"), Alert.AlertType.ERROR).showAndWait();
         }
     }
     

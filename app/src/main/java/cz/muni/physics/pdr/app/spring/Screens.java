@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.BiPredicate;
 
 /**
@@ -33,6 +34,8 @@ public class Screens {
 
     @Autowired
     private ApplicationContext ctx;
+    @Autowired
+    private ResourceBundle resources;
 
     @Value("${app.name:PDR}")
     private String name;
@@ -41,6 +44,7 @@ public class Screens {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+
 
     public void initRootLayout() {
         SpringFXMLLoader loader = fxmlLoader();
@@ -59,7 +63,7 @@ public class Screens {
     public void showPhotometricDataOverview(Map<StarSurveyModel, List<PhotometricDataModel>> data, StellarObjectModel object) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/PhotometricDataOverview.fxml")
-                        .stage("Search Result", primaryStage);
+                        .stage(resources.getString("search.result"), primaryStage);
         PhotometricDataOverviewController controller = builder.controller();
         Stage stage = builder.get();
         controller.setStellarObject(object);
@@ -69,7 +73,7 @@ public class Screens {
 
     public void showPreferencesOverview() {
         SpringDialogBuilder.load(fxmlLoader(), "/view/PreferencesOverview.fxml")
-                .stage("Preferences", primaryStage).get().showAndWait();
+                .stage(resources.getString("preferences"), primaryStage).get().showAndWait();
     }
 
     public void showStarSurveyOverview() {
@@ -81,7 +85,7 @@ public class Screens {
     public boolean showStarSurveyEditDialog(StarSurveyModel record, Window owner) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/StarSurveyEditDialog.fxml")
-                        .stage("Edit Star Survey", owner);
+                        .stage(resources.getString("edit.star.survey"), owner);
         StarSurveyEditDialogController controller = builder.controller();
         controller.setStarSurvey(record);
         Stage stage = builder.get();
@@ -92,7 +96,7 @@ public class Screens {
     public StellarObjectModel showStellarObjects(List<StellarObjectModel> stellarObjects) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/StellarObjectOverview.fxml")
-                        .stage("Choose one stellar object", primaryStage);
+                        .stage(resources.getString("choose.one.stellar.object"), primaryStage);
         StellarObjectOverviewController controller = builder.controller();
         controller.setItems(stellarObjects);
         Stage stage = builder.get();
@@ -102,13 +106,13 @@ public class Screens {
 
     public void showValueParameterOverview(Stage owner) {
         SpringDialogBuilder.load(fxmlLoader(), "/view/ValuesOverview.fxml")
-                .stage("Values", owner)
+                .stage(resources.getString("values"), owner)
                 .get().showAndWait();
     }
 
     public void showPatternsOverview(Stage owner) {
         SpringDialogBuilder.load(fxmlLoader(), "/view/PatternsOverview.fxml")
-                .stage("Patterns", owner)
+                .stage(resources.getString("patterns"), owner)
                 .get().showAndWait();
     }
 
@@ -119,7 +123,7 @@ public class Screens {
     public boolean showEntryEditDialog(EntryModel model, Stage owner, BiPredicate<TextField, TextField> validCheck) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/EntryEditDialog.fxml")
-                        .stage("Edit Entry", owner);
+                        .stage(resources.getString("edit.entry"), owner);
         EntryEditDialogController controller = builder.controller();
         controller.setValidCheck(validCheck);
         controller.setModel(model);

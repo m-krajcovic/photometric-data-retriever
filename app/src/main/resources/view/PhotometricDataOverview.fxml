@@ -26,13 +26,13 @@
                 </TabPane>
                 <ScatterChart fx:id="chart" animated="false" cache="true" cacheShape="true" disable="true" layoutX="1.0" layoutY="326.0" opacity="0.3" prefHeight="268.0" prefWidth="575.0" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="265.0">
                     <xAxis>
-                        <NumberAxis forceZeroInRange="false" label="Period" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" />
+                        <NumberAxis forceZeroInRange="false" label="%photometricdata.period" prefHeight="42.0" prefWidth="548.0" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis autoRanging="true" forceZeroInRange="false" label="Magnitude" side="LEFT" />
+                        <NumberAxis autoRanging="true" forceZeroInRange="false" label="%photometricdata.magnitude" side="LEFT" />
                     </yAxis>
                 </ScatterChart>
-                <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="No Period and Epoch available" visible="false">
+                <Label fx:id="infoLabel" alignment="BASELINE_CENTER" layoutY="378.0" prefHeight="17.0" prefWidth="600.0" text="%period.epoch.unavailable" visible="false">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>
@@ -58,7 +58,7 @@
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%file">
                     <items>
                         <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#handleSaveAllMenuItem" text="%menu.item.save.all" />
                         <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save" />

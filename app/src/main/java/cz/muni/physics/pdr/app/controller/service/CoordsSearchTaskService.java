@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
     private Callback onDone;
     private Consumer<String> onError;
     private NameSearchTaskService nameSearchTaskService;
+    private ResourceBundle resources;
 
     @Autowired
     public CoordsSearchTaskService(Screens app,
@@ -76,7 +78,7 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
         List<StellarObjectModel> searchResult = getValue();
         if (searchResult.isEmpty()) {
             if (onError != null)
-                onError.accept("No results found");
+                onError.accept(resources.getString("no.results.found"));
             if (onDone != null) {
                 onDone.call();
             }
@@ -98,7 +100,7 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
     protected void failed() {
         logger.error("Failed to finish task", getException());
         if (onError != null)
-            onError.accept("Error occured");
+            onError.accept(resources.getString("error.occured"));
         if (onDone != null) {
             onDone.call();
         }
@@ -139,6 +141,11 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
 
     public void setOnError(Consumer<String> onError) {
         this.onError = onError;
+    }
+
+    @Autowired
+    public void setResources(ResourceBundle resources){
+        this.resources = resources;
     }
 
     @Autowired

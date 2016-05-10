@@ -12,7 +12,7 @@
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%file">
                     <items>
                         <MenuItem fx:id="surveysMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
                                   text="%menu.item.starsurveys"/>

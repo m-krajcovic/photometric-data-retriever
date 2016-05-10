@@ -96,7 +96,7 @@ public class PreferencesOverviewController extends StageController {
         preferences.put("app.data.dir.path", appDataRoot.getValue());
         preferences.put("plugins.dir.path", pluginsRoot.getValue());
         changeMade.setValue(false);
-        FXMLUtils.alert("Restart needed", "Application restart needed", "You need to restart this application for changes to take effect.", Alert.AlertType.INFORMATION).showAndWait();
+        FXMLUtils.alert(resources.getString("restart.needed"), resources.getString("application.restart.needed"), resources.getString("restart.needed.message"), Alert.AlertType.INFORMATION).showAndWait();
     }
 
     private void resetToDefaults() {

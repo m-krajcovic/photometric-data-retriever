@@ -4,11 +4,6 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
-/**
- * @author Michal Krajčovič
- * @version 1.0
- * @since 18/04/16
- */
 public class Shaker {
     private TranslateTransition tt;
 

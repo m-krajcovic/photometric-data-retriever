@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -32,6 +33,7 @@ public class NameSearchTaskService extends Service<StellarObject> {
     private Callback onDone;
     private Consumer<String> onError;
     private StarSurveySearchTaskService starSurveySearchTaskService;
+    private ResourceBundle resources;
 
     @Autowired
     public NameSearchTaskService(SesameNameResolver sesameNameResolver,
@@ -75,7 +77,7 @@ public class NameSearchTaskService extends Service<StellarObject> {
     protected void failed() {
         logger.error("Failed to finish task", getException());
         if (onError != null)
-            onError.accept("Error occured");
+            onError.accept(resources.getString("error.occured"));
         if (onDone != null) {
             onDone.call();
         }
@@ -100,6 +102,11 @@ public class NameSearchTaskService extends Service<StellarObject> {
 
     public void setModel(SearchModel model) {
         this.searchModel = model;
+    }
+
+    @Autowired
+    public void setResources(ResourceBundle resources){
+        this.resources = resources;
     }
 
     @Autowired

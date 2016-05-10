@@ -39,7 +39,7 @@
                         <Insets top="30.0" />
                     </VBox.margin>
                 </HBox>
-                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="Query is empty" textAlignment="CENTER" textFill="#d35244" visible="false">
+                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="" textAlignment="CENTER" textFill="#d35244" visible="false">
                     <VBox.margin>
                         <Insets top="5.0" />
                     </VBox.margin>

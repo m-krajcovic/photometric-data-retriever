@@ -117,13 +117,13 @@ public class StarSurveyOverviewController extends StageController {
     }
 
     private void errorAlert() {
-        FXMLUtils.alert("Resource not available", "Configuration file is broken.", "Try deleting config file and reloading application.", Alert.AlertType.ERROR).showAndWait();
+        FXMLUtils.alert(resources.getString("resource.not.available"), resources.getString("configuration.file.is.broken"), resources.getString("delete.reload.app"), Alert.AlertType.ERROR).showAndWait();
     }
 
     private void showNoSelectionDialog() {
         Alert alert = FXMLUtils.alert(resources.getString("alert.noselection"),
-                "No Star Survey Selected",
-                "Please select a Star Survey in the table.",
+                resources.getString("no.star.survey.selected"),
+                resources.getString("select.row.table"),
                 Alert.AlertType.WARNING);
         alert.initOwner(stage);
         alert.showAndWait();

@@ -90,13 +90,13 @@ public class PhotometricDataOverviewController extends StageController {
         String entryFormat = ".csv";
         String[] choices = {"CSV file .csv", "Ascii table .txt"};
         ChoiceDialog<String> dialog = FXMLUtils.showOptionDialog(stage, Arrays.asList(choices), "Choose output format", "Choose output format",
-                "Output format: ");
+                resources.getString("output.format"));
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             entryFormat = result.get();
 
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-        File zip = FXMLUtils.showSaveFileChooser("Choose output file",
+        File zip = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
                 System.getProperty("user.home"),
                 "pdr-export-" + coords,
                 stage,
@@ -195,7 +195,7 @@ public class PhotometricDataOverviewController extends StageController {
 
     private void toFile(String name, List<PhotometricDataModel> models) {
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-        File file = FXMLUtils.showSaveFileChooser("Choose output file",
+        File file = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
                 System.getProperty("user.home"),
                 name + "-" + coords,
                 stage,
@@ -226,7 +226,7 @@ public class PhotometricDataOverviewController extends StageController {
     }
 
     private void errorAlert() {
-        FXMLUtils.alert("Error", "Failed to export data", "Try again and/or try to restart application", Alert.AlertType.ERROR);
+        FXMLUtils.alert(resources.getString("photometricdata.error"), resources.getString("failed.export"), resources.getString("delete.reload.app"), Alert.AlertType.ERROR);
     }
 
     public StellarObjectModel getStellarObject() {

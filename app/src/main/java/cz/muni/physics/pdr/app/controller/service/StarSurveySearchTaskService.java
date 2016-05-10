@@ -16,10 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -39,6 +36,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     private ObservableMap<StarSurveyModel, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
     private Callback onDone;
     private Consumer<String> onError;
+    private ResourceBundle resources;
 
     @Autowired
     public StarSurveySearchTaskService(Screens app,
@@ -110,7 +108,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     protected void failed() {
         logger.error("Failed to finish task", getException());
         if (onError != null)
-            onError.accept("Error occured");
+            onError.accept(resources.getString("error.occured"));
         if (onDone != null) {
             onDone.call();
         }
@@ -120,6 +118,11 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     @Autowired
     public void setTaskExecutor(Executor executor) {
         super.setExecutor(executor);
+    }
+
+    @Autowired
+    public void setResources(ResourceBundle resources){
+        this.resources = resources;
     }
 
     public StellarObject getResolverResult() {

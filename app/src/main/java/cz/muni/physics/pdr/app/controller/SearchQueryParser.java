@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,8 +25,9 @@ class SearchQueryParser {
     private Consumer<SearchModel> onName;
     private Consumer<String> onError;
     private Map<Pattern, Consumer<SearchModel>> strategies;
+    private ResourceBundle resources;
 
-    SearchQueryParser(Consumer<SearchModel> onCoordinates, Consumer<SearchModel> onName, Consumer<String> onError) {
+    SearchQueryParser(Consumer<SearchModel> onCoordinates, Consumer<SearchModel> onName, Consumer<String> onError, ResourceBundle resources) {
         if (onCoordinates == null) {
             throw new IllegalArgumentException("onCoordinates cannot be null.");
         }
@@ -36,10 +38,12 @@ class SearchQueryParser {
             throw new IllegalArgumentException("onError cannot be null.");
         }
 
+
         strategies = new DefaultHashMap<>(this::handleNameSearch);
         strategies.put(Pattern.compile("(\\d+\\.?\\d*)\\s([\\+\\-]?\\d+\\.?\\d*)"), this::handleDegreesCoordsSearch);
         strategies.put(Pattern.compile("(\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*),?\\s([\\+\\-]?\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
 
+        this.resources = resources;
         this.onCoordinates = onCoordinates;
         this.onName = onName;
         this.onError = onError;
@@ -76,19 +80,19 @@ class SearchQueryParser {
 
     private void handleDegreesCoordsSearch(SearchModel model) {
         if (model.getQuery().isEmpty()) {
-            onError.accept("Query is empty. Insert coords in format '118.77167 +22.00139'");
+            onError.accept(resources.getString("empty.coords.query"));
         } else {
             String[] degrees = model.getQuery().split(" ");
             if (degrees.length != 2 || !NumberUtils.isParsable(degrees[0]) || !NumberUtils.isParsable(degrees[1])) {
-                onError.accept("Wrong format use degrees like '118.77167 +22.00139'");
+                onError.accept(resources.getString("coords.query.format"));
             } else {
                 double ra = Double.parseDouble(degrees[0]);
                 double dec = Double.parseDouble(degrees[1]);
                 if (ra < 0 || ra > 360) {
-                    onError.accept("Right Ascension must be from interval [0, 360]'");
+                    onError.accept(resources.getString("coords.ra.interval"));
                     return;
                 } else if (dec < -90 || dec > 90) {
-                    onError.accept("Declination must be from interval [-90, +90]'");
+                    onError.accept(resources.getString("coords.dec.interval"));
                     return;
                 }
                 model.setQuery(ra + " " + dec);
@@ -104,7 +108,7 @@ class SearchQueryParser {
 
     private void handleNameSearch(SearchModel model) {
         if (model.getQuery().isEmpty()) {
-            onError.accept("Query is empty");
+            onError.accept(resources.getString("query.is.empty"));
         } else {
             onName.accept(model);
         }

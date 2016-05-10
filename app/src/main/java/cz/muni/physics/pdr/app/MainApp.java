@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 /**
  * @author Michal Krajčovič
@@ -34,7 +33,7 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) throws BackingStoreException {
-//        launch(MainApp.class);
+//        launch(MainApp.class);g
         LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
     }
 
