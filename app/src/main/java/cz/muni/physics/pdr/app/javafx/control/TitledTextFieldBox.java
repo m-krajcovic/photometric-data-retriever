@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
 
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -72,7 +73,18 @@ public class TitledTextFieldBox extends HBox {
             updateTextWithPrefix();
         });
 
-        textField.textProperty().addListener((observable, oldValue, newValue) -> updateTextWithPrefix());
+        textField.textProperty().bindBidirectional(textWithPrefix, new StringConverter<String>(){
+            @Override
+            public String toString(String object) {
+                return object;
+            }
+
+            @Override
+            public String fromString(String string) {
+                return titleLabel.getText() + textField.getText();
+
+            }
+        });
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
@@ -101,11 +113,12 @@ public class TitledTextFieldBox extends HBox {
         filter = value.getFilter();
         textField.setTextFormatter(new TextFormatter<>(change -> {
             if (useAutoTitles && titleLabel.getText().isEmpty()) {
-                if (change.getText().equals(delimiter)) {
+                if (change.getControlNewText().contains(delimiter)) {
                     for (Map.Entry<String, String> entry : autoTitles.entrySet()) {
-                        if (change.getControlText().equalsIgnoreCase(entry.getKey())) {
+                        if (change.getControlNewText().startsWith(entry.getKey())) {
                             TitledTextFieldBox.this.setTitle(entry.getValue());
-                            textField.setText("");
+                            String newText = change.getControlNewText().substring(entry.getValue().length());
+                            textField.setText(newText);
                             return null;
                         }
                     }

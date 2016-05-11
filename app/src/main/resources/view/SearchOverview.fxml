@@ -7,14 +7,18 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import cz.muni.physics.pdr.app.javafx.control.DecimalTextField?>
+<?import javafx.geometry.Rectangle2D?>
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
         <VBox alignment="BASELINE_CENTER">
             <children>
-                <ImageView fitHeight="150.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../images/planet.png" />
+                        <Image url="@../images/planetsprite.png" />
                     </image>
+                    <viewport>
+                        <Rectangle2D minX="0" minY="0" width="256" height="256"/>
+                    </viewport>
                 </ImageView>
                 <HBox fx:id="searchBox" disable="false">
                     <children>
