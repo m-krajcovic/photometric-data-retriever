@@ -37,13 +37,16 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     @Override
     public void insert(StarSurvey entity) {
+        logger.debug("Inserting key {}, value {}", entity.getName(), entity.toString());
         starSurveysCache.put(entity.getName(), new StarSurvey(entity));
         saveConfig();
     }
 
     @Override
     public void delete(StarSurvey entity) {
+        logger.debug("Removing key {}", entity.getName());
         if (starSurveysCache.containsKey(entity.getName())) {
+            logger.debug("Key {} found. Removing object.", entity.getName());
             starSurveysCache.remove(entity.getName());
             saveConfig();
         }
@@ -51,6 +54,7 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     @Override
     public Collection<StarSurvey> getAll() {
+        configHolder.get();
         List<StarSurvey> newList = new ArrayList<>(starSurveysCache.values().size());
         starSurveysCache.values().forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
         return newList;
@@ -58,11 +62,13 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     @Override
     public StarSurvey getById(String s) {
+        configHolder.get();
         return new StarSurvey(starSurveysCache.get(s));
     }
 
     @Override
     public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
+        configHolder.get();
         Optional<StarSurvey> optional = starSurveysCache.values().stream().filter(predicate).findFirst();
         if (optional.isPresent()) {
             return new StarSurvey(optional.get());
@@ -72,6 +78,7 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     @Override
     public Collection<StarSurvey> searchForAll(Predicate<StarSurvey> predicate) {
+        configHolder.get();
         List<StarSurvey> result = starSurveysCache.values().stream().filter(predicate).collect(Collectors.toList());
         List<StarSurvey> newList = new ArrayList<>(result.size());
         result.forEach(starSurvey -> newList.add(new StarSurvey(starSurvey)));
@@ -79,6 +86,7 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
     }
 
     private void reloadConfig(Configuration configuration) {
+        logger.debug("Reloading configuration file.");
         List<StarSurvey> starSurveys = configuration.getStarSurveys();
         starSurveysCache = new HashMap<>(starSurveys.size());
         for (StarSurvey starSurvey : starSurveys) {
@@ -91,23 +99,29 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
     private void saveConfig() {
         Configuration configuration = configHolder.get();
         configuration.setStarSurveys(new ArrayList<>(starSurveysCache.values()));
+        configuration.setValueParameters(valueParameters);
+        configuration.setPatterns(patterns);
         configHolder.persist(configuration);
     }
 
     @Override
     public Map<String, Pattern> getAllPatterns() {
+        configHolder.get();
         return new HashMap<>(patterns);
     }
 
     @Override
     public void insertPattern(String key, Pattern pattern) {
+        logger.debug("Inserting key {}, value {}", key, pattern.pattern());
         patterns.put(key, pattern);
         saveConfig();
     }
 
     @Override
     public void removePattern(String key) {
+        logger.debug("Starting removal of key {}", key);
         if (patterns.containsKey(key)) {
+            logger.debug("Key {} found. Removing object.", key);
             patterns.remove(key);
             saveConfig();
         }
@@ -115,6 +129,7 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     @Override
     public Map<String, String> getAllValueParameters() {
+        configHolder.get();
         return new HashMap<>(valueParameters);
     }
 

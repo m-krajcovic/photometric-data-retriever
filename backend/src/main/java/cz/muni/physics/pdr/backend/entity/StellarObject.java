@@ -19,6 +19,14 @@ public class StellarObject {
     private double period;
     private double distance;
 
+    public double getDeclinationInHours() {
+        return declination / 15;
+    }
+
+    public double getRightAscensionInHours() {
+        return rightAscension / 15;
+    }
+
     public List<String> getNames() {
         return names;
     }

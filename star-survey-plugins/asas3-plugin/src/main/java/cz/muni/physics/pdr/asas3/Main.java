@@ -19,7 +19,12 @@ public class Main {
         //http://www.astrouw.edu.pl//cgi-asas/asas_cgi_get_data?123300+2643.0,asas3
         //http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3
         Main main = new Main();
-        main.readData("http://www.astrouw.edu.pl//cgi-asas/asas_cgi_get_data?123300+2643.0,asas3");
+
+        if(args.length == 1){
+            if (args[0].startsWith("http")){
+                main.readData(args[0]);
+            }
+        }
     }
 
     private void readData(String... args) throws IOException {

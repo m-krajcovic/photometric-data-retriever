@@ -31,6 +31,10 @@
             <plugin name="APASS"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="PIOTS">
+            <plugin name="PIOTS"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="HIP">
             <plugin name="HIP"/>
             <urls/>

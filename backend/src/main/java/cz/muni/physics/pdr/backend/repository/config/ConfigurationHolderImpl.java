@@ -49,11 +49,14 @@ public class ConfigurationHolderImpl implements ConfigurationHolder {
     public void persist(Configuration configuration) {
         this.configuration = configuration;
         try (Writer writer = new FileWriter(configurationFile)) {
-            xStream.toXML(configuration, writer);
-            onConfigurationChange.forEach(consumer -> consumer.accept(configuration));
+            logger.debug("Writing to file {}", configurationFile.getAbsolutePath());
+            xStream.toXML(this.configuration, writer);
         } catch (IOException e) {
             throw new ResourceAvailabilityException("Failed to save to file", configurationFile.getAbsolutePath(), e);
         }
+        fileWatcher.forceUpdate();
+        onConfigurationChange.forEach(consumer -> consumer.accept(this.configuration));
+        logger.debug("Successfully finished writing to file.");
     }
 
     @Override
@@ -71,13 +74,13 @@ public class ConfigurationHolderImpl implements ConfigurationHolder {
             logger.debug("Configuration file was not loaded yet. Loading now.");
             this.configuration = loadConfig();
         } else if (fileWatcher.isFileUpdated()) {
-            logger.debug("Configuration file has change. Reloading now.");
+            logger.debug("Configuration file has changed. Reloading now.");
             this.configuration = loadConfig();
             onConfigurationChange.forEach(consumer -> consumer.accept(configuration));
         }
     }
 
-    private synchronized Configuration loadConfig(int retryCount) {
+    private Configuration loadConfig(int retryCount) {
         try (Reader reader = new FileReader(configurationFile)) {
             return (Configuration) xStream.fromXML(reader);
         } catch (IOException | XStreamException e) {
@@ -90,7 +93,7 @@ public class ConfigurationHolderImpl implements ConfigurationHolder {
         }
     }
 
-    private synchronized Configuration loadConfig() {
+    private Configuration loadConfig() {
         return loadConfig(0);
     }
 }

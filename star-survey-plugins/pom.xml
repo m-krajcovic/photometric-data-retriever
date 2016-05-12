@@ -81,7 +81,7 @@
                                 <goal>copy-resources</goal>
                             </goals>
                             <configuration>
-                                <outputDirectory>${user.home}/.pdr/plugins/${plugin.folder}</outputDirectory>
+                                <outputDirectory>${user.home}\.pdr\plugins\${plugin.folder}</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>properties</directory>

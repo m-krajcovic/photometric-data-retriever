@@ -35,6 +35,7 @@ public class MainApp extends Application {
     public static void main(String[] args) throws BackingStoreException {
 //        launch(MainApp.class);g
         LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
+
     }
 
     @Override

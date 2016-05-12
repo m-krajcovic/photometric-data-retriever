@@ -190,12 +190,12 @@ public class SearchOverviewController extends StageController {
 
     private void removeErrorInfo() {
         infoLabel.setText("");
-        searchTextField.getTextField().getStyleClass().remove("error");
+        searchTextField.getInnerTextField().getStyleClass().remove("error");
     }
 
     private void showErrorMessage(String message) {
         shaker.shake();
-        searchTextField.getTextField().getStyleClass().add("error");
+        searchTextField.getInnerTextField().getStyleClass().add("error");
         infoLabel.setText(message);
         infoLabel.setVisible(true);
     }

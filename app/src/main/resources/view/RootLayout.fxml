@@ -16,6 +16,7 @@
                     <items>
                         <MenuItem fx:id="surveysMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
                                   text="%menu.item.starsurveys"/>
+                        <MenuItem fx:id="openPluginsMenuItem" text="%open.plugins" mnemonicParsing="false" onAction="#handleOpenPlugins"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false"
                                   onAction="#handlePreferencesMenuItem"

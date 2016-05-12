@@ -55,6 +55,7 @@ public class NameSearchTaskService extends Service<StellarObject> {
                 logger.debug("Trying to get StellarObject.");
                 StellarObject sesameResult = sesameNameResolver.findByName(searchModel.getQuery());
                 List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
+                System.out.println(vsxResult.size());
                 if (vsxResult.size() == 1) {
                     sesameResult.getNames().add(vsxResult.get(0).getName());
                     sesameResult.setEpoch(vsxResult.get(0).getEpoch());

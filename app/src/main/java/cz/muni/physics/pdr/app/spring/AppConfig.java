@@ -122,7 +122,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ResourceBundle resources(){
+    public ResourceBundle resources() {
         return ResourceBundle.getBundle("i18n/bundle");
     }
 

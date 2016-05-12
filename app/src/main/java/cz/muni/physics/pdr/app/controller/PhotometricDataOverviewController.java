@@ -23,6 +23,7 @@ import javafx.util.converter.NumberStringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,7 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -49,7 +51,10 @@ public class PhotometricDataOverviewController extends StageController {
 
     @Autowired
     private Executor executor;
-
+    @Autowired
+    private Preferences preferences;
+    @Value("${last.save.path}")
+    private String lastSavePath;
 
     @FXML
     private TitledTextFieldBox epochTextField;
@@ -97,13 +102,20 @@ public class PhotometricDataOverviewController extends StageController {
 
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
         File zip = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
-                System.getProperty("user.home"),
+                lastSavePath,
                 "pdr-export-" + coords,
                 stage,
                 new FileChooser.ExtensionFilter("Zip file (*.zip)", "*.zip"));
         if (zip != null)
+            updateLastSavePath(zip.getParent());
             toZip(zip, coords + entryFormat);
+
         }
+    }
+
+    private void updateLastSavePath(String newPath){
+        lastSavePath = newPath;
+        preferences.put("last.save.path", lastSavePath);
     }
 
     @FXML
@@ -196,12 +208,13 @@ public class PhotometricDataOverviewController extends StageController {
     private void toFile(String name, List<PhotometricDataModel> models) {
         String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
         File file = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
-                System.getProperty("user.home"),
+                lastSavePath,
                 name + "-" + coords,
                 stage,
                 new FileChooser.ExtensionFilter("Csv file (*.csv)", "*.csv"),
                 new FileChooser.ExtensionFilter("Ascii table (*.txt)", "*.txt"));
         if (file != null) {
+            updateLastSavePath(file.getParent());
             PhotometricDataModelConverter converter = PhotometricDataModelConverter.get(file.getName());
             Task task = new Task() {
                 @Override
@@ -235,8 +248,8 @@ public class PhotometricDataOverviewController extends StageController {
 
     public void setStellarObject(StellarObjectModel stellarObject) {
         this.stellarObject = stellarObject;
-        this.epochTextField.getTextField().textProperty().bindBidirectional(stellarObject.epochProperty(), new NumberStringConverter("#.####"));
-        this.periodTextField.getTextField().textProperty().bindBidirectional(stellarObject.periodProperty(), new NumberStringConverter("#.##########"));
+        this.epochTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.epochProperty(), new NumberStringConverter(Locale.ENGLISH,"#.####"));
+        this.periodTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.periodProperty(), new NumberStringConverter(Locale.ENGLISH,"#.##########"));
     }
 
 

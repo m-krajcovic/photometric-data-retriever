@@ -11,12 +11,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +69,7 @@ public class AppInitializerImpl implements AppInitializer {
             confirmations.add(alert -> {
                 alert.setTitle("Plugins folder not found");
                 alert.setHeaderText("Could not find folder " + pluginsDir.getAbsolutePath());
-                alert.setContentText("Default plugins will be loaded.");
+                alert.setContentText("Default plugins will be loaded. Java 8+ is required for these to work.");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     loadDefaultPlugins();
@@ -102,45 +97,6 @@ public class AppInitializerImpl implements AppInitializer {
                 }
             });
         }
-
-        /*
-        mainApp.notifyPreloader(PreloaderHandlerEvent.VSX_DAT_CHECK);
-        logger.debug("Checking if vsx.dat file {} exists", vsxDatFile.getAbsoluteFile());
-        if (!vsxDatFile.exists()) {
-            logger.debug("File vsx.dat does not exist");
-            confirmations.add(alert -> {
-                alert.setAlertType(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("File vsx.dat not found.");
-                alert.setHeaderText("Could not find file " + vsxDatFile);
-                alert.setContentText("Do you want to download it now? If not, application will shut down and you will have to do it manually.");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    downloadVsxDatFile();
-                } else {
-                    logger.debug("Confirmation alert to download vsx.dat was canceled, application is set to shut down");
-                    shutdown = true;
-                }
-            });
-        } else if (checkOutdated) {
-            logger.debug("Checking if vsx.dat file is up to date");
-            if (vsxDatFile.lastModified() + 86400000 < System.currentTimeMillis()) {
-                logger.debug("File vsx.dat is outdated.");
-                confirmations.add(alert -> {
-                    alert.setAlertType(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("vsx.dat is outdated.");
-                    alert.setHeaderText("File vsx.dat is older than 7 days.");
-                    alert.setContentText("Do you want to download the current version?");
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.isPresent() && result.get() == ButtonType.OK) {
-                        downloadVsxDatFile();
-                    }
-                });
-            } else {
-                logger.debug("vsx.dat file is up to date");
-            }
-        } else {
-            logger.debug("Checking for outdated vsx.dat file is turned off, skipping");
-        }*/
     }
 
     private void loadDefaultPlugins() {
@@ -201,42 +157,6 @@ public class AppInitializerImpl implements AppInitializer {
         dialog.showAndWait();
     }
 
-    /*
-    private void downloadVsxDatFile() {
-        Task task = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                logger.debug("Starting to download vsx.dat file");
-                try {
-                    URL url = new URL(vsxDownloadUrl);
-                    long size = 71597;
-                    try (GZIPInputStream gzis = new GZIPInputStream(url.openStream());
-                         FileOutputStream out = new FileOutputStream(vsxDatFile)) {
-                        byte[] buffer = new byte[1024];
-                        long i = 0;
-                        int read;
-                        while ((read = gzis.read(buffer)) > 0) {
-                            out.write(buffer, 0, read);
-                            i++;
-                            updateProgress(i, size);
-                            double p = (i / (double) size);
-                            if (p > 1) p = 1;
-                            updateMessage(String.format("%.1f", 100 * p) + "%");
-                        }
-                        logger.debug("Successfully downloaded vsx.dat file");
-                    }
-                } catch (IOException e) {
-                    logger.error("Failed to download vsx.dat file", e);
-                    initErrors.add("Failed to download vsx.dat file. Try downloading it manually and put it into pdr app data folder");
-                }
-                return null;
-            }
-        };
-        Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
-        executeTask(task);
-        dialog.showAndWait();
-    }*/
-
     private void executeTask(Task task) {
         if (executor != null) {
             executor.execute(task);
@@ -253,7 +173,7 @@ public class AppInitializerImpl implements AppInitializer {
 
     private void showInitErrors() {
         for (String message : initErrors) {
-            FXMLUtils.alert("Error", null, message, Alert.AlertType.ERROR);
+            FXMLUtils.alert("Error", null, message, Alert.AlertType.ERROR).showAndWait();
         }
     }
 

@@ -28,4 +28,8 @@ public class FileWatcher {
         }
         return false;
     }
+
+    public void forceUpdate() {
+        this.timeStamp = file.lastModified();
+    }
 }

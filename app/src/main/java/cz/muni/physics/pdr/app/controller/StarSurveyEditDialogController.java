@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -68,6 +69,7 @@ public class StarSurveyEditDialogController extends StageController {
     private void handleOk() {
         if (isInputValid()) {
             starSurvey.setName(nameTextField.getText());
+            Arrays.stream(urlTextArea.getText().split(System.lineSeparator())).filter(s -> !s.trim().isEmpty()).forEach(s -> starSurvey.getUrls().add(s));
             starSurvey.setPlugin(pluginChoiceBox.getValue());
 
             okClicked = true;
@@ -90,7 +92,8 @@ public class StarSurveyEditDialogController extends StageController {
     public void setStarSurvey(StarSurveyModel starSurvey) {
         this.starSurvey = starSurvey;
         nameTextField.setText(starSurvey.getName());
-        urlTextArea.setText(String.join("\n", starSurvey.getUrls()));
+        if(!nameTextField.getText().trim().isEmpty()) nameTextField.setDisable(true);
+        urlTextArea.setText(String.join(System.lineSeparator(), starSurvey.getUrls()));
         pluginChoiceBox.getSelectionModel().select(starSurvey.getPlugin());
     }
 

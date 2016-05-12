@@ -62,6 +62,7 @@ public class EntryEditDialogController extends StageController {
     public void setModel(EntryModel model) {
         this.model = model;
         keyTextField.setText(model.key());
+        if(!keyTextField.getText().trim().isEmpty()) keyTextField.setDisable(true);
         valueTextField.setText(model.value());
     }
 

@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.javafx.control;
 
 import javafx.application.Platform;
+import javafx.beans.NamedArg;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import java.util.function.UnaryOperator;
  */
 public class TitledTextFieldBox extends HBox {
     private Label titleLabel;
-    private TextField textField;
+    private final TextField innerTextField;
     private UnaryOperator<TextFormatter.Change> filter = c -> c;
     private String delimiter;
     private Map<String, String> autoTitles;
@@ -32,21 +33,29 @@ public class TitledTextFieldBox extends HBox {
     private StringProperty textWithPrefix = new SimpleStringProperty("");
 
     public TitledTextFieldBox() {
+        this(new TextField());
+    }
+
+    public TitledTextFieldBox(@NamedArg("innerTextField") TextField innerTextField) {
         super();
+        this.innerTextField = innerTextField;
+        initialize();
+    }
+
+    private void initialize() {
         titleLabel = new Label();
         titleLabel.getStyleClass().add("titled-label");
         titleLabel.setFocusTraversable(false);
         titleLabel.setVisible(false);
         titleLabel.setMinWidth(Region.USE_PREF_SIZE);
         titleLabel.setMaxWidth(Region.USE_PREF_SIZE);
-        textField = new TextField();
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setPrefWidth(newValue.doubleValue());
+            innerTextField.setPrefWidth(newValue.doubleValue());
         });
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setPrefHeight(newValue.doubleValue());
+            innerTextField.setPrefHeight(newValue.doubleValue());
             titleLabel.setPrefHeight(newValue.doubleValue());
         });
 
@@ -54,9 +63,9 @@ public class TitledTextFieldBox extends HBox {
             Platform.runLater(() -> {
                 if (currText.isEmpty()) {
                     titleLabel.setPrefWidth(0);
-                    this.textField.setPrefWidth(getWidth());
+                    this.innerTextField.setPrefWidth(getWidth());
                     titleLabel.setVisible(false);
-                    textField.getStyleClass().remove("titled-text-field");
+                    innerTextField.getStyleClass().remove("titled-text-field");
                 } else {
                     Text text = new Text(currText);
                     text.setFont(titleLabel.getFont());
@@ -65,15 +74,15 @@ public class TitledTextFieldBox extends HBox {
                             + 2d;
                     width = Math.ceil(width);
                     titleLabel.setPrefWidth(width);
-                    this.textField.setPrefWidth(getWidth() - width);
+                    this.innerTextField.setPrefWidth(getWidth() - width);
                     titleLabel.setVisible(true);
-                    this.textField.getStyleClass().add("titled-text-field");
+                    this.innerTextField.getStyleClass().add("titled-text-field");
                 }
             });
             updateTextWithPrefix();
         });
 
-        textField.textProperty().bindBidirectional(textWithPrefix, new StringConverter<String>(){
+        innerTextField.textProperty().bindBidirectional(textWithPrefix, new StringConverter<String>() {
             @Override
             public String toString(String object) {
                 return object;
@@ -81,22 +90,22 @@ public class TitledTextFieldBox extends HBox {
 
             @Override
             public String fromString(String string) {
-                return titleLabel.getText() + textField.getText();
+                return titleLabel.getText() + innerTextField.getText();
 
             }
         });
 
-        textField.setOnKeyPressed(event -> {
+        innerTextField.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 hideTitle();
             } else if (event.getCode().equals(KeyCode.BACK_SPACE)) {
-                if (textField.getText().isEmpty()) {
+                if (innerTextField.getText().isEmpty()) {
                     hideTitle();
                 }
             }
         });
 
-        getChildren().addAll(titleLabel, textField);
+        getChildren().addAll(titleLabel, innerTextField);
     }
 
     public void setAutomaticTitles(String delimiter, Map<String, String> automaticTitles) {
@@ -111,14 +120,13 @@ public class TitledTextFieldBox extends HBox {
             throw new IllegalArgumentException("TextFormatter value cannot be null.");
         }
         filter = value.getFilter();
-        textField.setTextFormatter(new TextFormatter<>(change -> {
+        innerTextField.setTextFormatter(new TextFormatter<>(change -> {
             if (useAutoTitles && titleLabel.getText().isEmpty()) {
-                if (change.getControlNewText().contains(delimiter)) {
+                if (change.getText().equals(delimiter)) {
                     for (Map.Entry<String, String> entry : autoTitles.entrySet()) {
                         if (change.getControlNewText().startsWith(entry.getKey())) {
                             TitledTextFieldBox.this.setTitle(entry.getValue());
-                            String newText = change.getControlNewText().substring(entry.getValue().length());
-                            textField.setText(newText);
+                            innerTextField.setText("");
                             return null;
                         }
                     }
@@ -129,7 +137,7 @@ public class TitledTextFieldBox extends HBox {
     }
 
     private void updateTextWithPrefix() {
-        textWithPrefix.setValue(titleLabel.getText() + textField.getText());
+        textWithPrefix.setValue(titleLabel.getText() + innerTextField.getText());
     }
 
     public String getTextWithPrefix() {
@@ -149,11 +157,11 @@ public class TitledTextFieldBox extends HBox {
     }
 
     public String getPromptText() {
-        return textField.getPromptText();
+        return innerTextField.getPromptText();
     }
 
     public void setPromptText(String value) {
-        textField.setPromptText(value);
+        innerTextField.setPromptText(value);
     }
 
     public void setTitle(String title) {
@@ -168,16 +176,16 @@ public class TitledTextFieldBox extends HBox {
         return titleLabel;
     }
 
-    public TextField getTextField() {
-        return textField;
+    public TextField getInnerTextField() {
+        return innerTextField;
     }
 
     public EventHandler<ActionEvent> getOnAction() {
-        return textField.getOnAction();
+        return innerTextField.getOnAction();
     }
 
     public void setOnAction(EventHandler<ActionEvent> onAction) {
-        textField.setOnAction(onAction);
+        innerTextField.setOnAction(onAction);
     }
 
     public boolean isUseAutoTitles() {
@@ -187,4 +195,5 @@ public class TitledTextFieldBox extends HBox {
     public void setUseAutoTitles(boolean useAutoTitles) {
         this.useAutoTitles = useAutoTitles;
     }
+
 }
