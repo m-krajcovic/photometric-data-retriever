@@ -7,7 +7,6 @@ import cz.muni.physics.pdr.app.javafx.Shaker;
 import cz.muni.physics.pdr.app.javafx.SpriteAnimation;
 import cz.muni.physics.pdr.app.javafx.control.DecimalTextField;
 import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
-import cz.muni.physics.pdr.app.javafx.formatter.DecimalFilter;
 import cz.muni.physics.pdr.app.model.RadiusModel;
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -17,7 +16,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -124,7 +126,6 @@ public class SearchOverviewController extends StageController {
             }
         });
 
-        radiusTextField.setTextFormatter(new TextFormatter<>(new DecimalFilter()));
         radiusUnitChoiceBox.setItems(FXCollections.observableArrayList(RadiusModel.Unit.values()));
         radiusUnitChoiceBox.getSelectionModel().selectFirst();
         searchModel.queryProperty().bindBidirectional(searchTextField.textWithPrefixProperty());

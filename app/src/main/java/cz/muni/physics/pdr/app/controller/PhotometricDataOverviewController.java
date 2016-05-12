@@ -9,6 +9,7 @@ import cz.muni.physics.pdr.app.model.converters.PhotometricDataModelConverter;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
@@ -88,6 +89,8 @@ public class PhotometricDataOverviewController extends StageController {
         saveAllMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
         chart.setCacheHint(CacheHint.SPEED);
+
+
     }
 
     @FXML
@@ -100,20 +103,20 @@ public class PhotometricDataOverviewController extends StageController {
         if (result.isPresent()) {
             entryFormat = result.get();
 
-        String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
-        File zip = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
-                lastSavePath,
-                "pdr-export-" + coords,
-                stage,
-                new FileChooser.ExtensionFilter("Zip file (*.zip)", "*.zip"));
-        if (zip != null)
-            updateLastSavePath(zip.getParent());
+            String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
+            File zip = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
+                    lastSavePath,
+                    "pdr-export-" + coords,
+                    stage,
+                    new FileChooser.ExtensionFilter("Zip file (*.zip)", "*.zip"));
+            if (zip != null)
+                updateLastSavePath(zip.getParent());
             toZip(zip, coords + entryFormat);
 
         }
     }
 
-    private void updateLastSavePath(String newPath){
+    private void updateLastSavePath(String newPath) {
         lastSavePath = newPath;
         preferences.put("last.save.path", lastSavePath);
     }
@@ -248,9 +251,13 @@ public class PhotometricDataOverviewController extends StageController {
 
     public void setStellarObject(StellarObjectModel stellarObject) {
         this.stellarObject = stellarObject;
-        this.epochTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.epochProperty(), new NumberStringConverter(Locale.ENGLISH,"#.####"));
-        this.periodTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.periodProperty(), new NumberStringConverter(Locale.ENGLISH,"#.##########"));
+        this.epochTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.epochProperty(), new NumberStringConverter(Locale.ENGLISH, "#.####"));
+        this.periodTextField.getInnerTextField().textProperty().bindBidirectional(stellarObject.periodProperty(), new NumberStringConverter(Locale.ENGLISH, "#.##########"));
     }
 
 
+    @FXML
+    private void showMenuItem(ActionEvent actionEvent) {
+
+    }
 }

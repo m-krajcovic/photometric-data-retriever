@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import cz.muni.physics.pdr.app.javafx.control.DecimalTextField?>
 <?import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox?>
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import cz.muni.physics.pdr.app.javafx.control.DecimalTextField?>
-<?import javafx.geometry.Rectangle2D?>
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
+<?import java.util.Locale?>
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
     <children>
         <VBox alignment="BASELINE_CENTER">
             <children>
-                <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT"
+                           pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../images/planetsprite.png" />
+                        <Image url="@../images/planetsprite.png"/>
                     </image>
                     <viewport>
                         <Rectangle2D minX="0" minY="0" width="256" height="256"/>
@@ -30,26 +33,33 @@
                             </HBox.margin>
                         </TitledTextFieldBox>
                         <!--<TextField maxWidth="234" prefHeight="27" prefWidth="234" />-->
-                        <DecimalTextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="%textfield.radius.prompt" styleClass="input-group-left">
+                        <DecimalTextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0"
+                                          prefWidth="63.0" promptText="%textfield.radius.prompt"
+                                          styleClass="input-group-left">
+                            <locale><Locale fx:constant="ENGLISH"/></locale>
                         </DecimalTextField>
-                        <ChoiceBox fx:id="radiusUnitChoiceBox" prefHeight="27" prefWidth="60.0" styleClass="input-group-right">
+                        <ChoiceBox fx:id="radiusUnitChoiceBox" prefHeight="27" prefWidth="60.0"
+                                   styleClass="input-group-right">
                             <HBox.margin>
-                                <Insets right="5.0" />
+                                <Insets right="5.0"/>
                             </HBox.margin>
                         </ChoiceBox>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="%button.search" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction"
+                                prefHeight="27.0" prefWidth="69.0" text="%button.search"/>
                     </children>
                     <VBox.margin>
-                        <Insets top="30.0" />
+                        <Insets top="30.0"/>
                     </VBox.margin>
                 </HBox>
-                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="" textAlignment="CENTER" textFill="#d35244" visible="false">
+                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text=""
+                       textAlignment="CENTER" textFill="#d35244" visible="false">
                     <VBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="5.0"/>
                     </VBox.margin>
                 </Label>
-                <ProgressIndicator fx:id="searchProgressIndicator" visible="false" />
-                <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="306.0" text="" textAlignment="CENTER" visible="false" />
+                <ProgressIndicator fx:id="searchProgressIndicator" visible="false"/>
+                <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0"
+                       prefWidth="306.0" text="" textAlignment="CENTER" visible="false"/>
             </children>
         </VBox>
     </children>

@@ -13,7 +13,15 @@ import java.util.function.UnaryOperator;
  */
 public class DecimalFilter implements UnaryOperator<TextFormatter.Change> {
 
-    private DecimalFormat format = new DecimalFormat("#.0");
+    private DecimalFormat format;
+
+    public DecimalFilter() {
+        this(new DecimalFormat("#.0"));
+    }
+
+    public DecimalFilter(DecimalFormat format) {
+        this.format = format;
+    }
 
     @Override
     public TextFormatter.Change apply(TextFormatter.Change change) {
@@ -23,11 +31,14 @@ public class DecimalFilter implements UnaryOperator<TextFormatter.Change> {
 
         ParsePosition parsePosition = new ParsePosition(0);
         Object object = format.parse(change.getControlNewText(), parsePosition);
-
         if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
             return null;
         } else {
             return change;
         }
+    }
+
+    public DecimalFormat getFormat() {
+        return format;
     }
 }

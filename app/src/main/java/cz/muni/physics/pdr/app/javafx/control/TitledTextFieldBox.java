@@ -25,7 +25,7 @@ import java.util.function.UnaryOperator;
  */
 public class TitledTextFieldBox extends HBox {
     private Label titleLabel;
-    private final TextField innerTextField;
+    private TextField innerTextField;
     private UnaryOperator<TextFormatter.Change> filter = c -> c;
     private String delimiter;
     private Map<String, String> autoTitles;
