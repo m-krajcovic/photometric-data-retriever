@@ -59,7 +59,7 @@
                                 <Insets left="10.0" right="10.0"/>
                             </HBox.margin>
                         </TitledTextFieldBox>
-                        <Button mnemonicParsing="false" prefWidth="94.0" onAction="#drawChart" text="%chart.redraw"/>
+                        <Button mnemonicParsing="false" prefWidth="94.0" onAction="#handleRedraw" text="%chart.redraw"/>
                     </children>
                 </HBox>
             </children>
@@ -76,10 +76,28 @@
                         <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#handleSaveAllMenuItem"
                                   text="%menu.item.save.all"/>
                         <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save"/>
-                        <MenuItem fx:id="reportMenuItem" mnemonicParsing="false" onAction="#showMenuItem" text="%menu.item.report"/>
+                        <MenuItem fx:id="reportMenuItem" mnemonicParsing="false" onAction="#showReportMenuItem" text="%menu.item.report"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem"
                                   text="%menu.item.close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%chart">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showAllInChart" text="%chart.show.all"/>
+                        <Menu fx:id="showOneMenu" mnemonicParsing="false" text="%chart.show">
+                        </Menu>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%originals">
+                    <items>
+                        <Menu fx:id="openOriginalFileMenu" mnemonicParsing="false" text="%open.original">
+                        </Menu>
+                        <Menu fx:id="openOutputFolderMenu" mnemonicParsing="false" text="%open.output">
+                        </Menu>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem onAction="#handleOpenPlugins" text="%open.plugins"/>
                     </items>
                 </Menu>
             </menus>

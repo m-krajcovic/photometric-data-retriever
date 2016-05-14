@@ -1,24 +1,29 @@
 package cz.muni.physics.pdr.app.controller;
 
-import cz.muni.physics.pdr.app.javafx.PhotometricChartDataFactory;
+import cz.muni.physics.pdr.app.javafx.chart.PhotometricChartDataFactory;
 import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.model.converters.PhotometricDataModelConverter;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.*;
 import javafx.stage.FileChooser;
 import javafx.util.converter.NumberStringConverter;
 import org.apache.logging.log4j.LogManager;
@@ -28,14 +33,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.awt.*;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -50,12 +55,17 @@ public class PhotometricDataOverviewController extends StageController {
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataOverviewController.class);
 
+
+    @Autowired
+    private Screens app;
     @Autowired
     private Executor executor;
     @Autowired
     private Preferences preferences;
     @Value("${last.save.path}")
     private String lastSavePath;
+    @Autowired
+    private File pluginsDir;
 
     @FXML
     private TitledTextFieldBox epochTextField;
@@ -77,6 +87,12 @@ public class PhotometricDataOverviewController extends StageController {
     private ScatterChart<Number, Number> chart;
     @FXML
     private ProgressIndicator chartProgressIndicator;
+    @FXML
+    private Menu showOneMenu;
+    @FXML
+    private Menu openOutputFolderMenu;
+    @FXML
+    private Menu openOriginalFileMenu;
 
     private Map<StarSurveyModel, List<PhotometricDataModel>> data;
     private StellarObjectModel stellarObject;
@@ -127,17 +143,63 @@ public class PhotometricDataOverviewController extends StageController {
     }
 
     public void setData(Map<StarSurveyModel, List<PhotometricDataModel>> data) {
-        this.data = data;
-        chart.getData().clear();
+        Map<StarSurveyModel, List<PhotometricDataModel>> result = new HashMap<>();
         for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
-            tabPane.getTabs().add(getTab(entry.getKey().getName(), entry.getValue()));
-            saveMenu.getItems().add(getMenuItem(entry.getKey().getName(), entry.getValue()));
+            Map<String, List<PhotometricDataModel>> byIds = entry.getValue().stream().collect(Collectors.groupingBy(PhotometricDataModel::getId));
+            MenuItem item = getOpenOutputFolderMenuItem(entry.getKey().getPlugin().getName());
+            if (item != null)
+                openOutputFolderMenu.getItems().add(item);
+            byIds.forEach((s, models) -> {
+                if (!models.isEmpty()) {
+                    String name = entry.getKey().getPlugin().getName() + (s.isEmpty() ? "" : ("-" + s));
+                    StarSurveyModel survey = new StarSurveyModel(name, entry.getKey().getPlugin());
+                    result.put(survey, models);
+                    tabPane.getTabs().add(getTab(survey, models));
+                    saveMenu.getItems().add(getSaveMenuItem(survey, models));
+                    showOneMenu.getItems().add(getShowOneMenuItem(survey));
+                    MenuItem fileMenuItem = getOpenOriginalFileMenuItem(survey.getPlugin().getName(), s);
+                    if (fileMenuItem != null)
+                        openOriginalFileMenu.getItems().add(fileMenuItem);
+                }
+            });
         }
-        drawChart();
+        this.data = result;
+        chart.getData().clear();
+        handleRedraw();
+    }
+
+    private void showOneInChart(StarSurveyModel survey) {
+        chart.getYAxis().setAutoRanging(false);
+        chart.getData().stream().forEach(
+                s -> {
+                    double max = -Double.MAX_VALUE;
+                    double min = Double.MAX_VALUE;
+                    if (s.getName().equals(survey.getName())) {
+                        for (XYChart.Data<Number, Number> d : s.getData()) {
+                            double y = d.getYValue().doubleValue();
+                            if (y > max) max = y;
+                            if (y < min) min = y;
+                            d.getNode().setVisible(true);
+                        }
+                        NumberAxis yAxis = (NumberAxis) chart.getYAxis();
+                        yAxis.setLowerBound(min);
+                        yAxis.setUpperBound(max);
+                    } else {
+                        s.getData().forEach(d -> d.getNode().setVisible(false));
+                    }
+                }
+        );
     }
 
     @FXML
-    private void drawChart() {
+    private void showAllInChart() {
+        chart.getYAxis().setAutoRanging(true);
+        chart.getData().stream().forEach(s -> s.getData().forEach(
+                d -> d.getNode().setVisible(true)
+        ));
+    }
+
+    private void drawChart(Map<StarSurveyModel, List<PhotometricDataModel>> data) {
         chart.getData().clear();
         PhotometricChartDataFactory dataFactory = PhotometricChartDataFactory.getInstance(stellarObject);
         dataFactory.setUpChart(chart, resources);
@@ -164,7 +226,12 @@ public class PhotometricDataOverviewController extends StageController {
         executor.execute(task);
     }
 
-    private Tab getTab(String name, List<PhotometricDataModel> models) {
+    @FXML
+    private void handleRedraw() {
+        drawChart(data);
+    }
+
+    private Tab getTab(StarSurveyModel model, List<PhotometricDataModel> models) {
         TableView<PhotometricDataModel> table;
         try {
             table = FXMLLoader.load(this.getClass().getResource("/view/PhotometricDataTable.fxml"), resources);
@@ -172,15 +239,36 @@ public class PhotometricDataOverviewController extends StageController {
             throw new RuntimeException("Failed to load .fxml resource", e);
         }
         table.getItems().addAll(models);
-        Tab tab = new Tab(String.format("%s (%d)", name, models.size()), table);
+        Tab tab = new Tab();
         tab.setClosable(false);
+        tab.setContent(table);
+        tab.setGraphic(new Label(String.format("%s (%d)", model.getName(), models.size())));
+        tab.getGraphic().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        showOneInChart(model);
+                    }
+                }
+            }
+        });
+
         return tab;
     }
 
-    private MenuItem getMenuItem(String name, List<PhotometricDataModel> models) {
-        MenuItem menuItem = new MenuItem(name);
+    private MenuItem getSaveMenuItem(StarSurveyModel model, List<PhotometricDataModel> models) {
+        MenuItem menuItem = new MenuItem(model.getName());
         menuItem.setOnAction(event -> {
-            toFile(name, models);
+            toFile(model.getPlugin().getName(), models);
+        });
+        return menuItem;
+    }
+
+    private MenuItem getShowOneMenuItem(StarSurveyModel survey) {
+        MenuItem menuItem = new MenuItem(survey.getName());
+        menuItem.setOnAction(event -> {
+            showOneInChart(survey);
         });
         return menuItem;
     }
@@ -192,7 +280,7 @@ public class PhotometricDataOverviewController extends StageController {
                 try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
                     PhotometricDataModelConverter converter = PhotometricDataModelConverter.get(entrySuffix);
                     for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
-                        ZipEntry e = new ZipEntry(MessageFormat.format("{0}{1}", entry.getKey().getName(), converter.getExtension()));
+                        ZipEntry e = new ZipEntry(MessageFormat.format("{0}{1}", entry.getKey().getPlugin().getName(), converter.getExtension()));
                         out.putNextEntry(e);
                         write(out, entry.getValue(), converter);
                         out.closeEntry();
@@ -257,7 +345,83 @@ public class PhotometricDataOverviewController extends StageController {
 
 
     @FXML
-    private void showMenuItem(ActionEvent actionEvent) {
+    private void showReportMenuItem() {
+        app.showSearchReport(stage, stellarObject, data);
+    }
 
+    @FXML
+    private void handleOpenPlugins() {
+        try {
+            Desktop.getDesktop().open(pluginsDir);
+        } catch (IOException e) {
+            FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
+        }
+    }
+
+    private MenuItem getOpenOriginalFileMenuItem(String pluginName, String id) {
+        File original = getOriginalFile(pluginName, id);
+        if (original != null) {
+            MenuItem menuItem = new MenuItem(pluginName + (id.isEmpty() ? "" : ("-" + id)));
+            menuItem.setOnAction(event -> {
+                try {
+                    Desktop.getDesktop().open(original);
+                } catch (IOException e) {
+                    FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
+                }
+            });
+            return menuItem;
+        }
+        return null;
+    }
+
+    private MenuItem getOpenOutputFolderMenuItem(String pluginName) {
+        File outputDir = getOutputDir(pluginName);
+        if (outputDir.exists()) {
+            MenuItem menuItem = new MenuItem(pluginName);
+            menuItem.setOnAction(event -> {
+                try {
+                    Desktop.getDesktop().open(getOutputDir(pluginName));
+                } catch (IOException e) {
+                    FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
+                }
+            });
+            return menuItem;
+        }
+        return null;
+    }
+
+    private File getOriginalFile(String pluginName, String id) {
+        File outputDir = getOutputDir(pluginName);
+        if (outputDir.exists()) {
+            File[] list = outputDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.startsWith(pluginName);
+                }
+            });
+            if (list.length == 0) {
+                File original = getOldest(outputDir.listFiles());
+                if (original.getName().startsWith(pluginName + (id.isEmpty() ? "" : id))) {
+                    return original;
+                }
+            } else {
+                return getOldest(list);
+            }
+        }
+        return null;
+    }
+
+    private File getOutputDir(String pluginName) {
+        return new File(pluginsDir, pluginName + File.separator + "output");
+    }
+
+    private File getOldest(File[] files) {
+        File oldest = files[0];
+        for (int i = 1; i < files.length; i++) {
+            if (files[i].lastModified() < oldest.lastModified()) {
+                oldest = files[i];
+            }
+        }
+        return oldest;
     }
 }

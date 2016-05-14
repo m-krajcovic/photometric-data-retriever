@@ -55,13 +55,12 @@ public class NameSearchTaskService extends Service<StellarObject> {
                 logger.debug("Trying to get StellarObject.");
                 StellarObject sesameResult = sesameNameResolver.findByName(searchModel.getQuery());
                 List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
-                System.out.println(vsxResult.size());
                 if (vsxResult.size() == 1) {
                     sesameResult.getNames().add(vsxResult.get(0).getName());
                     sesameResult.setEpoch(vsxResult.get(0).getEpoch());
                     sesameResult.setPeriod(vsxResult.get(0).getPeriod());
                 }
-                return sesameResult;
+                return sesameResult.getNames().size() > 0 ? sesameResult : null;
             }
         };
     }
@@ -69,8 +68,17 @@ public class NameSearchTaskService extends Service<StellarObject> {
     @Override
     protected void succeeded() {
         logger.debug("Succeeded in retrieving star resolver data.");
-        starSurveySearchTaskService.setResolverResult(getValue());
-        starSurveySearchTaskService.start();
+        StellarObject result = getValue();
+        if (result != null) {
+            starSurveySearchTaskService.setResolverResult(getValue());
+            starSurveySearchTaskService.start();
+        } else {
+            if (onError != null)
+                onError.accept(resources.getString("no.results.found"));
+            if (onDone != null) {
+                onDone.call();
+            }
+        }
         reset();
     }
 
@@ -106,7 +114,7 @@ public class NameSearchTaskService extends Service<StellarObject> {
     }
 
     @Autowired
-    public void setResources(ResourceBundle resources){
+    public void setResources(ResourceBundle resources) {
         this.resources = resources;
     }
 

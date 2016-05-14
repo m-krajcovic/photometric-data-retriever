@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.omc;
 
+import cz.muni.physics.pdr.java.PluginUtils;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.TableHDU;
@@ -53,7 +54,7 @@ public class Main {
         Element fetchAnchor = doc.getElementsByAttributeValueStarting("href", "fetch_lcurve.jsp?obj_id=").first();
         String href = fetchAnchor.attr("href");
         URL fetchUrl = new URL("https://sdc.cab.inta-csic.es/omc/secure/" + href);
-        try (InputStream is = fetchUrl.openStream()) {
+        try (InputStream is = PluginUtils.copyUrlOpenStream(fetchUrl, "OMC-" + PluginUtils.getQueryMap(fetchUrl.getQuery()).getOrDefault("obj_id", "-" + System.currentTimeMillis()) + ".fits", 3)) {
             Fits fits = new Fits(is);
             TableHDU table = (TableHDU) fits.getHDU(1);
             float[] mags = (float[]) table.getColumn("MAG_V");

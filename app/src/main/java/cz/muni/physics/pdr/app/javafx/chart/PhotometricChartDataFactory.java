@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.app.javafx;
+package cz.muni.physics.pdr.app.javafx.chart;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
@@ -7,6 +7,7 @@ import javafx.scene.chart.XYChart;
 import javafx.util.StringConverter;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -28,10 +29,11 @@ public abstract class PhotometricChartDataFactory {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(name);
         int size = models.size();
-        int increment = size > 10000 ? 10 : 1;
+        int increment = size > 1000 ? (size > 2000 ? 10 : 5) : 1;
         for (int i = 0; i < size; i += increment) {
             PhotometricDataModel d = models.get(i);
-            series.getData().add(getData(d));
+            if (d.getMagnitude() != 0)
+                series.getData().add(getData(d));
         }
         return series;
     }
@@ -40,7 +42,7 @@ public abstract class PhotometricChartDataFactory {
         return new NumberAxis.DefaultFormatter(yAxis) {
             @Override
             public String toString(Number value) {
-                return String.format("%7.1f", -value.doubleValue());
+                return String.format(Locale.ENGLISH, "%7.1f", -value.doubleValue());
             }
         };
     }

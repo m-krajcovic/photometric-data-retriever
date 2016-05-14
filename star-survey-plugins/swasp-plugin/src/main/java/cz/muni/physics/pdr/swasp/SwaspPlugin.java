@@ -3,9 +3,7 @@ package cz.muni.physics.pdr.swasp;
 import au.com.bytecode.opencsv.CSVReader;
 import cz.muni.physics.pdr.java.PhotometricData;
 import cz.muni.physics.pdr.java.Plugin;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import cz.muni.physics.pdr.java.PluginUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,42 +29,21 @@ public class SwaspPlugin implements Plugin {
         } catch (MalformedURLException e) {
             return result;
         }
-        Document doc;
-        try {
-            doc = Jsoup.connect(url).get();
-        } catch (IOException e) {
-            return result;
-        }
-        for (Element a : doc.getElementsByTag("a")) {
-            if (a.ownText().equals("CSV")) {
-                try {
-                    u = new URL("http://wasp.cerit-sc.cz" + a.attr("href"));
-                } catch (MalformedURLException e) {
-                    return result;
-                }
-            }
-        }
 
-        BufferedReader in;
-        try {
-            in = new BufferedReader(new InputStreamReader(u.openStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return result;
-        }
-        CSVReader reader = new CSVReader(in);
-        try {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(PluginUtils.copyUrlOpenStream(u,"SWASP-" + PluginUtils.getQueryMap(u.getQuery()).getOrDefault("object", "-" + System.currentTimeMillis()) + ".csv", 3)));
+             CSVReader reader = new CSVReader(in)) {
             String[] nextLine = reader.readNext();
             if (nextLine == null) return result;
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine.length >= 4) {
-                    PhotometricData data = new PhotometricData(nextLine[0], nextLine[2], nextLine[3]);
+                    PhotometricData data = new PhotometricData(nextLine[0], nextLine[2], nextLine[3], nextLine[1]);
                     result.add(data);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 }

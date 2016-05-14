@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.backend.entity;
 
+import cz.muni.physics.pdr.backend.utils.NumberUtils;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -9,6 +11,7 @@ public class PhotometricData {
     private double julianDate;
     private double magnitude;
     private double error;
+    private String id = null;
 
     public PhotometricData(double julianDate, double magnitude, double error) {
         this.julianDate = julianDate;
@@ -17,9 +20,27 @@ public class PhotometricData {
     }
 
     public PhotometricData(String julianDate, String magnitude, String error) {
-        this.julianDate = Double.parseDouble(julianDate);
-        this.magnitude = Double.parseDouble(magnitude);
-        this.error = Double.parseDouble(error);
+        this(NumberUtils.isParsable(julianDate) ? Double.parseDouble(julianDate) : 0,
+                NumberUtils.isParsable(magnitude) ? Double.parseDouble(magnitude) : 0,
+                NumberUtils.isParsable(error) ? Double.parseDouble(error) : 0);
+    }
+
+    public PhotometricData(double julianDate, double magnitude, double error, String id) {
+        this(julianDate, magnitude, error);
+        this.id = id;
+    }
+
+    public PhotometricData(String julianDate, String magnitude, String error, String id) {
+        this(julianDate, magnitude, error);
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public double getJulianDate() {

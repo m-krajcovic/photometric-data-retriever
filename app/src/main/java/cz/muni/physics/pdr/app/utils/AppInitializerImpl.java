@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author Michal Krajčovič
@@ -63,23 +61,6 @@ public class AppInitializerImpl implements AppInitializer {
             }
         }
 
-        mainApp.notifyPreloader(PreloaderHandlerEvent.PLUGIN_FOLDER_CHECK);
-        logger.debug("Checking if plugins folder {} exists", pluginsDir.getAbsoluteFile());
-        if (!pluginsDir.exists()) {
-            confirmations.add(alert -> {
-                alert.setTitle("Plugins folder not found");
-                alert.setHeaderText("Could not find folder " + pluginsDir.getAbsolutePath());
-                alert.setContentText("Default plugins will be loaded. Java 8+ is required for these to work.");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    loadDefaultPlugins();
-                } else {
-                    logger.debug("Plugins info alert was closed and not confirmed, shutting down app");
-                    shutdown = true;
-                }
-            });
-        }
-
         mainApp.notifyPreloader(PreloaderHandlerEvent.CONFIG_FILE_CHECK);
         logger.debug("Checking if configuration file {} exists", configFile.getAbsoluteFile());
         if (!configFile.exists()) {
@@ -97,40 +78,6 @@ public class AppInitializerImpl implements AppInitializer {
                 }
             });
         }
-    }
-
-    private void loadDefaultPlugins() {
-        Task task = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                logger.debug("Started loading default plugins.");
-                try (ZipInputStream zis = new ZipInputStream(AppInitializerImpl.class.getResourceAsStream("/plugins.zip"))) {
-                    ZipEntry ze = zis.getNextEntry();
-                    byte[] buffer = new byte[1024];
-                    while (ze != null) {
-                        String filePath = appDataDir + File.separator + ze.getName();
-                        if (!ze.isDirectory()) {
-                            try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
-                                int read = 0;
-                                while ((read = zis.read(buffer)) != -1) {
-                                    bos.write(buffer, 0, read);
-                                }
-                                bos.close();
-                            }
-                        } else {
-                            File dir = new File(filePath);
-                            dir.mkdir();
-                        }
-                        zis.closeEntry();
-                        ze = zis.getNextEntry();
-                    }
-                }
-                return null;
-            }
-        };
-        Dialog dialog = FXMLUtils.getProgressDialog(primaryStage, task);
-        executeTask(task);
-        dialog.showAndWait();
     }
 
     private void loadDefaultConfigFile() {

@@ -3,6 +3,8 @@ package cz.muni.physics.pdr.app.model;
 import cz.muni.physics.pdr.backend.entity.PhotometricData;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * @author Michal Krajčovič
@@ -13,12 +15,14 @@ public class PhotometricDataModel {
     private DoubleProperty julianDate = new SimpleDoubleProperty();
     private DoubleProperty magnitude = new SimpleDoubleProperty();
     private DoubleProperty error = new SimpleDoubleProperty();
+    private StringProperty id = new SimpleStringProperty("");
 
     public PhotometricDataModel() {
     }
 
     public PhotometricDataModel(PhotometricData data) {
         this(data.getJulianDate(), data.getMagnitude(), data.getError());
+        if (data.getId() != null) id.setValue(data.getId());
     }
 
     public PhotometricDataModel(String julianDate, String magnitude, String error) {
@@ -30,7 +34,19 @@ public class PhotometricDataModel {
         this.magnitude.setValue(magnitude);
         this.error.setValue(error);
     }
-    
+
+    public String getId() {
+        return id.get();
+    }
+
+    public StringProperty idProperty() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id.set(id);
+    }
+
     public double getJulianDate() {
         return julianDate.get();
     }

@@ -1,7 +1,9 @@
 package cz.muni.physics.pdr.app.spring;
 
+import cz.muni.physics.pdr.app.MainApp;
 import cz.muni.physics.pdr.app.controller.StageController;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -43,6 +45,11 @@ class SpringDialogBuilder {
         stage.setTitle(title);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(owner);
+        return this;
+    }
+
+    SpringDialogBuilder icon(String iconPath) {
+        stage.getIcons().add(new Image(MainApp.class.getResourceAsStream(iconPath)));
         return this;
     }
 

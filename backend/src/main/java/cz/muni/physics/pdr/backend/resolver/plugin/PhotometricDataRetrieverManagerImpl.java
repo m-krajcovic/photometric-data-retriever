@@ -52,8 +52,8 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             futures.add(run(survey.getPlugin(), params)
                     .thenAccept(data -> {
                         logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
+                        resultMap.put(survey, data);
                         if (!data.isEmpty()) {
-                            resultMap.put(survey, data);
                             if (onResultsFound != null)
                                 onResultsFound.accept(survey);
                         } else {

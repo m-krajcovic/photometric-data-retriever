@@ -1,9 +1,6 @@
 package cz.muni.physics.pdr.app.spring;
 
-import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
-import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
-import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
-import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
+import cz.muni.physics.pdr.app.controller.*;
 import cz.muni.physics.pdr.app.model.EntryModel;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -130,6 +127,15 @@ public class Screens {
         Stage stage = builder.get();
         stage.showAndWait();
         return controller.isOkClicked();
+    }
+
+    public void showSearchReport(Stage owner, StellarObjectModel stellarObject, Map<StarSurveyModel, List<PhotometricDataModel>> data) {
+        SpringDialogBuilder builder =
+                SpringDialogBuilder.load(fxmlLoader(), "/view/SearchReportDialog.fxml")
+                        .stage(resources.getString("search.report"), owner);
+        SearchReportDialogController controller = builder.controller();
+        controller.setData(stellarObject, data);
+        builder.get().showAndWait();
     }
 
     private SpringFXMLLoader fxmlLoader() {

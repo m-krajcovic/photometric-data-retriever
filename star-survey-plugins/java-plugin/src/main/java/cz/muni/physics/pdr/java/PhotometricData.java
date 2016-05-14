@@ -9,14 +9,21 @@ public class PhotometricData {
     private Double julianDate;
     private Double magnitude;
     private Double error;
+    private String id;
 
     public PhotometricData() {
     }
 
+
+    public PhotometricData(String julianDate, String magnitude, String error, String id) {
+        this(julianDate, magnitude, error);
+        this.id = id;
+    }
+
     public PhotometricData(String julianDate, String magnitude, String error) {
-        this.julianDate = Double.parseDouble(julianDate);
-        this.magnitude = Double.parseDouble(magnitude);
-        this.error = Double.parseDouble(error);
+        this.julianDate = PluginUtils.isNumeric(julianDate.trim()) ? Double.parseDouble(julianDate) : 0;
+        this.magnitude = PluginUtils.isNumeric(julianDate.trim()) ? Double.parseDouble(magnitude) : 0;
+        this.error = PluginUtils.isNumeric(julianDate.trim()) ? Double.parseDouble(error) : 0;
     }
 
     public PhotometricData(Double julianDate, Double magnitude, Double error) {
@@ -26,7 +33,7 @@ public class PhotometricData {
     }
 
     public String toCsv() {
-        return julianDate + "," + magnitude + "," + error;
+        return julianDate + "," + magnitude + "," + error + (id == null ? "" : ("," + id));
     }
 
     public Double getJulianDate() {
@@ -51,6 +58,14 @@ public class PhotometricData {
 
     public void setError(Double error) {
         this.error = error;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

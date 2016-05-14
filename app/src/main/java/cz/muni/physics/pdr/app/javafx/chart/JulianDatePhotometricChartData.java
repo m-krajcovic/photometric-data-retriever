@@ -1,4 +1,4 @@
-package cz.muni.physics.pdr.app.javafx;
+package cz.muni.physics.pdr.app.javafx.chart;
 
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import javafx.scene.chart.NumberAxis;

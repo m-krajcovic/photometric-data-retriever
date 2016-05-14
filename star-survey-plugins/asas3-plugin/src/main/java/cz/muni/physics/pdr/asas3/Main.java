@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.asas3;
 
+import cz.muni.physics.pdr.java.PluginUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,8 +22,8 @@ public class Main {
         //http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3
         Main main = new Main();
 
-        if(args.length == 1){
-            if (args[0].startsWith("http")){
+        if (args.length == 1) {
+            if (args[0].startsWith("http")) {
                 main.readData(args[0]);
             }
         }
@@ -39,7 +41,7 @@ public class Main {
             return;
         }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(PluginUtils.copyUrlOpenStream(url, "ASAS3-" + url.getQuery().split(",")[0] + ".txt", 3)))) {
             String line;
             List<AsasData> dataList = new ArrayList<>();
             double[] avgErr = new double[5];

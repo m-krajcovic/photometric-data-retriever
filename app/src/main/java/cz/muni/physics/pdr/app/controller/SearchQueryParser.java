@@ -2,7 +2,7 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.utils.DefaultHashMap;
-import cz.muni.physics.pdr.app.utils.NumberUtils;
+import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

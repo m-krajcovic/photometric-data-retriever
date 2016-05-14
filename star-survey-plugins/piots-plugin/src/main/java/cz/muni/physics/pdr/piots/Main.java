@@ -1,9 +1,11 @@
 package cz.muni.physics.pdr.piots;
 
+import cz.muni.physics.pdr.java.PluginUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,7 +35,8 @@ public class Main {
 
         String searchUrl = "http://grb2.pi.ncbj.gov.pl/pi/db/public/2006_2009/pi/starsAround.php?db=Pi%20of%20the%20Sky&ra=" + rah + "&dec=" + decdeg + "&rad=0.01";
 
-        for (Element a : Jsoup.connect(searchUrl).get().getElementsByTag("a")) {
+        Elements as = Jsoup.connect(searchUrl).get().getElementsByTag("a");
+        for (Element a : as) {
             String starId = a.text();
 
             Document doc = Jsoup.connect("http://grb2.pi.ncbj.gov.pl/pi/db/public/2006_2009/pi/starView.php?&starId=" + starId).get();
@@ -68,6 +71,8 @@ public class Main {
                             .data("clamping1", "")
                             .data("type", "CSVfull").method(Connection.Method.GET).execute().body();
 
+            PluginUtils.saveOriginal("PIOTS-" + starId + ".csv", output, as.size() + 3);
+
             List<String> result = Arrays.stream(output.split("\n")).filter(s -> !s.isEmpty() && !s.startsWith("#") && !s.startsWith("$")).collect(Collectors.toList());
 
             for (String s : result) {
@@ -75,7 +80,7 @@ public class Main {
                 double jd = Double.parseDouble(splits[0]) + 2453250;
                 String mag = splits[1].trim();
                 String error = "0";
-                System.out.println(Double.toString(jd) + "," + mag + "," + error);
+                System.out.println(Double.toString(jd) + "," + mag + "," + error + "," + starId);
             }
         }
     }

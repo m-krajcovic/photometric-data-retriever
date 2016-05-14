@@ -3,6 +3,7 @@ package cz.muni.physics.pdr.app.model.converters;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Michal on 28-Apr-16.
@@ -10,7 +11,7 @@ import java.util.List;
 public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataModelConverter {
     @Override
     public String toString(PhotometricDataModel object) {
-        return String.format("%s\t%s\t%s", object.getJulianDate(), object.getMagnitude(), object.getError());
+        return String.format(Locale.ENGLISH, "%s\t%s\t%s", object.getJulianDate(), object.getMagnitude(), object.getError());
     }
 
     @Override
@@ -39,10 +40,10 @@ public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataM
     }
 
     private String toString(PhotometricDataModel object, int jd, int mag, int err) {
-        String jdString = String.format("%" + (-jd) + "s", object.getJulianDate()).replace(' ' , '0');
-        String magString = String.format("%" + (-mag) + "s", object.getMagnitude()).replace(' ' , '0');
-        String errString = String.format("%" + (-err) + "s", object.getError()).replace(' ' , '0');
-        return String.format("%s\t%s\t%s", jdString, magString, errString);
+        String jdString = String.format(Locale.ENGLISH, "%" + (-jd) + "s", object.getJulianDate()).replace(' ', '0');
+        String magString = String.format(Locale.ENGLISH, "%" + (-mag) + "s", object.getMagnitude()).replace(' ', '0');
+        String errString = String.format(Locale.ENGLISH, "%" + (-err) + "s", object.getError()).replace(' ', '0');
+        return String.format(Locale.ENGLISH, "%s\t%s\t%s", jdString, magString, errString);
     }
 
     @Override
@@ -55,7 +56,4 @@ public class PhotometricDataModelZeroFillAsciiConverter extends PhotometricDataM
         return ".txt";
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.format("%2s", 2d));
-    }
 }

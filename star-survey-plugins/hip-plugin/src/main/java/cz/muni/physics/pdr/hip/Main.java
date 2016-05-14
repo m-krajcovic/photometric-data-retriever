@@ -1,5 +1,7 @@
 package cz.muni.physics.pdr.hip;
 
+import cz.muni.physics.pdr.java.PluginUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,16 +23,13 @@ public class Main {
     private void readData(String... args) throws IOException {
         URL url;
         if (args.length == 1) {
-            if (args[0].startsWith("http")) {//is url
-                url = new URL(args[0]);
-            } else { // it's id
                 url = new URL("http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/Vgraph/txt?I/239/./" + args[0] + "&0&P=0&-Y&mag&-y&-&-&-");
-            }
         } else {
             return;
+
         }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(PluginUtils.copyUrlOpenStream(url, "HIP-" + args[0] + ".txt", 3)))) {
             String line;
             while ((line = in.readLine()) != null) {
                 if (line.startsWith("#")) continue;

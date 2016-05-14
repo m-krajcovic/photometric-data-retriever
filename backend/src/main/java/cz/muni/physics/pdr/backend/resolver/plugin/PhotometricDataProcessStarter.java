@@ -83,12 +83,12 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
             String[] split = line.split(",");
             if (split.length >= 3 && NumberUtils.isParsable(split[0])
                     && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
-                return new PhotometricData(split[0], split[1], split[2]);
+                PhotometricData data = new PhotometricData(split[0], split[1], split[2]);
+                if (split.length >= 4) {
+                    data.setId(split[3]);
+                }
+                return data;
             }
-            return null;
-        });
-        StreamGobbler errorOutput = new StreamGobbler<>(p.getErrorStream(), line -> {
-            logger.error(line);
             return null;
         });
 
