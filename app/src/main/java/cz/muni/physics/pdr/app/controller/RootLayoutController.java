@@ -58,7 +58,11 @@ public class RootLayoutController {
     @FXML
     private void handleOpenPlugins() {
         try {
-            Desktop.getDesktop().open(pluginsDir);
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(pluginsDir);
+            } else {
+                FXMLUtils.textInputDialog(pluginsDir.getAbsolutePath(), resources.getString("not.supported"), resources.getString("desktop.open.not.supported"), resources.getString("folder.path"), false).showAndWait();
+            }
         } catch (IOException e) {
             FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
         }

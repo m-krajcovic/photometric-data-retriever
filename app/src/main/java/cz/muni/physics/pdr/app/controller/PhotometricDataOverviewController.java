@@ -364,7 +364,11 @@ public class PhotometricDataOverviewController extends StageController {
             MenuItem menuItem = new MenuItem(pluginName + (id.isEmpty() ? "" : ("-" + id)));
             menuItem.setOnAction(event -> {
                 try {
-                    Desktop.getDesktop().open(original);
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().open(original);
+                    } else {
+                        FXMLUtils.textInputDialog(pluginsDir.getAbsolutePath(), resources.getString("not.supported"), resources.getString("desktop.open.not.supported"), resources.getString("file.path"), false).showAndWait();
+                    }
                 } catch (IOException e) {
                     FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
                 }
@@ -380,7 +384,11 @@ public class PhotometricDataOverviewController extends StageController {
             MenuItem menuItem = new MenuItem(pluginName);
             menuItem.setOnAction(event -> {
                 try {
-                    Desktop.getDesktop().open(getOutputDir(pluginName));
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().open(outputDir);
+                    } else {
+                        FXMLUtils.textInputDialog(pluginsDir.getAbsolutePath(), resources.getString("not.supported"), resources.getString("desktop.open.not.supported"), resources.getString("folder.path"), false).showAndWait();
+                    }
                 } catch (IOException e) {
                     FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
                 }
