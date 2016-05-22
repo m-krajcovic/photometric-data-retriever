@@ -12,42 +12,60 @@ import javafx.beans.property.StringProperty;
  */
 public class StellarObjectModel {
     private StringProperty name;
-    private StringProperty rightAscension;
-    private StringProperty declination;
+    private DoubleProperty rightAscension;
+    private DoubleProperty declination;
     private DoubleProperty distance;
     private DoubleProperty epoch;
     private DoubleProperty period;
 
-    public StellarObjectModel(String name, String rightAscension, String declination, double distance, double epoch, double period) {
+    public StellarObjectModel() {
+        this.name = new SimpleStringProperty();
+        this.rightAscension = new SimpleDoubleProperty();
+        this.declination = new SimpleDoubleProperty();
+        this.distance = new SimpleDoubleProperty();
+        this.epoch = new SimpleDoubleProperty();
+        this.period = new SimpleDoubleProperty();
+    }
+
+    public StellarObjectModel(String name, double rightAscension, double declination, double distance, double epoch, double period) {
         this.name = new SimpleStringProperty(name);
-        this.rightAscension = new SimpleStringProperty(rightAscension);
-        this.declination = new SimpleStringProperty(declination);
+        this.rightAscension = new SimpleDoubleProperty(rightAscension);
+        this.declination = new SimpleDoubleProperty(declination);
         this.distance = new SimpleDoubleProperty(distance);
         this.epoch = new SimpleDoubleProperty(epoch);
         this.period = new SimpleDoubleProperty(period);
     }
 
-    public String getRightAscension() {
+    public StellarObjectModel(String name, Double rightAscension, Double declination, Double distance, Double epoch, Double period) {
+        this(name,
+                rightAscension == null ? 0 : rightAscension,
+                declination == null ? 0 : declination,
+                distance == null ? 0 : distance,
+                epoch == null ? 0 : epoch,
+                period == null ? 0 : period);
+    }
+
+    public double getRightAscension() {
         return rightAscension.get();
     }
 
-    public StringProperty rightAscensionProperty() {
+    public DoubleProperty rightAscensionProperty() {
         return rightAscension;
     }
 
-    public void setRightAscension(String rightAscension) {
+    public void setRightAscension(double rightAscension) {
         this.rightAscension.set(rightAscension);
     }
 
-    public String getDeclination() {
+    public double getDeclination() {
         return declination.get();
     }
 
-    public StringProperty declinationProperty() {
+    public DoubleProperty declinationProperty() {
         return declination;
     }
 
-    public void setDeclination(String declination) {
+    public void setDeclination(double declination) {
         this.declination.set(declination);
     }
 

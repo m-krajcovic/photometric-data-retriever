@@ -17,13 +17,22 @@ import javafx.scene.CacheHint;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.*;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.converter.NumberStringConverter;
 import org.apache.logging.log4j.LogManager;
@@ -34,10 +43,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -139,7 +156,7 @@ public class PhotometricDataOverviewController extends StageController {
 
     @FXML
     private void handleCloseMenuItem() {
-
+        stage.close();
     }
 
     public void setData(Map<StarSurveyModel, List<PhotometricDataModel>> data) {
@@ -401,20 +418,13 @@ public class PhotometricDataOverviewController extends StageController {
     private File getOriginalFile(String pluginName, String id) {
         File outputDir = getOutputDir(pluginName);
         if (outputDir.exists()) {
-            File[] list = outputDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.startsWith(pluginName);
-                }
+            File[] list = outputDir.listFiles((dir, name) -> {
+                return name.startsWith(pluginName + (id.isEmpty() ? "" : ("-" + id)));
             });
             if (list.length == 0) {
-                File original = getOldest(outputDir.listFiles());
-                if (original.getName().startsWith(pluginName + (id.isEmpty() ? "" : id))) {
-                    return original;
-                }
-            } else {
-                return getOldest(list);
+                list = outputDir.listFiles((dir, name) -> name.startsWith(pluginName));
             }
+            return getOldest(list);
         }
         return null;
     }

@@ -1,9 +1,9 @@
 package cz.muni.physics.pdr.backend.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -11,13 +11,27 @@ import java.util.Map;
  * @since 13/04/16
  */
 public class StellarObject {
-    private List<String> names = new ArrayList<>();
+    private String oName;
+    private Set<String> names = new HashSet<>();
     private Map<String, String> ids = new HashMap<>();
-    private double rightAscension;
-    private double declination;
-    private double epoch;
-    private double period;
-    private double distance;
+    private Double rightAscension;
+    private Double declination;
+    private Double epoch;
+    private Double period;
+    private Double distance;
+
+    public void merge(StellarObject other) {
+        if (other != null) {
+            this.oName = this.oName == null ? other.oName : this.oName;
+            this.rightAscension = this.rightAscension == null ? other.rightAscension : this.rightAscension;
+            this.declination = this.declination == null ? other.declination : this.declination;
+            this.names.addAll(other.names);
+            this.epoch = this.epoch == null ? other.epoch : this.epoch;
+            this.period = this.period == null ? other.period : this.period;
+            this.ids.putAll(other.ids);
+            this.distance = this.distance == null ? other.distance : this.distance;
+        }
+    }
 
     public double getDeclinationInHours() {
         return declination / 15;
@@ -27,11 +41,11 @@ public class StellarObject {
         return rightAscension / 15;
     }
 
-    public List<String> getNames() {
+    public Set<String> getNames() {
         return names;
     }
 
-    public void setNames(List<String> names) {
+    public void setNames(Set<String> names) {
         this.names = names;
     }
 
@@ -43,44 +57,52 @@ public class StellarObject {
         this.ids = ids;
     }
 
-    public double getRightAscension() {
+    public Double getRightAscension() {
         return rightAscension;
     }
 
-    public void setRightAscension(double rightAscension) {
+    public void setRightAscension(Double rightAscension) {
         this.rightAscension = rightAscension;
     }
 
-    public double getDeclination() {
+    public Double getDeclination() {
         return declination;
     }
 
-    public void setDeclination(double declination) {
+    public void setDeclination(Double declination) {
         this.declination = declination;
     }
 
-    public double getEpoch() {
+    public Double getEpoch() {
         return epoch;
     }
 
-    public void setEpoch(double epoch) {
+    public void setEpoch(Double epoch) {
         this.epoch = epoch;
     }
 
-    public double getPeriod() {
+    public Double getPeriod() {
         return period;
     }
 
-    public void setPeriod(double period) {
+    public void setPeriod(Double period) {
         this.period = period;
     }
 
-    public double getDistance() {
+    public Double getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public String getoName() {
+        return oName;
+    }
+
+    public void setoName(String oName) {
+        this.oName = oName;
     }
 
     @Override
@@ -96,7 +118,7 @@ public class StellarObject {
     }
 
     public String toLines() {
-        String output = "";
+        String output = oName;
         output += String.join("\n", names);
         for (Map.Entry<String, String> id : ids.entrySet()) {
             output += id.getKey() + ":" + id.getValue() + "\n";

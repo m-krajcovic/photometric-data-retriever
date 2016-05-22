@@ -16,7 +16,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -87,18 +91,19 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     @Override
     protected void succeeded() {
         Map<StarSurveyModel, List<PhotometricDataModel>> data = getValue();
-        if (data.isEmpty()) {
+        if (data.isEmpty() || data.values().stream().allMatch(List::isEmpty)) {
             if (onError != null)
                 onError.accept("No results found.");
         } else {
-            StellarObjectModel model = new StellarObjectModel(resolverResult.getNames().get(0),
-                    Double.toString(resolverResult.getRightAscension()),
-                    Double.toString(resolverResult.getDeclination()),
+            StellarObjectModel model = new StellarObjectModel(resolverResult.getoName(),
+                    resolverResult.getRightAscension(),
+                    resolverResult.getDeclination(),
                     resolverResult.getDistance(),
                     resolverResult.getEpoch(),
                     resolverResult.getPeriod());
             app.showPhotometricDataOverview(data, model);
         }
+
         if (onDone != null)
             onDone.call();
         reset();
@@ -121,7 +126,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     }
 
     @Autowired
-    public void setResources(ResourceBundle resources){
+    public void setResources(ResourceBundle resources) {
         this.resources = resources;
     }
 

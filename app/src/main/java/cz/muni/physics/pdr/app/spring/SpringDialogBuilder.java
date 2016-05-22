@@ -48,6 +48,11 @@ class SpringDialogBuilder {
         return this;
     }
 
+    SpringDialogBuilder stage(String title) {
+        stage.setTitle(title);
+        return this;
+    }
+
     SpringDialogBuilder icon(String iconPath) {
         stage.getIcons().add(new Image(MainApp.class.getResourceAsStream(iconPath)));
         return this;

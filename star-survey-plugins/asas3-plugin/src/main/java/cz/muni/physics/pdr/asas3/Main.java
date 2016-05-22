@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.asas3;
 
 import cz.muni.physics.pdr.java.PluginUtils;
+import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,28 +19,29 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        //http://www.astrouw.edu.pl//cgi-asas/asas_cgi_get_data?123300+2643.0,asas3
-        //http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3
         Main main = new Main();
 
         if (args.length == 1) {
-            if (args[0].startsWith("http")) {
-                main.readData(args[0]);
+            String id = "";
+            if (args[0].split("\\s").length > 1) {
+                String href = Jsoup.connect("http://www.astrouw.edu.pl/cgi-asas/asas_cat_input")
+                        .data("source", "asas3")
+                        .data("coo", args[0])
+                        .data("equinox", "2000")
+                        .data("nmin", "4")
+                        .data("box", "15")
+                        .data("submit", "Search")
+                        .post().getElementsByTag("a").first().attr("href");
+                id = href.split("/")[3].split(",")[0];
+            } else {
+                id = args[0];
             }
+            main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
         }
     }
 
-    private void readData(String... args) throws IOException {
-        URL url;
-        if (args.length == 1) {
-            if (args[0].startsWith("http")) {//je to link s asas3.id
-                url = new URL(args[0]);
-            } else { // je to nieco co dat do searchu
-                url = new URL(searchFor(args[0]));
-            }
-        } else {
-            return;
-        }
+    private void readData(String urlString) throws IOException {
+        URL url = new URL(urlString);
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(PluginUtils.copyUrlOpenStream(url, "ASAS3-" + url.getQuery().split(",")[0] + ".txt", 3)))) {
             String line;

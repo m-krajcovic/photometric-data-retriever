@@ -2,7 +2,7 @@ package cz.muni.physics.pdr.backend.resolver.vizier;
 
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
-import org.apache.commons.lang3.math.NumberUtils;
+import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -59,8 +59,10 @@ public class VizierResolverTsvImpl implements VizierResolver {
                         obj.setEpoch(Double.parseDouble(row[3]));
                     if (NumberUtils.isParsable(row[4]))
                         obj.setPeriod(Double.parseDouble(row[4]));
-                    obj.setRightAscension(row[5]);
-                    obj.setDeclination(row[6]);
+                    if (NumberUtils.isParsable(row[5]))
+                        obj.setRightAscension(Double.parseDouble(row[5]));
+                    if (NumberUtils.isParsable(row[6]))
+                        obj.setDeclination(Double.parseDouble(row[6]));
                     result.add(obj);
                 }
             }

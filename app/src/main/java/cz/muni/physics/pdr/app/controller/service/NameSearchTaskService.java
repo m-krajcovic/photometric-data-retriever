@@ -34,6 +34,7 @@ public class NameSearchTaskService extends Service<StellarObject> {
     private Consumer<String> onError;
     private StarSurveySearchTaskService starSurveySearchTaskService;
     private ResourceBundle resources;
+    private StellarObject object = new StellarObject();
 
     @Autowired
     public NameSearchTaskService(SesameNameResolver sesameNameResolver,
@@ -53,14 +54,14 @@ public class NameSearchTaskService extends Service<StellarObject> {
             @Override
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
-                StellarObject sesameResult = sesameNameResolver.findByName(searchModel.getQuery());
+                object.merge(sesameNameResolver.findByName(searchModel.getQuery()));
                 List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
                 if (vsxResult.size() == 1) {
-                    sesameResult.getNames().add(vsxResult.get(0).getName());
-                    sesameResult.setEpoch(vsxResult.get(0).getEpoch());
-                    sesameResult.setPeriod(vsxResult.get(0).getPeriod());
+                    object.setoName(vsxResult.get(0).getName());
+                    object.setEpoch(vsxResult.get(0).getEpoch());
+                    object.setPeriod(vsxResult.get(0).getPeriod());
                 }
-                return sesameResult.getNames().size() > 0 ? sesameResult : null;
+                return object.getoName() != null ? object : null;
             }
         };
     }
@@ -91,6 +92,20 @@ public class NameSearchTaskService extends Service<StellarObject> {
             onDone.call();
         }
         reset();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        object = new StellarObject();
+    }
+
+    public StellarObject getObject() {
+        return object;
+    }
+
+    public void setObject(StellarObject object) {
+        this.object = object;
     }
 
     public Consumer<String> getOnError() {

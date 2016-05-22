@@ -18,8 +18,8 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -53,13 +53,17 @@ public class SesameNameResolverImpl implements SesameNameResolver {
         try {
             doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
 
-            NodeList list = (NodeList) xpath.evaluate("(//alias | //oname)", doc, XPathConstants.NODESET);
-            List<String> names = new ArrayList<>(list.getLength());
+            NodeList list = (NodeList) xpath.evaluate("(//alias)", doc, XPathConstants.NODESET);
+            Set<String> names = new HashSet<>(list.getLength());
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
                 names.add(node.getTextContent());
             }
             result.setNames(names);
+            String oName = xpath.evaluate("//oname[1]", doc);
+            if (!oName.isEmpty()) {
+                result.setoName(oName);
+            }
             String jradeg = xpath.evaluate("//jradeg[1]", doc);
             if (!jradeg.isEmpty()) {
                 result.setRightAscension(Double.parseDouble(jradeg));

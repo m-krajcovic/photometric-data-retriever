@@ -9,8 +9,9 @@ public class VizierResult {
     private double distance;
     private double epoch;
     private double period;
-    private String rightAscension;
-    private String Declination;
+    private double rightAscension;
+    private double declination;
+
 
     public String getName() {
         return name;
@@ -44,19 +45,19 @@ public class VizierResult {
         this.period = period;
     }
 
-    public String getRightAscension() {
+    public double getRightAscension() {
         return rightAscension;
     }
 
-    public void setRightAscension(String rightAscension) {
+    public void setRightAscension(double rightAscension) {
         this.rightAscension = rightAscension;
     }
 
-    public String getDeclination() {
-        return Declination;
+    public double getDeclination() {
+        return declination;
     }
 
-    public void setDeclination(String declination) {
-        Declination = declination;
+    public void setDeclination(double declination) {
+        this.declination = declination;
     }
 }

@@ -46,9 +46,9 @@ public class StellarObjectOverviewController extends StageController {
     @FXML
     private TableColumn<StellarObjectModel, String> nameColumn;
     @FXML
-    private TableColumn<StellarObjectModel, String> raColumn;
+    private TableColumn<StellarObjectModel, Number> raColumn;
     @FXML
-    private TableColumn<StellarObjectModel, String> decColumn;
+    private TableColumn<StellarObjectModel, Number> decColumn;
 
     private StellarObjectModel selectedModel;
 

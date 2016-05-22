@@ -1,6 +1,10 @@
 package cz.muni.physics.pdr.app.spring;
 
-import cz.muni.physics.pdr.app.controller.*;
+import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
+import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
+import cz.muni.physics.pdr.app.controller.SearchReportDialogController;
+import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
+import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
 import cz.muni.physics.pdr.app.model.EntryModel;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -60,12 +64,12 @@ public class Screens {
     public void showPhotometricDataOverview(Map<StarSurveyModel, List<PhotometricDataModel>> data, StellarObjectModel object) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/PhotometricDataOverview.fxml")
-                        .stage(resources.getString("search.result"), primaryStage);
+                        .stage(resources.getString("search.result"));
         PhotometricDataOverviewController controller = builder.controller();
         Stage stage = builder.get();
         controller.setStellarObject(object);
         controller.setData(data);
-        stage.showAndWait();
+        stage.show();
     }
 
     public void showPreferencesOverview() {

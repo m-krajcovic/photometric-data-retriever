@@ -4,6 +4,7 @@ import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.backend.entity.Radius;
+import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
@@ -73,6 +74,11 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+    }
+
+    @Override
     protected void succeeded() {
         logger.debug("CoordsSearchService succeeded");
         List<StellarObjectModel> searchResult = getValue();
@@ -86,6 +92,13 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
             StellarObjectModel selected = app.showStellarObjects(searchResult);
             if (selected != null) {
                 searchModel.setQuery(selected.getName());
+                StellarObject obj = new StellarObject();
+                obj.setoName(selected.getName());
+                obj.setRightAscension(selected.getRightAscension());
+                obj.setDeclination(selected.getDeclination());
+                obj.setEpoch(selected.getEpoch());
+                obj.setPeriod(selected.getPeriod());
+                nameSearchTaskService.setObject(obj);
                 nameSearchTaskService.start();
             } else {
                 if (onDone != null) {
@@ -144,7 +157,7 @@ public class CoordsSearchTaskService extends Service<List<StellarObjectModel>> {
     }
 
     @Autowired
-    public void setResources(ResourceBundle resources){
+    public void setResources(ResourceBundle resources) {
         this.resources = resources;
     }
 

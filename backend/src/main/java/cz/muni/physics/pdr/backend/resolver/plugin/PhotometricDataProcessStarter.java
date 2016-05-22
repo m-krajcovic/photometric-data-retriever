@@ -61,7 +61,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         if (!readyToRun)
             throw new IllegalStateException("Plugin must be prepared first by preparePlugin() method.");
 
-        String[] commandSplit = command.split(" ");
+        String[] commandSplit = command.trim().split(" ");
         for (int i = 0; i < commandSplit.length; i++) {
             commandSplit[i] = StrSubstitutor.replace(commandSplit[i], parameters);
         }
@@ -76,7 +76,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<Photometric
         try {
             p = run();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to run process by command {}" + command, e);
+            throw new RuntimeException("Failed to run process by command "+ command, e);
         }
 
         StreamGobbler<PhotometricData> stdOutput = new StreamGobbler<>(p.getInputStream(), line -> {
