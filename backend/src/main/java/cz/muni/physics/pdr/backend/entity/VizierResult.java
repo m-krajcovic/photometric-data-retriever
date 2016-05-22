@@ -1,7 +1,10 @@
 package cz.muni.physics.pdr.backend.entity;
 
 /**
- * Created by Michal on 28-Apr-16.
+ * Data class for storing result from Vizier Service
+ * @author Michal
+ * @version 1.0
+ * @since 28-Apr-16
  */
 public class VizierResult {
 

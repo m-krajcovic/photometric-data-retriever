@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * Class for reading input stream
  * @author Michal Krajčovič
  * @version 1.0
  * @since 05/04/16
@@ -19,15 +20,30 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
     private Function<String, T> lineProcessor;
     private boolean sout = false;
 
+    /**
+     * Creates StreamGobbler with given InputStream without mapping function.
+     * @param is
+     */
     public StreamGobbler(InputStream is) {
         this.is = is;
     }
 
+    /**
+     * Creates StreamGobbler with given InputStream and mapping function
+     * @param is
+     * @param lineProcessor mapping function for mapping line to another object from stream
+     */
     public StreamGobbler(InputStream is, Function<String, T> lineProcessor) {
         this.is = is;
         this.lineProcessor = lineProcessor;
     }
 
+    /**
+     * Reads inputStream and maps every line to object T, which is added to resulting list.
+     * If no mapping function was specified, every line is written on standard output using System.out.println
+     * If result from mapping function is null, line is written on standard output
+     * @return resulting list of mapped objects
+     */
     @Override
     public List<T> get() {
         List<T> lines = new ArrayList<>();
@@ -52,6 +68,10 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
         return lineProcessor;
     }
 
+    /**
+     * Set mapping function for every line -> T
+     * @param lineProcessor
+     */
     public void setLineProcessor(Function<String, T> lineProcessor) {
         this.lineProcessor = lineProcessor;
     }
@@ -68,6 +88,10 @@ public class StreamGobbler<T> implements Supplier<List<T>> {
         return sout;
     }
 
+    /**
+     * Sets if lines should be written on standard output if mapping function is not available
+     * @param sout
+     */
     public void setSout(boolean sout) {
         this.sout = sout;
     }

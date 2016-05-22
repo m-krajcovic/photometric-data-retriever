@@ -79,7 +79,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             throw new IllegalArgumentException("params cannot be null.");
         }
         logger.debug("Running plugin {}", plugin.getName());
-        ProcessStarter<PhotometricData> starter = new PhotometricDataProcessStarter();
+        ProcessStarter<List<PhotometricData>> starter = new PhotometricDataProcessStarter();
         if (!starter.prepare(plugin.getCommands(), params)) {
             logger.debug("Not able to prepare {} plugin command", plugin.getName());
             return CompletableFuture.completedFuture(new ArrayList<>());

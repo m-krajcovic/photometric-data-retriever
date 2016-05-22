@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
+ * Data class to store information from configuration file
  * @author Michal Krajčovič
  * @version 1.0
  * @since 23/04/16

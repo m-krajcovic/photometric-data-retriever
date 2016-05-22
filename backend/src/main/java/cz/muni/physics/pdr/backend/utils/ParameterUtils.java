@@ -13,12 +13,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Utility class to resolve parameters for Star Survey with StellarObject and patterns...
  * @author Michal Krajčovič
  * @version 1.0
  * @since 11/04/16
  */
 public class ParameterUtils {
 
+    /**
+     * Returns full map of available parameters for given survey
+     * @param survey
+     * @param resolverResult
+     * @param patterns
+     * @param valueParameters
+     * @return
+     */
     public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult, List<Pattern> patterns, Map<String, String> valueParameters) {
         Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), patterns);
         resolveStarResolverParameters(resolverResult, params);
@@ -76,11 +85,23 @@ public class ParameterUtils {
         return params;
     }
 
+    /**
+     * Checks if all parameters in string are replaceable with strings from map
+     * @param string
+     * @param params
+     * @return
+     */
     public static boolean isResolvableWithParameters(String string, Map<String, String> params) {
         Set<String> stringParameters = findParameterNames(string);
         return stringParameters.stream().allMatch(params::containsKey);
     }
 
+    /**
+     * Finds names of regex groups from pattern
+     * Group name is marked in pattern like (?<groupName>.*)
+     * @param p
+     * @return
+     */
     public static Set<String> findRegexGroups(Pattern p) {
         Set<String> namedGroups = new HashSet<>();
         String groupName = "";
@@ -102,6 +123,11 @@ public class ParameterUtils {
         return namedGroups;
     }
 
+    /**
+     * Returns names of parameters in given string ( Parameters is marked as ${parameter} )
+     * @param str
+     * @return
+     */
     public static Set<String> findParameterNames(String str) {
         Set<String> params = new HashSet<>();
         String param = "";

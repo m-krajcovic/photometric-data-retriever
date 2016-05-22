@@ -25,6 +25,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
+ * JavaFX concurrent service class for retrieving PhotometricData for given stellar object
  * @author Michal Krajčovič
  * @version 1.0
  * @since 06/04/16

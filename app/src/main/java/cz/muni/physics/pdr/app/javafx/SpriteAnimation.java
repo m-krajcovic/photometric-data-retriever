@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 /**
+ * Class for animating sprite in JavaFX
  * code taken from: http://blog.netopyr.com/2012/03/09/creating-a-sprite-animation-with-javafx/
  */
 public class SpriteAnimation extends Transition {

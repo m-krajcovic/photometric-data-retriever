@@ -14,7 +14,10 @@ import java.util.Locale;
 
 
 /**
- * Created by Michal on 29-Apr-16.
+ * DecimalTextField extends TextField but allows only Decimal Numbers to be written inside it
+ * @author Michal
+ * @version 1.0
+ * @since 29-Apr-16
  */
 public class DecimalTextField extends TextField {
 

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Data class to store plugin information
  * @author Michal Krajčovič
  * @version 1.0
  * @since 14/04/16

@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 
 /**
+ * Shaker class for shaking nodes in JavaFX
  * code taken from: http://stackoverflow.com/questions/36147786
  */
 public class Shaker {

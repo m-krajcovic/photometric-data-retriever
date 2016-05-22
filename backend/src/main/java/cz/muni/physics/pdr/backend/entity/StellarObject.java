@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Data class for storing information about stellar object
  * @author Michal Krajčovič
  * @version 1.0
  * @since 13/04/16

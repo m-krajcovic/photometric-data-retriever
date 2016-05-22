@@ -18,7 +18,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 /**
+ * Class for storing needed Spring config
  * @author Michal Krajčovič
  * @version 1.0
  * @since 08/04/16
@@ -38,7 +41,7 @@ public class BackendConfig {
 
     @Bean
     @Scope("prototype")
-    public ProcessStarter<PhotometricData> photometricDataPluginStarter() {
+    public ProcessStarter<List<PhotometricData>> photometricDataPluginStarter() {
         return new PhotometricDataProcessStarter();
     }
 

@@ -18,6 +18,11 @@ public class VizierResolverTsvImpl implements VizierResolver {
     private String url;
     private String catalogue;
 
+    /**
+     * Creates Resolver for Vizier with given catalogue and vizier url
+     * @param url vizier url
+     * @param catalogue vizier catalogue
+     */
     public VizierResolverTsvImpl(String url, String catalogue) {
         this.url = url;
         this.catalogue = catalogue;

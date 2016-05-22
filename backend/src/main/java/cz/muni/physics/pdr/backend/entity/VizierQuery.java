@@ -1,7 +1,10 @@
 package cz.muni.physics.pdr.backend.entity;
 
 /**
- * Created by Michal on 28-Apr-16.
+ * Data class for storing query for Vizier service
+ * @author Michal
+ * @version 1.0
+ * @since 28-Apr-16
  */
 public class VizierQuery {
     private String query;

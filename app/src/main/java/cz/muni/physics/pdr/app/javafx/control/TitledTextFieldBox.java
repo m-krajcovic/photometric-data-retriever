@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 
 /**
+ * JavaFX TextField with nice label. Allows labels to be changed in runtime, width is changed nicely and doesn't change
+ * given pref size of whole input.
  * @author Michal Krajčovič
  * @version 1.0
  * @since 20/04/16

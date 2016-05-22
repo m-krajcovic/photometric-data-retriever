@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Class for getting PluginReader objects for different config formats
  * @author Michal Krajčovič
  * @version 1.0
  * @since 13/04/16

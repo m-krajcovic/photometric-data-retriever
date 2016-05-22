@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
+ * JavaFX concurrent service class for retrieving Stellar Object information by its name
  * @author Michal Krajčovič
  * @version 1.0
  * @since 06/04/16

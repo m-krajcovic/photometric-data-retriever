@@ -18,7 +18,7 @@ import java.util.Optional;
  * @version 1.0
  * @since 11/04/16
  */
-public class PhotometricDataProcessStarter implements ProcessStarter<PhotometricData> {
+public class PhotometricDataProcessStarter implements ProcessStarter<List<PhotometricData>> {
 
     private final static Logger logger = LogManager.getLogger(PhotometricDataProcessStarter.class);
 

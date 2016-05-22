@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
+ * JavaFX concurrent service class for searching for stellar objects by given coordinates
  * @author Michal Krajčovič
  * @version 1.0
  * @since 16/04/16

@@ -7,6 +7,7 @@ import java.text.ParsePosition;
 import java.util.function.UnaryOperator;
 
 /**
+ * Filter that allows only decimal numbers
  * @author Michal Krajčovič
  * @version 1.0
  * @since 17/04/16

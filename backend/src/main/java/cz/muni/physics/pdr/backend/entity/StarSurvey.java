@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Data class for storing information about star survey
  * @author Michal Krajčovič
  * @version 1.0
  * @since 14/04/16

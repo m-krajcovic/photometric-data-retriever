@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
+ * Factory class to get the right chart for given StellarObjectModel
  * @author Michal Krajčovič
  * @version 1.0
  * @since 24/04/16

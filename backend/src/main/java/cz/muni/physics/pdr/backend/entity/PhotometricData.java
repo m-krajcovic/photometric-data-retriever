@@ -3,6 +3,7 @@ package cz.muni.physics.pdr.backend.entity;
 import cz.muni.physics.pdr.backend.utils.NumberUtils;
 
 /**
+ * Data class to store measured photometric data of a variable star
  * @author Michal Krajčovič
  * @version 1.0
  * @since 14/04/16
