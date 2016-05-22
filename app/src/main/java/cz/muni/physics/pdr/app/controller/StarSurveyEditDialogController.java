@@ -69,7 +69,9 @@ public class StarSurveyEditDialogController extends StageController {
     private void handleOk() {
         if (isInputValid()) {
             starSurvey.setName(nameTextField.getText());
-            Arrays.stream(urlTextArea.getText().split(System.lineSeparator())).filter(s -> !s.trim().isEmpty()).forEach(s -> starSurvey.getUrls().add(s));
+            ObservableList<String> urls = FXCollections.observableArrayList();
+            Arrays.stream(urlTextArea.getText().split(System.lineSeparator())).filter(s -> !s.trim().isEmpty()).forEach(urls::add);
+            starSurvey.setUrls(urls);
             starSurvey.setPlugin(pluginChoiceBox.getValue());
 
             okClicked = true;

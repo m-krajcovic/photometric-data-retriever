@@ -8,6 +8,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+
 /**
  * @author Michal Krajčovič
  * @version 1.0
@@ -70,7 +72,7 @@ public class StarSurveyModel {
         if (getPlugin() != null) {
             survey.setPlugin(getPlugin().toEntity());
         }
-        survey.setUrls(getUrls());
+        survey.setUrls(new ArrayList<>(urls));
         return survey;
     }
 

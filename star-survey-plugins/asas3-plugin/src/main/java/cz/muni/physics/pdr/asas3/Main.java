@@ -19,6 +19,9 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+
+        args = new String[]{"RW Com"};
+
         Main main = new Main();
 
         if (args.length == 1) {

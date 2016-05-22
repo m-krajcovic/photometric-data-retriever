@@ -12,9 +12,7 @@ import java.text.MessageFormat;
 public class Main {
     public static void main(String[] args) {
         String url;
-        if (args.length == 1) { //je to url
-            url = args[0];
-        } else if (args.length == 2) { // je to ra dec
+        if (args.length == 2) { // je to ra dec
             url = MessageFormat.format("http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={0}&amp;Dec={1}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot", args[0], args[1]);
         } else {
             return;

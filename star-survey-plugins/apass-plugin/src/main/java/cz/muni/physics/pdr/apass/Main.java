@@ -1,4 +1,4 @@
-package cz.muni.physics.dr.apass;
+package cz.muni.physics.pdr.apass;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,9 +21,7 @@ public class Main {
 
     private void readData(String... args) throws IOException {
         URL url;
-        if (args.length == 1) { // je to url
-            url = new URL(args[0]);
-        } else if (args.length == 2) { // su to suradnice
+        if (args.length == 2) { // su to suradnice
             url = new URL(
                     MessageFormat.format("http://tombstone.physics.mcmaster.ca/APASS/conesearch_offset.php?radeg={0}&decdeg={1}&raddeg=0.005", args[0], args[1]));
         } else {

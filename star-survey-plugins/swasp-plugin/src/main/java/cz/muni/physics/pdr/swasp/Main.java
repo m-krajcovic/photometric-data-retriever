@@ -6,7 +6,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -16,32 +15,24 @@ import java.net.URLEncoder;
  * @since 12/04/16
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         URL u = null;
-        try {
-            new URL(args[0]); // je to url ?
+
+        if (args.length == 1) {
+            u = new URL("http://wasp.cerit-sc.cz/json?type=CSV&object=" + URLEncoder.encode(args[0], "UTF-8"));
+        } else if (args.length == 2) {
+            String ra = args[0];
+            String dec = args[1];
+            String resultURL = "http://wasp.cerit-sc.cz/search?ra=" + ra + "&dec=" + dec + "&radius=1&radiusUnit=min&limit=1";
             Document doc;
-            try {
-                doc = Jsoup.connect(args[0]).get();
-            } catch (IOException e) {
-                return;
-            }
+            doc = Jsoup.connect(resultURL).get();
             for (Element a : doc.getElementsByTag("a")) {
                 if (a.ownText().equals("CSV")) {
-                    try {
-                        u = new URL("http://wasp.cerit-sc.cz" + a.attr("href"));
-                    } catch (MalformedURLException e) {
-                        return;
-                    }
+                    u = new URL("http://wasp.cerit-sc.cz" + a.attr("href"));
                 }
             }
-        } catch (MalformedURLException e) {
-            try {
-                u = new URL("http://wasp.cerit-sc.cz/json?type=CSV&object=" + URLEncoder.encode(args[0], "UTF-8"));
-            } catch (IOException exc) {
-                exc.printStackTrace();
-                return;
-            }
+        } else {
+            return;
         }
 
         if (u == null) return;
