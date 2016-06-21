@@ -21,21 +21,27 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+
+
+
+
         Main main = new Main();
-        args = new String[]{"RW Com"};
+//        args = new String[]{"RW Com"};
         if (args.length == 1) {
             String id = "";
             if (args[0].split("\\s").length > 1) {
                 Connection data = Jsoup.connect("http://www.astrouw.edu.pl/cgi-asas/asas_cat_input")
+                        .header("Accept-Encoding", "gzip, deflate")
+                        .userAgent("python-requests/2.10.0")
+                        .header("Accept", "*//*")
                         .method(Connection.Method.POST)
-                        .data("source", "asas2")
+                        .data("source", "asas3")
+                        .header("Content-Type", "application/x-www-form-urlencoded")
                         .data("coo", args[0])
                         .data("equinox", "2000")
                         .data("nmin", "4")
                         .data("box", "15")
-                        .data("submit", "Search")
-                        .followRedirects(true)
-                        .ignoreContentType(true);
+                        .data("submit", "Search");
                 Document doc = data.execute().parse();
                 System.out.println(doc.html());
 
@@ -44,7 +50,7 @@ public class Main {
             } else {
                 id = args[0];
             }
-//            main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
+            //main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
         }
     }
 

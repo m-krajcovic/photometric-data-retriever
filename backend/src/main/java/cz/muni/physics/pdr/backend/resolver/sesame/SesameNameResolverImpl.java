@@ -52,8 +52,7 @@ public class SesameNameResolverImpl implements SesameNameResolver {
         Document doc;
         try {
             doc = (Document) xpath.evaluate("/", source, XPathConstants.NODE);
-
-            NodeList list = (NodeList) xpath.evaluate("(//alias)", doc, XPathConstants.NODESET);
+            NodeList list = (NodeList) xpath.evaluate("//alias", doc, XPathConstants.NODESET);
             Set<String> names = new HashSet<>(list.getLength());
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);

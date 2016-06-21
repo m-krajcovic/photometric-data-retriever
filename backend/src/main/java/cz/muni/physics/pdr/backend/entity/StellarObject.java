@@ -119,7 +119,7 @@ public class StellarObject {
     }
 
     public String toLines() {
-        String output = oName;
+        String output = oName + "\n";
         output += String.join("\n", names);
         for (Map.Entry<String, String> id : ids.entrySet()) {
             output += id.getKey() + ":" + id.getValue() + "\n";
