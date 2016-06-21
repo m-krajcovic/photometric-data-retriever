@@ -35,6 +35,9 @@ public class ParameterUtils {
         resolveUrlParameter(survey.getUrls(), params);
         if (survey.getPlugin().getMainFile() != null && !survey.getPlugin().getMainFile().trim().isEmpty())
             params.put("mainFile", survey.getPlugin().getMainFile());
+
+        params.forEach((s, s2) -> System.out.println(s + " -> " + s2));
+
         return params;
     }
 
