@@ -1,9 +1,11 @@
 package cz.muni.physics.pdr.asas3;
 
 import cz.muni.physics.pdr.java.PluginUtils;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,38 +23,26 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-
-
-
-
+        String id = "";
         Main main = new Main();
-//        args = new String[]{"RW Com"};
         if (args.length == 1) {
-            String id = "";
-            if (args[0].split("\\s").length > 1) {
-                Connection data = Jsoup.connect("http://www.astrouw.edu.pl/cgi-asas/asas_cat_input")
-                        .header("Accept-Encoding", "gzip, deflate")
-                        .userAgent("python-requests/2.10.0")
-                        .header("Accept", "*//*")
-                        .method(Connection.Method.POST)
-                        .data("source", "asas3")
-                        .header("Content-Type", "application/x-www-form-urlencoded")
-                        .data("coo", args[0])
-                        .data("equinox", "2000")
-                        .data("nmin", "4")
-                        .data("box", "15")
-                        .data("submit", "Search");
-                Document doc = data.execute().parse();
-                System.out.println(doc.html());
-
-                String href = doc.getElementsByTag("a").first().attr("href");
-                id = href.split("/")[3].split(",")[0];
-            } else {
-                id = args[0];
-            }
-            //main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
+            WebDriver driver = new HtmlUnitDriver();
+            driver.get("http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3");
+            driver.findElement(By.name("coo")).sendKeys(args[0]);
+            driver.findElement(By.name("submit")).submit();
+            driver.close();
+            driver.getWindowHandles().forEach(w -> {
+                driver.switchTo().window(w);
+            });
+            Document doc = Jsoup.parse(driver.getPageSource());
+            String href = doc.getElementsByTag("a").first().attr("href");
+            id = href.split("/")[3].split(",")[0];
+        } else {
+            id = args[0];
         }
+        main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
     }
+
 
     private void readData(String urlString) throws IOException {
         URL url = new URL(urlString);
