@@ -23,9 +23,6 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-
-        args = new String[]{"-c", "18.585614935", "+0.043010447"};
-
         String id = "";
         Main main = new Main();
         if (args[0].equals("-n")) {

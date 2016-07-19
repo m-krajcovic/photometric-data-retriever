@@ -18,24 +18,31 @@ public class Main {
         Main main = new Main();
         if (args.length == 1) {
             String ogleId = main.findByStarId(args[0]);
-            main.readData(ogleId);
+            main.readData(ogleId, "I");
+            main.readData(ogleId, "V");
         }
     }
 
-    public void readData(String id) throws IOException {
-        String photDir = "/ogle/ogle3/OIII-CVS/smc/ecl/phot/";
+    public void readData(String id, String band) throws IOException {
         FTPClient ftpClient = new FTPClient();
         ftpClient.connect("ogle.astrouw.edu.pl");
         ftpClient.login("anonymous", "anonymous");
         ftpClient.enterLocalPassiveMode();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+        String photDir = "/ogle/ogle3/OIII-CVS/smc/ecl/phot/";
 
-        try (InputStream is = ftpClient.retrieveFileStream(photDir + "I/" + id + ".dat");
+        try (InputStream is = ftpClient.retrieveFileStream(photDir + band + "/" + id + ".dat");
              BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                String[] cols = line.split(" ");
+                String jd = Double.toString(Double.parseDouble(cols[0]) + 2450000);
+                String mag = cols[1];
+                String err = cols[2];
+                System.out.println(jd + "," + mag + "," + err + "," + band);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             if (ftpClient.isConnected()) {
                 ftpClient.logout();

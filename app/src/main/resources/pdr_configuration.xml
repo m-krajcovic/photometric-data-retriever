@@ -27,6 +27,10 @@
                 <string>http://skydot.lanl.gov/nsvs/star.php?num={nsvsID}&amp;mask=32004</string>
             </urls>
         </starSurvey>
+        <starSurvey name="OGLE3">
+            <plugin name="OGLE3"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="APASS">
             <plugin name="APASS"/>
             <urls/>
@@ -433,7 +437,7 @@
         <entry>
             <string>OGLE2</string>
             <java.util.regex.Pattern>
-                <pattern>(?&lt;ogle&gt;OGLE\s(?&lt;ogleField&gt;[\-\w]*)\s(?&lt;ogleID&gt;\d*))</pattern>
+                <pattern>(?&lt;ogle&gt;OGLE\s(?&lt;ogleField&gt;[\-\w_]*)\s(?&lt;ogleID&gt;\d*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </entry>
