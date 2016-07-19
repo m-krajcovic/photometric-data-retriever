@@ -124,10 +124,6 @@ public class StellarObject {
         for (Map.Entry<String, String> id : ids.entrySet()) {
             output += id.getKey() + ":" + id.getValue() + "\n";
         }
-        output += rightAscension + "\n"
-                + declination + "\n"
-                + period + "\n"
-                + epoch + "\n";
         return output;
     }
 }
