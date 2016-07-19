@@ -31,6 +31,10 @@
             <plugin name="APASS"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="OGLE2">
+            <plugin name="OGLE2"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="PIOTS">
             <plugin name="PIOTS"/>
             <urls/>
@@ -423,6 +427,13 @@
             <string>ASAS</string>
             <java.util.regex.Pattern>
                 <pattern>(?&lt;asas&gt;ASAS\s(?&lt;asasID&gt;.*))</pattern>
+                <flags>0</flags>
+            </java.util.regex.Pattern>
+        </entry>
+        <entry>
+            <string>OGLE2</string>
+            <java.util.regex.Pattern>
+                <pattern>(?&lt;ogle&gt;OGLE\s(?&lt;ogleField&gt;[\-\w]*)\s(?&lt;ogleID&gt;\d*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </entry>

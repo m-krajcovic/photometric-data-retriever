@@ -33,6 +33,9 @@ public class RootLayoutController {
 
     @FXML
     private ResourceBundle resources;
+
+    @FXML
+    private MenuItem aboutMenuItem;
     @FXML
     private MenuBar menuBar;
     @FXML
@@ -81,5 +84,10 @@ public class RootLayoutController {
     @FXML
     private void handleCloseMenuItem() {
         app.getPrimaryStage().close();
+    }
+
+    @FXML
+    private void handleAboutMenuItem() {
+        app.showAboutOverview(app.getPrimaryStage());
     }
 }

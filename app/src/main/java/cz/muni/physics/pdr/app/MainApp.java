@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app;
 
+import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.LauncherImpl;
 import cz.muni.physics.pdr.app.spring.AppConfig;
 import cz.muni.physics.pdr.app.spring.Screens;
@@ -27,7 +28,6 @@ public class MainApp extends Application {
     private Screens app;
     private AppInitializer initializer;
 
-
     public MainApp() {
 
     }
@@ -47,6 +47,7 @@ public class MainApp extends Application {
         primaryStage.setTitle(app.getName());
         primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream(app.getIconPath())));
         app.setPrimaryStage(primaryStage);
+        app.setHostServices(HostServicesFactory.getInstance(this));
         app.initRootLayout();
         initializer.start(primaryStage);
         app.showSearch();

@@ -34,11 +34,17 @@ class SpringDialogBuilder {
         if (loader.getController() instanceof StageController) {
             ((StageController) loader.getController()).setStage(stage);
         }
+        stage.setResizable(false);
         stage.setScene(scene);
     }
 
     static SpringDialogBuilder load(SpringFXMLLoader loader, String resourceUrl) {
         return new SpringDialogBuilder(loader, resourceUrl);
+    }
+
+    SpringDialogBuilder resizable() {
+        stage.setResizable(true);
+        return this;
     }
 
     SpringDialogBuilder stage(String title, Window owner) {

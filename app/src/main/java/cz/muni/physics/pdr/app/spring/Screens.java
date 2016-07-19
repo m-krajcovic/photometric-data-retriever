@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.spring;
 
+import com.sun.javafx.application.HostServicesDelegate;
 import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.SearchReportDialogController;
@@ -45,6 +46,7 @@ public class Screens {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    private HostServicesDelegate hostServices;
 
 
     public void initRootLayout() {
@@ -52,6 +54,7 @@ public class Screens {
         rootLayout = loader.load("/view/RootLayout.fxml");
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -64,7 +67,7 @@ public class Screens {
     public void showPhotometricDataOverview(Map<StarSurveyModel, List<PhotometricDataModel>> data, StellarObjectModel object) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/PhotometricDataOverview.fxml")
-                        .stage(resources.getString("search.result"));
+                        .stage(resources.getString("search.result")).resizable();
         PhotometricDataOverviewController controller = builder.controller();
         Stage stage = builder.get();
         controller.setStellarObject(object);
@@ -142,6 +145,11 @@ public class Screens {
         builder.get().showAndWait();
     }
 
+    public void showAboutOverview(Stage owner) {
+        SpringDialogBuilder.load(fxmlLoader(), "/view/AboutOverview.fxml")
+                .stage(resources.getString("stage.about"), owner).get().showAndWait();
+    }
+
     private SpringFXMLLoader fxmlLoader() {
         return ctx.getBean(SpringFXMLLoader.class);
     }
@@ -176,5 +184,14 @@ public class Screens {
 
     public void setRootLayout(BorderPane rootLayout) {
         this.rootLayout = rootLayout;
+    }
+
+
+    public void setHostServices(HostServicesDelegate hostServices) {
+        this.hostServices = hostServices;
+    }
+
+    public HostServicesDelegate getHostServices() {
+        return hostServices;
     }
 }
