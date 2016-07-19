@@ -56,7 +56,7 @@ public class PluginUtils {
         return dest;
     }
 
-    private static File getOutputDir() {
+    public static File getOutputDir() {
         try {
             File jar = new File(PluginUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             File pluginDir = jar.getParentFile();

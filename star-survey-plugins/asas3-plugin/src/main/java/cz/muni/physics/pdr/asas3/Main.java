@@ -23,26 +23,36 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+
+        args = new String[]{"-c", "18.585614935", "+0.043010447"};
+
         String id = "";
         Main main = new Main();
-        if (args.length == 1) {
-            WebDriver driver = new HtmlUnitDriver();
-            driver.get("http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3");
-            driver.findElement(By.name("coo")).sendKeys(args[0]);
-            driver.findElement(By.name("submit")).submit();
-            driver.close();
-            driver.getWindowHandles().forEach(w -> {
-                driver.switchTo().window(w);
-            });
-            Document doc = Jsoup.parse(driver.getPageSource());
-            String href = doc.getElementsByTag("a").first().attr("href");
-            id = href.split("/")[3].split(",")[0];
-        } else {
-            id = args[0];
+        if (args[0].equals("-n")) {
+            id = main.getIdFromForm(args[1]);
+        } else if (args[0].equals("-i")) {
+            id = args[1];
+        } else if (args[0].equals("-c")) {
+            String rah = args[1];
+            String decdeg = args[2];
+            id = main.getIdFromForm(rah + " " + decdeg);
         }
         main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
     }
 
+    public String getIdFromForm(String query) {
+        WebDriver driver = new HtmlUnitDriver();
+        driver.get("http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3");
+        driver.findElement(By.name("coo")).sendKeys(query);
+        driver.findElement(By.name("submit")).submit();
+        driver.close();
+        driver.getWindowHandles().forEach(w -> {
+            driver.switchTo().window(w);
+        });
+        Document doc = Jsoup.parse(driver.getPageSource());
+        String href = doc.getElementsByTag("a").first().attr("href");
+        return href.split("/")[3].split(",")[0];
+    }
 
     private void readData(String urlString) throws IOException {
         URL url = new URL(urlString);

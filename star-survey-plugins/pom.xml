@@ -20,6 +20,9 @@
         <module>omc-plugin</module>
         <module>linear-plugin</module>
         <module>piots-plugin</module>
+        <module>ogle2-plugin</module>
+        <module>ptf-plugin</module>
+        <module>ogle3-plugin</module>
     </modules>
 
     <properties>
