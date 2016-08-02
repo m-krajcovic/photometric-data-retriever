@@ -51,6 +51,7 @@ class SearchQueryParser {
 
     void parseQuery(SearchModel model) {
         String searchText = model.getQuery().trim();
+        model.setQuery(searchText);
         logger.debug("Parsing query {}", searchText);
         if (StringUtils.startsWithIgnoreCase(searchText, "name:")) {
             logger.debug("Query has name: prefix, handling name search");

@@ -3,10 +3,13 @@ package cz.muni.physics.pdr.backend.resolver.vizier;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.utils.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +17,7 @@ import java.util.List;
  * Created by Michal on 28-Apr-16.
  */
 public class VizierResolverTsvImpl implements VizierResolver {
+    private final static Logger logger = LogManager.getLogger(VizierResolverTsvImpl.class);
 
     private String url;
     private String catalogue;
@@ -45,7 +49,25 @@ public class VizierResolverTsvImpl implements VizierResolver {
     }
 
     public boolean isAvailable() {
-        return true;
+        logger.debug("Checking availability of Vizier Service");
+        try {
+            final URL url = new URL(this.url);
+            final URLConnection conn = url.openConnection();
+            conn.setConnectTimeout(2000);
+            conn.connect();
+            logger.debug("Service is available");
+            return true;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            logger.debug("Service is unavailable");
+            return false;
+        }
+    }
+
+    @Override
+    public String getServiceName() {
+        return "Vizier";
     }
 
     protected List<VizierResult> parseDoc(String string) {

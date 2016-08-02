@@ -11,7 +11,8 @@ public enum PreloaderHandlerEvent implements Preloader.PreloaderNotification {
 
     PLUGIN_FOLDER_CHECK("Searching for plugins folder..."),
     DATA_DIR_CHECK("Searching for application data folder..."),
-    CONFIG_FILE_CHECK("Searching for configuration file...");
+    CONFIG_FILE_CHECK("Searching for configuration file..."),
+    SERVICES_CHECK("Checking availability of remote services...");
 
     private String message;
 

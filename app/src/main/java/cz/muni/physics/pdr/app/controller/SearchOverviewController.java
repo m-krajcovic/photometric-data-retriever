@@ -11,15 +11,14 @@ import cz.muni.physics.pdr.app.model.RadiusModel;
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.spring.Screens;
+import cz.muni.physics.pdr.app.utils.FXMLUtils;
+import cz.muni.physics.pdr.backend.resolver.AvailabilityQueryable;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * @author Michal Krajčovič
@@ -52,6 +52,8 @@ public class SearchOverviewController extends StageController {
     private NameSearchTaskService nameSearchTaskService;
     @Autowired
     private StarSurveySearchTaskService starSurveySearchService;
+    @Autowired
+    private Set<AvailabilityQueryable> services;
 
     @FXML
     private ResourceBundle resources;
@@ -111,6 +113,10 @@ public class SearchOverviewController extends StageController {
     @FXML
     private void handleSearchButtonAction() {
         disableElements(true);
+        services.stream().filter(service -> !service.isAvailable()).forEach(service -> {
+            FXMLUtils.alert("Service Unavailable", "Service " + service.getServiceName() + " is not available",
+                    "Some features may not work properly. Please try again later.", Alert.AlertType.ERROR).show();
+        });
         queryParser.parseQuery(searchModel);
     }
 

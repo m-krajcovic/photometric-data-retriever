@@ -80,16 +80,24 @@ public class SesameNameResolverImpl implements SesameNameResolver {
 
     @Override
     public boolean isAvailable() {
+        logger.debug("Checking availability of Sesame Service");
         try {
             final URL url = new URL(testUrl);
             final URLConnection conn = url.openConnection();
             conn.setConnectTimeout(2000);
             conn.connect();
+            logger.debug("Service is available");
             return true;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            logger.debug("Service is unavailable");
             return false;
         }
+    }
+
+    @Override
+    public String getServiceName() {
+        return "Sesame Name Resolver";
     }
 }

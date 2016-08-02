@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
+import cz.muni.physics.pdr.backend.resolver.AvailabilityQueryable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -10,11 +11,13 @@ import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -31,6 +34,9 @@ public class AppInitializerImpl implements AppInitializer {
     private File configFile;
 
     private Application mainApp;
+
+    @Autowired
+    private Set<AvailabilityQueryable> services;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
@@ -78,6 +84,11 @@ public class AppInitializerImpl implements AppInitializer {
                 }
             });
         }
+
+        mainApp.notifyPreloader(PreloaderHandlerEvent.SERVICES_CHECK);
+        services.stream().filter(service -> !service.isAvailable()).forEach(service -> {
+            initErrors.add("Service " + service.getServiceName() + " is not available");
+        });
     }
 
     private void loadDefaultConfigFile() {
