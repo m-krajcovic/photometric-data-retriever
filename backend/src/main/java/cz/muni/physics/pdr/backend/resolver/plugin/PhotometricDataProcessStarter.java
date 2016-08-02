@@ -25,6 +25,18 @@ public class PhotometricDataProcessStarter implements ProcessStarter<List<Photom
     private String command;
     private Map<String, String> parameters;
     private boolean readyToRun = false;
+    private double minThreshold;
+    private double maxThreshold;
+
+    public PhotometricDataProcessStarter() {
+        minThreshold = Double.NEGATIVE_INFINITY;
+        maxThreshold = Double.POSITIVE_INFINITY;
+    }
+
+    public PhotometricDataProcessStarter(double minThreshold, double maxThreshold) {
+        this.minThreshold = minThreshold;
+        this.maxThreshold = maxThreshold;
+    }
 
     @Override
     public boolean prepare(String command, Map<String, String> parameters) {
@@ -76,7 +88,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<List<Photom
         try {
             p = run();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to run process by command "+ command, e);
+            throw new RuntimeException("Failed to run process by command " + command, e);
         }
 
         StreamGobbler<PhotometricData> stdOutput = new StreamGobbler<>(p.getInputStream(), line -> {
@@ -84,10 +96,12 @@ public class PhotometricDataProcessStarter implements ProcessStarter<List<Photom
             if (split.length >= 3 && NumberUtils.isParsable(split[0])
                     && NumberUtils.isParsable(split[1]) && NumberUtils.isParsable(split[2])) {
                 PhotometricData data = new PhotometricData(split[0], split[1], split[2]);
-                if (split.length >= 4) {
-                    data.setId(split[3]);
+                if (data.getMagnitude() >= minThreshold && data.getMagnitude() <= maxThreshold) {
+                    if (split.length >= 4) {
+                        data.setId(split[3]);
+                    }
+                    return data;
                 }
-                return data;
             }
             return null;
         });

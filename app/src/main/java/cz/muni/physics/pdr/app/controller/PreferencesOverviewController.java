@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.javafx.control.DecimalTextField;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -11,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +40,21 @@ public class PreferencesOverviewController extends StageController {
     @Autowired
     private Preferences preferences;
 
+    @Value("${threshold.min}")
+    private Double minThreshold;
+    @Value("${threshold.max}")
+    private Double maxThreshold;
+
     @FXML
     private ResourceBundle resources;
     @FXML
     private TextField pluginsRootTextField;
     @FXML
     private TextField appDataRootTextField;
+    @FXML
+    private DecimalTextField minThresholdTextField;
+    @FXML
+    private DecimalTextField maxThresholdTextField;
     @FXML
     private Button applyButton;
 
@@ -57,6 +68,14 @@ public class PreferencesOverviewController extends StageController {
         appDataRootTextField.textProperty().bind(appDataRoot);
         appDataRoot.setValue(appDataDir.getAbsolutePath());
         pluginsRoot.setValue(pluginsDir.getAbsolutePath());
+        minThresholdTextField.setText(minThreshold.toString());
+        maxThresholdTextField.setText(maxThreshold.toString());
+        minThresholdTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            changeMade.setValue(true);
+        });
+        maxThresholdTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            changeMade.setValue(true);
+        });
         applyButton.disableProperty().bind(changeMade.not());
     }
 
@@ -95,6 +114,8 @@ public class PreferencesOverviewController extends StageController {
     private void handleApplyButton() {
         preferences.put("app.data.dir.path", appDataRoot.getValue());
         preferences.put("plugins.dir.path", pluginsRoot.getValue());
+        preferences.put("threshold.min", minThresholdTextField.getText());
+        preferences.put("threshold.max", maxThresholdTextField.getText());
         changeMade.setValue(false);
         FXMLUtils.alert(resources.getString("restart.needed"), resources.getString("application.restart.needed"), resources.getString("restart.needed.message"), Alert.AlertType.INFORMATION).showAndWait();
     }

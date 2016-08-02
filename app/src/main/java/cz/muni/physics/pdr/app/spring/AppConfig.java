@@ -106,8 +106,10 @@ public class AppConfig {
 
     @Bean
     public PhotometricDataRetrieverManager photometricDataRetrieverManager(StarSurveyManager starSurveyManager,
-                                                                           Executor executor) {
-        return new PhotometricDataRetrieverManagerImpl(starSurveyManager, executor);
+                                                                           Executor executor,
+                                                                           @Value("${threshold.min}") Double minThreshold,
+                                                                           @Value("${threshold.max}") Double maxThreshold) {
+        return new PhotometricDataRetrieverManagerImpl(starSurveyManager, executor, minThreshold, maxThreshold);
     }
 
     @Bean

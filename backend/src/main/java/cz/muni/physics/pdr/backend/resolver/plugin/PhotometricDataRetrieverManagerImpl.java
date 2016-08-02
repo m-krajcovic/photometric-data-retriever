@@ -30,14 +30,21 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     private StarSurveyManager starSurveyManager;
     private Executor executor;
 
+    private double minThreshold;
+    private double maxThreshold;
+
     private Consumer<StarSurvey> onNoResultsFound;
     private Consumer<StarSurvey> onResultsFound;
     private List<CompletableFuture> futures = null;
 
     public PhotometricDataRetrieverManagerImpl(StarSurveyManager starSurveyManager,
-                                               Executor executor) {
+                                               Executor executor,
+                                               double minThreshold,
+                                               double maxThreshold) {
         this.starSurveyManager = starSurveyManager;
         this.executor = executor;
+        this.minThreshold = minThreshold;
+        this.maxThreshold = maxThreshold;
     }
 
     public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
@@ -79,7 +86,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
             throw new IllegalArgumentException("params cannot be null.");
         }
         logger.debug("Running plugin {}", plugin.getName());
-        ProcessStarter<List<PhotometricData>> starter = new PhotometricDataProcessStarter();
+        ProcessStarter<List<PhotometricData>> starter = new PhotometricDataProcessStarter(minThreshold, maxThreshold);
         if (!starter.prepare(plugin.getCommands(), params)) {
             logger.debug("Not able to prepare {} plugin command", plugin.getName());
             return CompletableFuture.completedFuture(new ArrayList<>());
