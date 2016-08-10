@@ -15,6 +15,7 @@ import java.text.MessageFormat;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
+//        args = new String[] {"291.125751917", "-27.865943238"};
         Main main = new Main();
         main.readData(args);
     }
@@ -31,6 +32,7 @@ public class Main {
         Element text = doc.getElementsByTag("font").first();
         String[] lines = text.html().split("<br>");
         for (String line : lines) {
+            line = line.trim().replaceAll(" ", "");
             if (line.startsWith("#")) continue;
             String[] csv = line.split("#")[0].split(",");
             if (csv.length == 3) {
