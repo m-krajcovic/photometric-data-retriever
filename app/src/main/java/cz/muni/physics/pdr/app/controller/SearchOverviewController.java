@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.controller.service.CoordsSearchTaskService;
 import cz.muni.physics.pdr.app.controller.service.NameSearchTaskService;
+import cz.muni.physics.pdr.app.controller.service.NameWithRadiusSearchTaskService;
 import cz.muni.physics.pdr.app.controller.service.StarSurveySearchTaskService;
 import cz.muni.physics.pdr.app.javafx.Shaker;
 import cz.muni.physics.pdr.app.javafx.SpriteAnimation;
@@ -50,6 +51,8 @@ public class SearchOverviewController extends StageController {
     private CoordsSearchTaskService coordsSearchTaskService;
     @Autowired
     private NameSearchTaskService nameSearchTaskService;
+    @Autowired
+    private NameWithRadiusSearchTaskService nameWithRadiusSearchTaskService;
     @Autowired
     private StarSurveySearchTaskService starSurveySearchService;
     @Autowired
@@ -145,7 +148,11 @@ public class SearchOverviewController extends StageController {
             coordsSearchTaskService.start();
         }, model -> {
             logger.debug("Sending name {} to NameSearchService", model);
-            nameSearchTaskService.start();
+            if(radiusTextField.getText().isEmpty()) {
+                nameSearchTaskService.start();
+            } else {
+                nameWithRadiusSearchTaskService.start();
+            }
         }, error -> {
             showErrorMessage(error);
             disableElements(false);
@@ -162,6 +169,10 @@ public class SearchOverviewController extends StageController {
         nameSearchTaskService.setModel(searchModel);
         nameSearchTaskService.setOnError(this::showErrorMessage);
         nameSearchTaskService.setOnDone(() -> disableElements(false));
+
+        nameWithRadiusSearchTaskService.setModel(searchModel);
+        nameWithRadiusSearchTaskService.setOnError(this::showErrorMessage);
+        nameWithRadiusSearchTaskService.setOnDone(() -> disableElements(false));
     }
 
     private void initializeStarSurveySearchService() {

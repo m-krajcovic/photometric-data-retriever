@@ -10,7 +10,6 @@ import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataProcessStarter
 import cz.muni.physics.pdr.backend.resolver.plugin.ProcessStarter;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolverImpl;
-import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
 import cz.muni.physics.pdr.backend.resolver.vizier.VizierVSXStarResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -66,7 +65,7 @@ public class BackendConfig {
     }
 
     @Bean
-    public VizierResolver vsxVizierResolver() {
+    public VizierVSXStarResolver vsxVizierResolver() {
         return new VizierVSXStarResolver();
     }
 
