@@ -12,25 +12,34 @@ import javafx.beans.property.StringProperty;
  */
 public class StellarObjectModel {
     private StringProperty name;
-    private DoubleProperty rightAscension;
-    private DoubleProperty declination;
+    private StringProperty rightAscension;
+    private StringProperty declination;
     private DoubleProperty distance;
     private DoubleProperty epoch;
     private DoubleProperty period;
 
     public StellarObjectModel() {
         this.name = new SimpleStringProperty();
-        this.rightAscension = new SimpleDoubleProperty();
-        this.declination = new SimpleDoubleProperty();
+        this.rightAscension = new SimpleStringProperty();
+        this.declination = new SimpleStringProperty();
         this.distance = new SimpleDoubleProperty();
         this.epoch = new SimpleDoubleProperty();
         this.period = new SimpleDoubleProperty();
     }
 
+    public StellarObjectModel(String name, String rightAscension, String declination, double distance, double epoch, double period) {
+        this.name = new SimpleStringProperty(name);
+        this.rightAscension = new SimpleStringProperty(rightAscension);
+        this.declination = new SimpleStringProperty(declination);
+        this.distance = new SimpleDoubleProperty(distance);
+        this.epoch = new SimpleDoubleProperty(epoch);
+        this.period = new SimpleDoubleProperty(period);
+    }
+
     public StellarObjectModel(String name, double rightAscension, double declination, double distance, double epoch, double period) {
         this.name = new SimpleStringProperty(name);
-        this.rightAscension = new SimpleDoubleProperty(rightAscension);
-        this.declination = new SimpleDoubleProperty(declination);
+        this.rightAscension = new SimpleStringProperty(Double.toString(rightAscension));
+        this.declination = new SimpleStringProperty(Double.toString(declination));
         this.distance = new SimpleDoubleProperty(distance);
         this.epoch = new SimpleDoubleProperty(epoch);
         this.period = new SimpleDoubleProperty(period);
@@ -45,27 +54,27 @@ public class StellarObjectModel {
                 period == null ? 0 : period);
     }
 
-    public double getRightAscension() {
+    public String getRightAscension() {
         return rightAscension.get();
     }
 
-    public DoubleProperty rightAscensionProperty() {
+    public StringProperty rightAscensionProperty() {
         return rightAscension;
     }
 
-    public void setRightAscension(double rightAscension) {
+    public void setRightAscension(String rightAscension) {
         this.rightAscension.set(rightAscension);
     }
 
-    public double getDeclination() {
+    public String getDeclination() {
         return declination.get();
     }
 
-    public DoubleProperty declinationProperty() {
+    public StringProperty declinationProperty() {
         return declination;
     }
 
-    public void setDeclination(double declination) {
+    public void setDeclination(String declination) {
         this.declination.set(declination);
     }
 

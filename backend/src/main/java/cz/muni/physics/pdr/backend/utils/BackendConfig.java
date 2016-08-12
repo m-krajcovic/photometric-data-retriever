@@ -10,6 +10,8 @@ import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataProcessStarter
 import cz.muni.physics.pdr.backend.resolver.plugin.ProcessStarter;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolverImpl;
+import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolver;
+import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolverImpl;
 import cz.muni.physics.pdr.backend.resolver.vizier.VizierVSXStarResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -21,6 +23,7 @@ import java.util.List;
 
 /**
  * Class for storing needed Spring config
+ *
  * @author Michal Krajčovič
  * @version 1.0
  * @since 08/04/16
@@ -69,4 +72,8 @@ public class BackendConfig {
         return new VizierVSXStarResolver();
     }
 
+    @Bean
+    public SimbadResolver simbadResolver() {
+        return new SimbadResolverImpl();
+    }
 }
