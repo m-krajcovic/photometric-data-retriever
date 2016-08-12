@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 public abstract class PhotometricChartDataFactory {
 
     public static PhotometricChartDataFactory getInstance(StellarObjectModel stellarObject) {
-        if (stellarObject.getPeriod() != 0 && stellarObject.getEpoch() != 0) {
+        if (stellarObject.getPeriod() != 0) {
             return new PeriodPhotometricChartData(stellarObject);
         } else {
             return new JulianDatePhotometricChartData();

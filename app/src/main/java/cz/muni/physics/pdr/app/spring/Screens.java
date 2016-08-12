@@ -97,12 +97,12 @@ public class Screens {
         return controller.isOkClicked();
     }
 
-    public StellarObjectModel showStellarObjects(List<StellarObjectModel> stellarObjects) {
+    public StellarObjectModel showStellarObjects(Map<String, List<StellarObjectModel>> models) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/StellarObjectOverview.fxml")
                         .stage(resources.getString("choose.one.stellar.object"), primaryStage);
         StellarObjectOverviewController controller = builder.controller();
-        controller.setItems(stellarObjects);
+        controller.setItems(models);
         Stage stage = builder.get();
         stage.showAndWait();
         return controller.getSelected();

@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.model;
 
+import cz.muni.physics.pdr.backend.entity.Radius;
 import javafx.beans.property.*;
 
 /**
@@ -34,16 +35,32 @@ public class RadiusModel {
     }
 
     public enum Unit {
-        DEG("deg"),
-        ARCSEC("arcsec"),
-        ARCMIN("arcmin");
+        DEG("deg", Radius.Unit.DEG),
+        ARCSEC("arcsec", Radius.Unit.ARC_SEC),
+        ARCMIN("arcmin", Radius.Unit.ARC_MIN);
 
         private String id;
+        private Radius.Unit backendEnum;
 
-        private Unit(String id) {
+        private Unit(String id, Radius.Unit backendEnum) {
             this.id = id;
+            this.backendEnum = backendEnum;
         }
 
+        public Radius.Unit toBackend() {
+            return backendEnum;
+        }
+
+        public Unit fromBackend(Radius.Unit backendEnum) {
+            switch (backendEnum) {
+                case ARC_MIN:
+                    return RadiusModel.Unit.ARCMIN;
+                case ARC_SEC:
+                    return RadiusModel.Unit.ARCSEC;
+                default:
+                    return RadiusModel.Unit.DEG;
+            }
+        }
 
         @Override
         public String toString() {
