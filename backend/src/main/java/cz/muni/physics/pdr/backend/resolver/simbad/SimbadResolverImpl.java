@@ -54,6 +54,7 @@ public class SimbadResolverImpl implements SimbadResolver {
     public List<SimbadResult> findByCoords(String query, Radius radius) {
         List<SimbadResult> result = new ArrayList<>();
         try (InputStream is = UriComponentsBuilder.fromHttpUrl(coordsUrl).queryParam("output.format", "ASCII")
+                .queryParam("output.max", "100")
                 .queryParam("Coord", query)
                 .queryParam("Radius", Double.toString(radius.getRadius()))
                 .queryParam("Radius.unit", radius.getUnit().toString()).build().toUri().toURL().openStream();
