@@ -42,7 +42,7 @@ public class RadiusModel {
         private String id;
         private Radius.Unit backendEnum;
 
-        private Unit(String id, Radius.Unit backendEnum) {
+        Unit(String id, Radius.Unit backendEnum) {
             this.id = id;
             this.backendEnum = backendEnum;
         }

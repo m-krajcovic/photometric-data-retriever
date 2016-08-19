@@ -2,7 +2,6 @@ package cz.muni.physics.pdr.nsvs;
 
 import cz.muni.physics.pdr.java.PhotometricData;
 import cz.muni.physics.pdr.java.Plugin;
-import cz.muni.physics.pdr.java.PluginUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

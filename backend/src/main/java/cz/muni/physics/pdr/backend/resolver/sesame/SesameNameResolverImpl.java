@@ -27,7 +27,7 @@ import java.util.Set;
  * @since 24/03/16
  */
 public class SesameNameResolverImpl implements SesameNameResolver {
-    private final static Logger logger = LogManager.getLogger(SesameNameResolverImpl.class);
+    private static final Logger logger = LogManager.getLogger(SesameNameResolverImpl.class);
 
     private RestOperations restTemplate;
     private String resolverUrl;

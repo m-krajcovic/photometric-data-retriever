@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public class PhotometricDataProcessStarter implements ProcessStarter<List<PhotometricData>> {
 
-    private final static Logger logger = LogManager.getLogger(PhotometricDataProcessStarter.class);
+    private static final Logger logger = LogManager.getLogger(PhotometricDataProcessStarter.class);
 
     private String command;
     private Map<String, String> parameters;

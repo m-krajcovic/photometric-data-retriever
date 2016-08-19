@@ -21,7 +21,7 @@ import java.util.List;
  * @since 8/10/2016
  */
 public class SimbadResolverImpl implements SimbadResolver {
-    private final static Logger logger = LogManager.getLogger(SimbadResolverImpl.class);
+    private static final Logger logger = LogManager.getLogger(SimbadResolverImpl.class);
     private String coordsUrl = "http://simbad.u-strasbg.fr/simbad/sim-coo";
     private String identUrl = "http://simbad.u-strasbg.fr/simbad/sim-id";
 

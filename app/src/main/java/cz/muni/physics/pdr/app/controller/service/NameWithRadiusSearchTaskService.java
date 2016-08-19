@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  */
 @Component
 public class NameWithRadiusSearchTaskService extends Service<StellarObject> {
-    private final static Logger logger = LogManager.getLogger(NameWithRadiusSearchTaskService.class);
+    private static final Logger logger = LogManager.getLogger(NameWithRadiusSearchTaskService.class);
     protected SearchModel searchModel;
     protected SesameNameResolver sesameNameResolver;
     protected VizierResolver vsxVizierResolver;

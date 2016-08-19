@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  */
 @Component
 public class NameSearchTaskService extends Service<StellarObject> {
-    private final static Logger logger = LogManager.getLogger(NameSearchTaskService.class);
+    private static final Logger logger = LogManager.getLogger(NameSearchTaskService.class);
     private SearchModel searchModel;
     private SesameNameResolver sesameNameResolver;
     private VizierResolver vsxVizierResolver;

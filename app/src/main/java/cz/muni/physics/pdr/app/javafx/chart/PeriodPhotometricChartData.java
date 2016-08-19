@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 class PeriodPhotometricChartData extends PhotometricChartDataFactory {
     private StellarObjectModel stellarObject;
 
-    public PeriodPhotometricChartData(StellarObjectModel stellarObject) {
+    PeriodPhotometricChartData(StellarObjectModel stellarObject) {
         this.stellarObject = stellarObject;
     }
 

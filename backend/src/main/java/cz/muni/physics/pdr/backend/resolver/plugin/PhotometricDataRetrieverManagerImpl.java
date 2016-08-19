@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  */
 public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetrieverManager {
 
-    private final static Logger logger = LogManager.getLogger(PhotometricDataRetrieverManagerImpl.class);
+    private static final Logger logger = LogManager.getLogger(PhotometricDataRetrieverManagerImpl.class);
 
     private StarSurveyManager starSurveyManager;
     private Executor executor;

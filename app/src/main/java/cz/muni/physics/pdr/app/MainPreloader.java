@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MainPreloader extends Preloader {
 
-    private final static Logger logger = LogManager.getLogger(MainPreloader.class);
+    private static final Logger logger = LogManager.getLogger(MainPreloader.class);
 
     private Stage preloaderStage;
     private Label infoLabel;

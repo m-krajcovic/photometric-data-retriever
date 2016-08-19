@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 @Component
 public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, List<PhotometricDataModel>>> {
 
-    private final static Logger logger = LogManager.getLogger(StarSurveySearchTaskService.class);
+    private static final Logger logger = LogManager.getLogger(StarSurveySearchTaskService.class);
 
     private Screens app;
     private PhotometricDataRetrieverManager retrieverManager;

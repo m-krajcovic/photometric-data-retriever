@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 @Scope("prototype")
 public class SpringFXMLLoader {
 
-    private final static Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
+    private static final Logger logger = LogManager.getLogger(SpringFXMLLoader.class);
     @Autowired
     private ApplicationContext context;
     @Autowired

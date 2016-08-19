@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @since 20/04/16
  */
 class SearchQueryParser {
-    private final static Logger logger = LogManager.getLogger(SearchQueryParser.class);
+    private static final Logger logger = LogManager.getLogger(SearchQueryParser.class);
 
     private Consumer<SearchModel> onCoordinates;
     private Consumer<SearchModel> onName;
@@ -40,8 +40,8 @@ class SearchQueryParser {
 
 
         strategies = new DefaultHashMap<>(this::handleNameSearch);
-        strategies.put(Pattern.compile("(\\d+\\.?\\d*)\\s([\\+\\-]?\\d+\\.?\\d*)"), this::handleDegreesCoordsSearch);
-        strategies.put(Pattern.compile("(\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*),?\\s([\\+\\-]?\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
+        strategies.put(Pattern.compile("(\\d+\\.?\\d*)\\s+([\\+\\-]?\\d+\\.?\\d*)"), this::handleDegreesCoordsSearch);
+        strategies.put(Pattern.compile("(\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*),?\\s+([\\+\\-]?\\d{2}[\\s:]\\d{2}[\\s:]\\d{2}\\.?\\d*)"), this::handleCoordsSearch);
 
         this.resources = resources;
         this.onCoordinates = onCoordinates;

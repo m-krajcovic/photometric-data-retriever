@@ -70,7 +70,7 @@ public class PluginUtils {
     private static void writeFile(InputStream is, File file) throws IOException {
         file.getParentFile().mkdirs();
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            final byte data[] = new byte[1024];
+            final byte[] data = new byte[1024];
             int count;
             while ((count = is.read(data, 0, 1024)) != -1) {
                 fos.write(data, 0, count);
@@ -93,8 +93,7 @@ public class PluginUtils {
         return map;
     }
 
-    public static boolean isNumeric(String str)
-    {
+    public static boolean isNumeric(String str) {
         return str.matches("-?\\d+(.\\d+)?");
     }
 }

@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * @since 23/04/16
  */
 public class ConfigurationHolderImpl implements ConfigurationHolder {
-    private final static Logger logger = LogManager.getLogger(ConfigurationHolderImpl.class);
+    private static final Logger logger = LogManager.getLogger(ConfigurationHolderImpl.class);
 
     private File configurationFile;
     private XStream xStream;

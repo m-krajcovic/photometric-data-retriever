@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public class PluginRepositoryImpl implements PluginRepository {
 
-    private final static Logger logger = LogManager.getLogger(PluginRepositoryImpl.class);
+    private static final Logger logger = LogManager.getLogger(PluginRepositoryImpl.class);
 
     private File pluginsFolder;
     private FileWatcher fileWatcher;

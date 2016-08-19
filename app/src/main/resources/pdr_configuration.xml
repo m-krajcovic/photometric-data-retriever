@@ -47,6 +47,10 @@
             <plugin name="HIP"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="MACHO">
+            <plugin name="MACHO"/>
+            <urls/>
+        </starSurvey>
     </starSurveys>
     <patterns>
         <entry>
@@ -235,6 +239,13 @@
             <string>2MASS</string>
             <java.util.regex.Pattern>
                 <pattern>(?&lt;tmass&gt;2MASS\s(?&lt;tmassID&gt;.*))</pattern>
+                <flags>0</flags>
+            </java.util.regex.Pattern>
+        </entry>
+        <entry>
+            <string>MACHO</string>
+            <java.util.regex.Pattern>
+                <pattern>(?&lt;macho&gt;MACHO\s(?&lt;machoID&gt;.*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </entry>

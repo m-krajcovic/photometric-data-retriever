@@ -55,7 +55,7 @@ import java.util.zip.ZipOutputStream;
 @Scope("prototype")
 public class PhotometricDataOverviewController extends StageController {
 
-    private final static Logger logger = LogManager.getLogger(PhotometricDataOverviewController.class);
+    private static final Logger logger = LogManager.getLogger(PhotometricDataOverviewController.class);
 
 
     @Autowired

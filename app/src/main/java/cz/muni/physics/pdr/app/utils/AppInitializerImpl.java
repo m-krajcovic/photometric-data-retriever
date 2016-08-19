@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @since 09/04/16
  */
 public class AppInitializerImpl implements AppInitializer {
-    private final static Logger logger = LogManager.getLogger(AppInitializerImpl.class);
+    private static final Logger logger = LogManager.getLogger(AppInitializerImpl.class);
 
     private File appDataDir;
     private File pluginsDir;

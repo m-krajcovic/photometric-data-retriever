@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @since 23/04/16
  */
 public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
-    private final static Logger logger = LogManager.getLogger(StarSurveyRepositoryConfigImpl.class);
+    private static final Logger logger = LogManager.getLogger(StarSurveyRepositoryConfigImpl.class);
 
     private Map<String, StarSurvey> starSurveysCache = new HashMap<>();
     private Map<String, Pattern> patterns = new HashMap<>();

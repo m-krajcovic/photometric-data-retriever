@@ -40,7 +40,7 @@ public class Radius {
         private String string;
         private double weight;
 
-        private Unit(String string, double weight) {
+        Unit(String string, double weight) {
             this.string = string;
             this.weight = weight;
         }

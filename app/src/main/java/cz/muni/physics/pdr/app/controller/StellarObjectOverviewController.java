@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 @Scope("prototype")
 public class StellarObjectOverviewController extends StageController {
 
-    private final static Logger logger = LogManager.getLogger(StellarObjectOverviewController.class);
+    private static final Logger logger = LogManager.getLogger(StellarObjectOverviewController.class);
 
     @FXML
     public TabPane tabPane;

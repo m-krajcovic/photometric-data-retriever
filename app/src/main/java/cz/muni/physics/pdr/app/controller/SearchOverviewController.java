@@ -43,7 +43,7 @@ import java.util.Set;
 @Component
 public class SearchOverviewController extends StageController {
 
-    private final static Logger logger = LogManager.getLogger(SearchOverviewController.class);
+    private static final Logger logger = LogManager.getLogger(SearchOverviewController.class);
 
     @Autowired
     private Screens app;

@@ -23,7 +23,7 @@ import java.util.prefs.BackingStoreException;
  */
 public class MainApp extends Application {
 
-    private final static Logger logger = LogManager.getLogger(MainApp.class);
+    private static final Logger logger = LogManager.getLogger(MainApp.class);
 
     private Screens app;
     private AppInitializer initializer;

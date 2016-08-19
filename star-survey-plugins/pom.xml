@@ -23,6 +23,9 @@
         <module>ogle2-plugin</module>
         <module>ptf-plugin</module>
         <module>ogle3-plugin</module>
+        <module>vizier-data-plugin</module>
+        <module>vizier-utils</module>
+        <module>macho-plugin</module>
     </modules>
 
     <properties>
@@ -33,6 +36,16 @@
     </properties>
 
     <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>../checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
