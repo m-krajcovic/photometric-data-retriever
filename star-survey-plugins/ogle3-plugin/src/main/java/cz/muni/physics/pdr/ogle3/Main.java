@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
+        args = new String[]{"194856"};
+
         Main main = new Main();
         if (args.length == 1) {
             String ogleId = main.findByStarId(args[0]);
@@ -35,10 +37,11 @@ public class Main {
              BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                line = line.trim();
                 String[] cols = line.split(" ");
-                String jd = Double.toString(Double.parseDouble(cols[0]) + 2450000);
-                String mag = cols[1];
-                String err = cols[2];
+                String jd = Double.toString(Double.parseDouble(cols[0].trim()) + 2450000);
+                String mag = cols[1].trim();
+                String err = cols[2].trim();
                 System.out.println(jd + "," + mag + "," + err + "," + band);
             }
         } catch (IOException e) {
