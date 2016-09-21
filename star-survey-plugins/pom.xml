@@ -26,6 +26,7 @@
         <module>vizier-data-plugin</module>
         <module>vizier-utils</module>
         <module>macho-plugin</module>
+        <module>dk154-plugin</module>
     </modules>
 
     <properties>

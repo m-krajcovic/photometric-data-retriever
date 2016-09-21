@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.ogle3;
 
+import cz.muni.physics.pdr.java.PluginUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -15,7 +16,6 @@ import java.io.InputStreamReader;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-        args = new String[]{"194856"};
 
         Main main = new Main();
         if (args.length == 1) {
@@ -36,7 +36,9 @@ public class Main {
         try (InputStream is = ftpClient.retrieveFileStream(photDir + band + "/" + id + ".dat");
              BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
+            String original = "";
             while ((line = reader.readLine()) != null) {
+                original += line + "\n";
                 line = line.trim();
                 String[] cols = line.split(" ");
                 String jd = Double.toString(Double.parseDouble(cols[0].trim()) + 2450000);
@@ -44,6 +46,7 @@ public class Main {
                 String err = cols[2].trim();
                 System.out.println(jd + "," + mag + "," + err + "," + band);
             }
+            PluginUtils.saveOriginal("OGLE3-" + band + "-" + id + ".dat", original, 5);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

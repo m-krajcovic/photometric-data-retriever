@@ -35,6 +35,10 @@
             <plugin name="APASS"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="DK154">
+            <plugin name="DK154"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="OGLE2">
             <plugin name="OGLE2"/>
             <urls/>

@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.macho;
 
+import cz.muni.physics.pdr.java.PluginUtils;
 import cz.muni.physics.pdr.vizier.VizierHtmlParser;
 import cz.muni.physics.pdr.vizier.VizierService;
 import org.jsoup.Connection;
@@ -24,7 +25,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         VizierService vizierService = new VizierService();
         VizierHtmlParser vizierHtmlParser = new VizierHtmlParser();
-        args = new String[]{"MACHO 208.16083.86"};
         if (args.length >= 1) {
             String query = args[0];
             Document parse = vizierService.getConnectionFromVizier("J/AJ/134/1963/EBs", VizierService.OutputType.HTML)
@@ -43,10 +43,9 @@ public class Main {
                             String href = a.first().attr("abs:href")
                                     .replace("Calibrated", "Instrumental")
                                     .replaceFirst("&P=[0-9\\.]*(&?)", "&P=0.0$1");
-                            System.out.println(href);
                             URL hrefUrl = new URL(href);
                             String filter = "R";
-                            try (InputStream is = hrefUrl.openStream();
+                            try (InputStream is = PluginUtils.copyUrlOpenStream(hrefUrl, "MACHO-"+result.get("MACHO") + "-" + filter, 10);
                                  BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                                 reader.readLine();
                                 String line;

@@ -66,13 +66,15 @@ public class SimbadResolverImpl implements SimbadResolver {
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty() && !line.startsWith("=")) {
                     String[] cols = line.split("\\|");
-                    SimbadResult currentObject = new SimbadResult();
-                    currentObject.setDistance(Radius.Unit.ARC_SEC.convertTo(Double.parseDouble(cols[1].trim()), radius.getUnit()));
-                    currentObject.setIdentifier(cols[2].trim());
-                    String[] coords = cols[4].trim().split("(?=[-+])");
-                    currentObject.setRightAscension(coords[0]);
-                    currentObject.setDeclination(coords[1]);
-                    result.add(currentObject);
+                    if (cols.length > 4) {
+                        SimbadResult currentObject = new SimbadResult();
+                        currentObject.setDistance(Radius.Unit.ARC_SEC.convertTo(Double.parseDouble(cols[1].trim()), radius.getUnit()));
+                        currentObject.setIdentifier(cols[2].trim());
+                        String[] coords = cols[4].trim().split("(?=[-+])");
+                        currentObject.setRightAscension(coords[0]);
+                        currentObject.setDeclination(coords[1]);
+                        result.add(currentObject);
+                    }
                 }
             }
         } catch (MalformedURLException e) {

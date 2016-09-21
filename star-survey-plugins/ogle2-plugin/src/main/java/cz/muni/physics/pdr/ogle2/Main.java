@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.ogle2;
 
+import cz.muni.physics.pdr.java.PluginUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,6 +32,7 @@ public class Main {
         String url = "http://ogledb.astrouw.edu.pl/~ogle/photdb/getobj.php?field=" + field + "&starid=" + starId;
         Document doc = Jsoup.connect(url).get();
         Element pre = doc.getElementsByTag("pre").first();
+        PluginUtils.saveOriginal("OGLE2-"+field +"-" + starId +".txt", pre.text(), 5);
         for (String line : pre.text().split("\n")) {
             String[] cols = line.split("\\s");
             System.out.println(cols[0] + "," + cols[1] + "," + cols[2] + "," + field);
