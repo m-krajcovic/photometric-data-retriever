@@ -81,3 +81,5 @@ buildNumber.properties
 hs_err_pid*
 
 *.log
+
+.DS_STORE

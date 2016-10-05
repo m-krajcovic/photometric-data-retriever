@@ -28,7 +28,7 @@ public class Main {
             doc = Jsoup.connect(resultURL).get();
             for (Element a : doc.getElementsByTag("a")) {
                 if (a.ownText().equals("CSV")) {
-                    u = new URL("http://wasp.cerit-sc.cz" + a.attr("href"));
+                    u = new URL(a.attr("abs:href"));
                 }
             }
         } else {

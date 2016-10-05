@@ -45,7 +45,7 @@ public class Main {
                                     .replaceFirst("&P=[0-9\\.]*(&?)", "&P=0.0$1");
                             URL hrefUrl = new URL(href);
                             String filter = "R";
-                            try (InputStream is = PluginUtils.copyUrlOpenStream(hrefUrl, "MACHO-"+result.get("MACHO") + "-" + filter, 10);
+                            try (InputStream is = PluginUtils.copyUrlOpenStream(hrefUrl, "MACHO-"+result.get("MACHO") + "-" + filter + ".txt", 10);
                                  BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                                 reader.readLine();
                                 String line;

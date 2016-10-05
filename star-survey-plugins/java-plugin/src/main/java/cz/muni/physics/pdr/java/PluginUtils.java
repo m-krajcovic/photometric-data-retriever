@@ -1,6 +1,11 @@
 package cz.muni.physics.pdr.java;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -36,11 +41,17 @@ public class PluginUtils {
         return oldest;
     }
 
-    public static void saveOriginal(String fileName, String text, int allowedCount) throws IOException {
-        try (InputStream is = new ByteArrayInputStream(text.getBytes())) {
-            writeFile(is, new File(getOutputDir(), fileName));
+    public static File saveOriginal(String fileName, String text, int allowedCount) throws IOException {
+        return saveOriginal(fileName, text.getBytes(), allowedCount);
+    }
+
+    public static File saveOriginal(String fileName, byte[] text, int allowedCount) throws IOException {
+            File file = new File(getOutputDir(), fileName);
+        try (InputStream is = new ByteArrayInputStream(text)) {
+            writeFile(is, file);
         }
         deleteOldestFile(allowedCount);
+        return file;
     }
 
     public static File copyUrlToFile(URL url, String destName, int allowedCount) throws IOException {
@@ -59,6 +70,7 @@ public class PluginUtils {
     public static File getOutputDir() {
         try {
             File jar = new File(PluginUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            System.err.println(jar.getAbsolutePath());
             File pluginDir = jar.getParentFile();
             File outDir = new File(pluginDir, "output");
             return outDir;

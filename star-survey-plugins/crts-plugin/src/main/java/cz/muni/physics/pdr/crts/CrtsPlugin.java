@@ -36,7 +36,7 @@ public class CrtsPlugin implements Plugin {
         Element downloadAnchor = doc.getElementsMatchingOwnText("download").first();
         URL csvUrl;
         try {
-            csvUrl = new URL(downloadAnchor.attr("href"));
+            csvUrl = new URL(downloadAnchor.attr("abs:href"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return result;

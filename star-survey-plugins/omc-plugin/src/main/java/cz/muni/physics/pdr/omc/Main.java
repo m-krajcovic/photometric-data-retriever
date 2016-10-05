@@ -52,8 +52,8 @@ public class Main {
         }
         Document doc = post.post();
         Element fetchAnchor = doc.getElementsByAttributeValueStarting("href", "fetch_lcurve.jsp?obj_id=").first();
-        String href = fetchAnchor.attr("href");
-        URL fetchUrl = new URL("https://sdc.cab.inta-csic.es/omc/secure/" + href);
+        String href = fetchAnchor.attr("abs:href");
+        URL fetchUrl = new URL(href);
         try (InputStream is = PluginUtils.copyUrlOpenStream(fetchUrl, "OMC-" + PluginUtils.getQueryMap(fetchUrl.getQuery()).getOrDefault("obj_id", "-" + System.currentTimeMillis()) + ".fits", 3)) {
             Fits fits = new Fits(is);
             TableHDU table = (TableHDU) fits.getHDU(1);
