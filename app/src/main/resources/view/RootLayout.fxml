@@ -29,6 +29,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">
                     <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#handleAboutMenuItem" text="%menu.item.about"/>
+                    <MenuItem fx:id="reportErrorMenuItem" mnemonicParsing="false" onAction="#handleReportErrorMenuItem" text="%menu.item.report.error"/>
                 </Menu>
             </menus>
         </MenuBar>

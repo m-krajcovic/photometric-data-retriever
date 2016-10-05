@@ -194,4 +194,11 @@ public class Screens {
     public HostServicesDelegate getHostServices() {
         return hostServices;
     }
+
+    public void showReportErrorWindow(Stage owner) {
+            SpringDialogBuilder builder =
+                    SpringDialogBuilder.load(fxmlLoader(), "/view/ReportErrorDialog.fxml")
+                            .stage(resources.getString("report.error"), owner);
+            builder.get().showAndWait();
+        }
 }

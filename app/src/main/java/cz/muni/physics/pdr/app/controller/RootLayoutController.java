@@ -2,6 +2,7 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
@@ -34,6 +35,8 @@ public class RootLayoutController {
     @FXML
     private ResourceBundle resources;
 
+    @FXML
+    private MenuItem reportErrorMenuItem;
     @FXML
     private MenuItem aboutMenuItem;
     @FXML
@@ -89,5 +92,10 @@ public class RootLayoutController {
     @FXML
     private void handleAboutMenuItem() {
         app.showAboutOverview(app.getPrimaryStage());
+    }
+
+    @FXML
+    private void handleReportErrorMenuItem() {
+        app.showReportErrorWindow(app.getPrimaryStage());
     }
 }
