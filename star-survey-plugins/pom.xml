@@ -27,6 +27,7 @@
         <module>vizier-utils</module>
         <module>macho-plugin</module>
         <module>dk154-plugin</module>
+        <module>kws-plugin</module>
     </modules>
 
     <properties>

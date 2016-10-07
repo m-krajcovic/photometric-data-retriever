@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>star-survey-plugins</artifactId>
@@ -9,12 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linear-plugin</artifactId>
+    <artifactId>kws-plugin</artifactId>
 
     <properties>
-        <main.class>cz.muni.physics.pdr.linear.Main</main.class>
-        <plugin.folder>LINEAR</plugin.folder>
-        <plugin.name>LinearPlugin</plugin.name>
+        <main.class>cz.muni.physics.pdr.kws.Main</main.class>
+        <plugin.folder>KWS</plugin.folder>
+        <plugin.name>KwsPlugin</plugin.name>
     </properties>
 
     <dependencies>
@@ -28,11 +28,6 @@
             <groupId>cz.muni.physics.pdr</groupId>
             <artifactId>java-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>2.3</version>
         </dependency>
     </dependencies>
 
@@ -50,6 +45,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
