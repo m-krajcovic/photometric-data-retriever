@@ -33,7 +33,7 @@ public class AboutOverviewController extends StageController {
     private void initialize() {
         imageView.setImage(new Image(this.getClass().getResourceAsStream("/images/planet.png")));
         topLabel.setText("Photometric Data Retriever");
-        bottomLabel.setText("Version 1.1.5");
+        bottomLabel.setText("Version 1.1.5b");
         topHyperlink.setText("GitHub Project");
     }
 

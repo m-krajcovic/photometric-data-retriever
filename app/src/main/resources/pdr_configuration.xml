@@ -17,6 +17,10 @@
             <plugin name="OMC"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="KWS">
+            <plugin name="KWS"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="ASAS3">
             <plugin name="ASAS3"/>
             <urls/>
