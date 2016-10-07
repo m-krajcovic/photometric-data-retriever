@@ -70,7 +70,10 @@ public class FXMLUtils {
     public static File showDirChooser(String title, String initPath, Window dialogStage) {
         DirectoryChooser fileChooser = new DirectoryChooser();
         fileChooser.setTitle(title);
-        fileChooser.setInitialDirectory(new File(initPath));
+        File initFolder = new File(initPath);
+        if (initFolder.exists()) {
+            fileChooser.setInitialDirectory(initFolder);
+        }
         return fileChooser.showDialog(dialogStage);
     }
 
@@ -82,7 +85,10 @@ public class FXMLUtils {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.setInitialFileName(initFileName);
-        fileChooser.setInitialDirectory(new File(initPath));
+        File initFolder = new File(initPath);
+        if (initFolder.exists()) {
+            fileChooser.setInitialDirectory(initFolder);
+        }
         fileChooser.getExtensionFilters().addAll(extensionFilters);
         return fileChooser.showSaveDialog(dialogStage);
     }
