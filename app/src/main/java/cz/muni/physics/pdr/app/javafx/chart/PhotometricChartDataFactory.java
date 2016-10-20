@@ -27,10 +27,14 @@ public abstract class PhotometricChartDataFactory {
     }
 
     public XYChart.Series<Number, Number> getSeries(String name, List<PhotometricDataModel> models) {
+        return getSeries(name, models, false);
+    }
+
+    public XYChart.Series<Number, Number> getSeries(String name, List<PhotometricDataModel> models, boolean forceAll) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(name);
         int size = models.size();
-        int increment = size > 1000 ? (size > 2000 ? 10 : 5) : 1;
+        int increment = !forceAll && size > 1000 ? (size > 2000 ? 10 : 5) : 1;
         for (int i = 0; i < size; i += increment) {
             PhotometricDataModel d = models.get(i);
             if (d.getMagnitude() != 0)

@@ -88,6 +88,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#showAllInChart" text="%chart.show.all"/>
                         <Menu fx:id="showOneMenu" mnemonicParsing="false" text="%chart.show">
                         </Menu>
+                        <MenuItem mnemonicParsing="false" onAction="#handleFullRedraw" text="%chart.redraw.full"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%originals">

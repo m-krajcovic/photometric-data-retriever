@@ -201,7 +201,7 @@ public class PhotometricDataOverviewController extends StageController {
         ));
     }
 
-    private void drawChart(Map<StarSurveyModel, List<PhotometricDataModel>> data) {
+    private void drawChart(Map<StarSurveyModel, List<PhotometricDataModel>> data, boolean forceAll) {
         chart.getData().clear();
         PhotometricChartDataFactory dataFactory = PhotometricChartDataFactory.getInstance(stellarObject);
         dataFactory.setUpChart(chart, resources);
@@ -211,7 +211,7 @@ public class PhotometricDataOverviewController extends StageController {
             @Override
             protected Object call() throws Exception {
                 for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
-                    XYChart.Series<Number, Number> series = dataFactory.getSeries(entry.getKey().getName(), entry.getValue());
+                    XYChart.Series<Number, Number> series = dataFactory.getSeries(entry.getKey().getName(), entry.getValue(), forceAll);
                     Platform.runLater(() -> chart.getData().add(series));
                 }
                 return null;
@@ -230,7 +230,12 @@ public class PhotometricDataOverviewController extends StageController {
 
     @FXML
     private void handleRedraw() {
-        drawChart(data);
+        drawChart(data, false);
+    }
+
+    @FXML
+    private void handleFullRedraw() {
+        drawChart(data, true);
     }
 
     private Tab getTab(StarSurveyModel model, List<PhotometricDataModel> models) {
