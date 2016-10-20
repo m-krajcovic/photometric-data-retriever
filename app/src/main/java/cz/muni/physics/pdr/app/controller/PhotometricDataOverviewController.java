@@ -409,7 +409,7 @@ public class PhotometricDataOverviewController extends StageController {
             if (list.length == 0) {
                 list = outputDir.listFiles((dir, name) -> name.startsWith(pluginName));
             }
-            return getOldest(list);
+            return getNewest(list);
         }
         return null;
     }
@@ -418,13 +418,13 @@ public class PhotometricDataOverviewController extends StageController {
         return new File(pluginsDir, pluginName + File.separator + "output");
     }
 
-    private File getOldest(File[] files) {
-        File oldest = files[0];
+    private File getNewest(File[] files) {
+        File newest = files[0];
         for (int i = 1; i < files.length; i++) {
-            if (files[i].lastModified() < oldest.lastModified()) {
-                oldest = files[i];
+            if (files[i].lastModified() > newest.lastModified()) {
+                newest = files[i];
             }
         }
-        return oldest;
+        return newest;
     }
 }
