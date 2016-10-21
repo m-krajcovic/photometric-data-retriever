@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -51,6 +52,8 @@ public class ReportErrorDialogController extends StageController {
     private Button buttonCancel;
     @FXML
     private TextArea textArea;
+    @FXML
+    private TextField emailTextField;
 
     @FXML
     private void initialize() {
@@ -71,6 +74,7 @@ public class ReportErrorDialogController extends StageController {
                 if (resource.exists()) {
                     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
                     parts.add("text", textArea.getText());
+                    parts.add("from", emailTextField.getText());
                     parts.add("Content-Type", "text/plain");
                     parts.add("file", resource);
 
