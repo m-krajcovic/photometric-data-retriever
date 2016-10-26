@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -141,7 +142,13 @@ public class FXMLUtils {
         Node closeButton = dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
         closeButton.managedProperty().bind(closeButton.visibleProperty());
         closeButton.setVisible(false);
-        task.setOnSucceeded(event -> dialog.close());
+        EventHandler onSucceeded = task.getOnSucceeded();
+        task.setOnSucceeded(event -> {
+            dialog.close();
+            if (onSucceeded != null) {
+                onSucceeded.handle(event);
+            }
+        });
         return dialog;
     }
 

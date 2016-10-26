@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ import java.util.ResourceBundle;
  */
 @Component
 public class StarSurveyOverviewController extends StageController {
+
+    private static final Logger logger = LogManager.getLogger(StarSurveyOverviewController.class);
 
     @Autowired
     private Screens app;
@@ -52,6 +56,7 @@ public class StarSurveyOverviewController extends StageController {
         try {
             starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
         } catch (ResourceAvailabilityException e) {
+            logger.error(e);
             errorAlert();
         }
         starSurveys.setItems(list);
@@ -66,6 +71,7 @@ public class StarSurveyOverviewController extends StageController {
                 starSurveys.getItems().add(tempStarSurvey);
                 starSurveyManager.insert(tempStarSurvey.toEntity());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             starSurveys.refresh();
@@ -81,6 +87,7 @@ public class StarSurveyOverviewController extends StageController {
                 try {
                     starSurveyManager.insert(selectedRecord.toEntity());
                 } catch (ResourceAvailabilityException e) {
+                    logger.error(e);
                     errorAlert();
                 }
                 starSurveys.refresh();
@@ -98,6 +105,7 @@ public class StarSurveyOverviewController extends StageController {
                 starSurveys.getItems().remove(selectedRecord);
                 starSurveyManager.delete(selectedRecord.toEntity());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             starSurveys.refresh();

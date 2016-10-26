@@ -1,10 +1,15 @@
 package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
+import cz.muni.physics.pdr.app.updater.UpdaterService;
+import cz.muni.physics.pdr.app.updater.UpdaterStatus;
+import cz.muni.physics.pdr.app.updater.UpdaterUnavailableException;
 import cz.muni.physics.pdr.backend.resolver.AvailabilityQueryable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -13,12 +18,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -30,13 +41,14 @@ public class AppInitializerImpl implements AppInitializer {
     private static final Logger logger = LogManager.getLogger(AppInitializerImpl.class);
 
     private File appDataDir;
-    private File pluginsDir;
     private File configFile;
 
-    private Application mainApp;
 
     @Autowired
     private Set<AvailabilityQueryable> services;
+
+    @Autowired
+    private UpdaterService updaterService;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
@@ -45,16 +57,15 @@ public class AppInitializerImpl implements AppInitializer {
     private boolean shutdown = false;
     private Executor executor;
     private Stage primaryStage;
+    private UpdaterStatus serverStatus;
 
-    public AppInitializerImpl(File appDataDir, File pluginsDir, File configFile) {
+    public AppInitializerImpl(File appDataDir, File configFile) {
         this.appDataDir = appDataDir;
-        this.pluginsDir = pluginsDir;
         this.configFile = configFile;
     }
 
     @Override
     public void initialize(Application mainApp) {
-        this.mainApp = mainApp;
         initializeCalled = true;
         logger.debug("Initializing Application {}", mainApp.getClass());
 
@@ -79,7 +90,7 @@ public class AppInitializerImpl implements AppInitializer {
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     loadDefaultConfigFile();
                 } else {
-                    logger.debug("Configuration info alert was closed and not confirmed, shutting down app");
+                    logger.warn("Configuration info alert was closed and not confirmed, shutting down app");
                     shutdown = true;
                 }
             });
@@ -87,8 +98,19 @@ public class AppInitializerImpl implements AppInitializer {
 
         mainApp.notifyPreloader(PreloaderHandlerEvent.SERVICES_CHECK);
         services.stream().filter(service -> !service.isAvailable()).forEach(service -> {
-            initErrors.add("Service " + service.getServiceName() + " is not available");
+            String msg = "Service " + service.getServiceName() + " is not available";
+            logger.warn(msg);
+            initErrors.add(msg);
         });
+
+        mainApp.notifyPreloader(PreloaderHandlerEvent.UPDATE_CHECK);
+        try {
+            serverStatus = updaterService.status();
+        } catch (UpdaterUnavailableException e) {
+            String msg = "Updater service is not available right now";
+            logger.warn(msg, e);
+            initErrors.add(msg);
+        }
     }
 
     private void loadDefaultConfigFile() {
@@ -148,7 +170,7 @@ public class AppInitializerImpl implements AppInitializer {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public boolean start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         if (!Platform.isFxApplicationThread()) {
             throw new IllegalThreadStateException("This method must be called only from JavaFX Application Thread");
@@ -159,7 +181,73 @@ public class AppInitializerImpl implements AppInitializer {
         showInitExceptions();
         showInitErrors();
         showAlerts();
-        if (shutdown)
-            primaryStage.close();
+        showUpdater(primaryStage);
+        return !shutdown;
+    }
+
+    private void showUpdater(Stage primaryStage) {
+        if (serverStatus != null && updaterService.getCurrentVersion().compareTo(serverStatus.getServerVersion()) < 0) {
+            logger.debug("Initializing update sequence");
+            File fileUpdate = null;
+            if (serverStatus.getLocalUpdate() != null && serverStatus.getLocalVersion().equals(serverStatus.getServerVersion())) {
+                logger.debug("Update is already downloaded.");
+                fileUpdate = serverStatus.getLocalUpdate();
+            } else {
+                logger.debug("Download update");
+                Alert alert = FXMLUtils.alert("New update available!", "Do you want to download version " + serverStatus.getServerVersion() + "?"
+                        , "Current version is " + updaterService.getCurrentVersion(), Alert.AlertType.CONFIRMATION);
+                Optional<ButtonType> buttonResult = alert.showAndWait();
+                if (buttonResult.isPresent() && buttonResult.get().equals(ButtonType.OK)) {
+                    Task<File> task = new Task<File>() {
+                        @Override
+                        protected File call() throws Exception {
+                            updateMessage("Downloading please wait... (0%)");
+                            BiConsumer<Long, Long> consumer = (workDone, max) -> {
+                                updateProgress(workDone, max);
+                                String percentage = String.format(Locale.ENGLISH, "%.2f", ((double) workDone / max) * 100);
+                                updateMessage("Downloading please wait... (" + percentage + "%)");
+                            };
+                            return updaterService.downloadUpdate(serverStatus, consumer);
+                        }
+                    };
+
+//                    task.setOnSucceeded(event -> {
+//                        Alert alert1 = FXMLUtils.alert("Success!", "Update was downloaded", "", Alert.AlertType.INFORMATION);
+//                        alert1.initOwner(primaryStage);
+//                        alert1.showAndWait();
+//                    });
+
+                    Dialog progressDialog = FXMLUtils.getProgressDialog(primaryStage, task);
+
+                    EventHandler<WorkerStateEvent> errorHandler = event -> {
+                        logger.error("Error updating", task.getException());
+                        Alert alert1 = FXMLUtils.alert("Error!", "Update has failed", "Try running application as administrator", Alert.AlertType.ERROR);
+                        alert.initOwner(primaryStage);
+                        alert1.showAndWait();
+                        progressDialog.close();
+                    };
+                    task.setOnFailed(errorHandler);
+                    task.setOnCancelled(errorHandler);
+
+                    executor.execute(task);
+                    progressDialog.showAndWait();
+                    fileUpdate = task.getValue();
+                }
+            }
+            logger.debug("Finished getting update file");
+            if (fileUpdate != null) {
+                logger.debug("Initializing update application");
+                Alert alert = FXMLUtils.alert("Update ready to install!", "Do you want to install update " + serverStatus.getServerVersion() + " now?"
+                        , "Current version is " + updaterService.getCurrentVersion(), Alert.AlertType.CONFIRMATION);
+                Optional<ButtonType> buttonResult = alert.showAndWait();
+                if (buttonResult.isPresent() && buttonResult.get().equals(ButtonType.OK)) {
+                    updaterService.applyUpdate(fileUpdate);
+                }
+            }
+        } else if (serverStatus != null && serverStatus.getLocalUpdate() != null) {
+            if (serverStatus.getLocalVersion().equals(updaterService.getCurrentVersion())) {
+                serverStatus.getLocalUpdate().deleteOnExit();
+            }
+        }
     }
 }

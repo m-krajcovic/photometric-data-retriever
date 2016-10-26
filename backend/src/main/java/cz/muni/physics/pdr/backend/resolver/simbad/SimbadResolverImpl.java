@@ -40,7 +40,7 @@ public class SimbadResolverImpl implements SimbadResolver {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            logger.debug("Service is unavailable");
+            logger.error("Service is unavailable", e);
             return false;
         }
     }
@@ -77,10 +77,8 @@ public class SimbadResolverImpl implements SimbadResolver {
                     }
                 }
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return result;
     }

@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +33,8 @@ import static cz.muni.physics.pdr.app.utils.FXMLUtils.showDirChooser;
 @Component
 @Scope("prototype")
 public class PreferencesOverviewController extends StageController {
+
+    private static final Logger logger = LogManager.getLogger(PreferencesOverviewController.class);
 
     @Autowired
     private File appDataDir;
@@ -124,7 +128,7 @@ public class PreferencesOverviewController extends StageController {
         try {
             preferences.clear();
         } catch (BackingStoreException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 

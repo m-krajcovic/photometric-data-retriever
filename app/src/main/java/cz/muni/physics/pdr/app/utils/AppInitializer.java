@@ -28,5 +28,5 @@ public interface AppInitializer {
      *
      * @see javafx.application.Application
      */
-    void start(Stage primaryStage);
+    boolean start(Stage primaryStage);
 }

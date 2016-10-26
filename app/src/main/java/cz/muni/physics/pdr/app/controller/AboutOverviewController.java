@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,8 @@ public class AboutOverviewController extends StageController {
 
     @Autowired
     private Screens app;
+    @Value("${version}")
+    private String version;
 
     @FXML
     private ImageView imageView;
@@ -33,7 +36,7 @@ public class AboutOverviewController extends StageController {
     private void initialize() {
         imageView.setImage(new Image(this.getClass().getResourceAsStream("/images/planet.png")));
         topLabel.setText("Photometric Data Retriever");
-        bottomLabel.setText("Version 1.1.5b");
+        bottomLabel.setText("Version " + version);
         topHyperlink.setText("GitHub Project");
     }
 
