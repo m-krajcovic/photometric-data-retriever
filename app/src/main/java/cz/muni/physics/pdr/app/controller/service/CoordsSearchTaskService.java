@@ -11,6 +11,7 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolver;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResult;
 import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
+import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -124,6 +125,12 @@ public class CoordsSearchTaskService extends Service<Map<String, List<StellarObj
                 obj.setoName(selected.getName());
                 obj.setEpoch(selected.getEpoch());
                 obj.setPeriod(selected.getPeriod());
+                if (NumberUtils.isParsable(selected.getRightAscension())) {
+                    obj.setRightAscension(Double.parseDouble(selected.getRightAscension()));
+                }
+                if (NumberUtils.isParsable(selected.getDeclination())) {
+                    obj.setDeclination(Double.parseDouble(selected.getDeclination()));
+                }
                 nameSearchTaskService.setObject(obj);
                 nameSearchTaskService.start();
             } else {
