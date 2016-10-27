@@ -2,6 +2,10 @@ package cz.muni.physics.pdr.app.spring;
 
 import com.thoughtworks.xstream.XStream;
 import cz.muni.physics.pdr.app.MainApp;
+import cz.muni.physics.pdr.app.updater.UpdaterService;
+import cz.muni.physics.pdr.app.updater.UpdaterStatus;
+import cz.muni.physics.pdr.app.updater.UpdaterUnavailableException;
+import cz.muni.physics.pdr.app.updater.WindowsUpdaterService;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
 import cz.muni.physics.pdr.app.utils.AppInitializerImpl;
 import cz.muni.physics.pdr.backend.manager.PluginManager;
@@ -17,10 +21,15 @@ import cz.muni.physics.pdr.backend.repository.starsurvey.StarSurveyRepositoryCon
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManagerImpl;
 import cz.muni.physics.pdr.backend.utils.BackendConfig;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -29,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.prefs.Preferences;
 
 /**
@@ -56,11 +66,9 @@ public class AppConfig {
 
     @Bean
     public AppInitializer appInitializer(File appDataDir,
-                                         File pluginsDir,
                                          @Value("${config.file.name}") String configFileName,
                                          Executor executor) {
         AppInitializerImpl initializer = new AppInitializerImpl(appDataDir,
-                pluginsDir,
                 new File(appDataDir, configFileName));
         initializer.setExecutor(executor);
         return initializer;
@@ -131,6 +139,39 @@ public class AppConfig {
     @Bean
     public Preferences preferences() {
         return Preferences.userNodeForPackage(MainApp.class);
+    }
+
+    @Bean
+    public UpdaterService updaterService() {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return new WindowsUpdaterService();
+        } else
+            return new UpdaterService() {
+                @Override
+                public File downloadUpdate(UpdaterStatus status) throws UpdaterUnavailableException {
+                    return null;
+                }
+
+                @Override
+                public boolean applyUpdate(File update) {
+                    return false;
+                }
+
+                @Override
+                public UpdaterStatus status() throws UpdaterUnavailableException {
+                    return null;
+                }
+
+                @Override
+                public String getCurrentVersion() {
+                    return null;
+                }
+
+                @Override
+                public File downloadUpdate(UpdaterStatus serverStatus, BiConsumer<Long, Long> consumer) throws UpdaterUnavailableException {
+                    return null;
+                }
+            };
     }
 
 }

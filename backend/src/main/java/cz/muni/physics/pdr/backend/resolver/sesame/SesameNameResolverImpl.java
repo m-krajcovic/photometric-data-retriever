@@ -91,7 +91,7 @@ public class SesameNameResolverImpl implements SesameNameResolver {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            logger.debug("Service is unavailable");
+            logger.error("Service is unavailable", e);
             return false;
         }
     }

@@ -293,6 +293,7 @@ public class PhotometricDataOverviewController extends StageController {
                         out.closeEntry();
                     }
                 } catch (IOException e) {
+                    logger.error(e);
                     errorAlert();
                 }
                 return null;
@@ -320,6 +321,7 @@ public class PhotometricDataOverviewController extends StageController {
                     try (OutputStream out = new FileOutputStream(file)) {
                         write(out, models, converter);
                     } catch (IOException e) {
+                        logger.error(e);
                         errorAlert();
                     }
                     return null;
@@ -361,6 +363,7 @@ public class PhotometricDataOverviewController extends StageController {
         try {
             Desktop.getDesktop().open(pluginsDir);
         } catch (IOException e) {
+            logger.error(e);
             FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
         }
     }
@@ -377,6 +380,7 @@ public class PhotometricDataOverviewController extends StageController {
                         FXMLUtils.textInputDialog(pluginsDir.getAbsolutePath(), resources.getString("not.supported"), resources.getString("desktop.open.not.supported"), resources.getString("file.path"), false).showAndWait();
                     }
                 } catch (IOException e) {
+                    logger.error(e);
                     FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
                 }
             });
@@ -397,6 +401,7 @@ public class PhotometricDataOverviewController extends StageController {
                         FXMLUtils.textInputDialog(pluginsDir.getAbsolutePath(), resources.getString("not.supported"), resources.getString("desktop.open.not.supported"), resources.getString("folder.path"), false).showAndWait();
                     }
                 } catch (IOException e) {
+                    logger.error(e);
                     FXMLUtils.alert(resources.getString("failed"), null, resources.getString("open.plugins.failed"), Alert.AlertType.ERROR);
                 }
             });

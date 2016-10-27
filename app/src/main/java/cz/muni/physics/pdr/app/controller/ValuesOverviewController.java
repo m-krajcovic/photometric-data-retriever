@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import java.util.ResourceBundle;
  */
 @Component
 public class ValuesOverviewController extends StageController {
+
+    private static final Logger logger = LogManager.getLogger(ValuesOverviewController.class);
 
     @Autowired
     private Screens app;
@@ -47,6 +51,7 @@ public class ValuesOverviewController extends StageController {
         try {
             starSurveyManager.getAllValueParameters().forEach((k, v) -> list.add(new ValueParameterModel(k, v)));
         } catch (ResourceAvailabilityException e) {
+            logger.error(e);
             errorAlert();
         }
         tableView.setItems(list);
@@ -61,6 +66,7 @@ public class ValuesOverviewController extends StageController {
                 tableView.getItems().add(model);
                 starSurveyManager.insertValueParameter(model.key(), model.value());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             tableView.refresh();
@@ -77,6 +83,7 @@ public class ValuesOverviewController extends StageController {
                 try {
                     starSurveyManager.insertValueParameter(model.key(), model.value());
                 } catch (ResourceAvailabilityException e) {
+                    logger.error(e);
                     errorAlert();
                 }
                 tableView.refresh();
@@ -94,6 +101,7 @@ public class ValuesOverviewController extends StageController {
                 tableView.getItems().remove(selectedRecord);
                 starSurveyManager.removeValueParameter(selectedRecord.key());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             tableView.refresh();

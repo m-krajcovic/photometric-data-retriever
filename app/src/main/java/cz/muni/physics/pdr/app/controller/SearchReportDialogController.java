@@ -13,6 +13,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,8 @@ import java.util.prefs.Preferences;
  */
 @Component
 public class SearchReportDialogController extends StageController {
+
+    private static final Logger logger = LogManager.getLogger(SearchReportDialogController.class);
 
     @Autowired
     private Executor executor;
@@ -71,7 +75,7 @@ public class SearchReportDialogController extends StageController {
                         byte[] byteArray = text.get().getBytes();
                         out.write(byteArray, 0, byteArray.length);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error(e);
                     }
                     return null;
                 }

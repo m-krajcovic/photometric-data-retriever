@@ -12,7 +12,8 @@ public enum PreloaderHandlerEvent implements Preloader.PreloaderNotification {
     PLUGIN_FOLDER_CHECK("Searching for plugins folder..."),
     DATA_DIR_CHECK("Searching for application data folder..."),
     CONFIG_FILE_CHECK("Searching for configuration file..."),
-    SERVICES_CHECK("Checking availability of remote services...");
+    SERVICES_CHECK("Checking availability of remote services..."),
+    UPDATE_CHECK("Checking for updates...");
 
     private String message;
 
@@ -23,9 +24,4 @@ public enum PreloaderHandlerEvent implements Preloader.PreloaderNotification {
     public String getMessage() {
         return message;
     }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
 }

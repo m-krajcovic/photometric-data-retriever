@@ -3,12 +3,10 @@ package cz.muni.physics.pdr.backend.resolver.vizier;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
 import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.utils.NumberUtils;
-import cz.muni.physics.pdr.vizier.VizierHtmlParser;
 import cz.muni.physics.pdr.vizier.VizierService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,7 +14,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Michal on 28-Apr-16.
@@ -51,7 +48,7 @@ public class VizierResolverTsvImpl implements VizierResolver {
             }
             result.addAll(parseDoc(con.method(Connection.Method.POST).execute().body()));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return result;
     }
@@ -68,7 +65,7 @@ public class VizierResolverTsvImpl implements VizierResolver {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            logger.debug("Service is unavailable");
+            logger.error("Service is unavailable", e);
             return false;
         }
     }
@@ -112,33 +109,5 @@ public class VizierResolverTsvImpl implements VizierResolver {
                 .data("-out", "Epoch")
                 .data("-out", "Period")
                 .data("-out", "_RAJ,_DEJ");
-    }
-
-    public static void main(String[] args) {
-        VizierResolverTsvImpl resolver = new VizierVSXStarResolver();
-        for (VizierResult vizierResult : resolver.findByQuery(new VizierQuery("RW Com"))) {
-            System.out.println(vizierResult.toString());
-        }
-        //VizierResult{name='RW Com', distance=7.0E-4, epoch=2454918.704, period=0.23734706, rightAscension=188.25117, declination=26.71622}
-
-        VizierService vizierService = new VizierService();
-        VizierHtmlParser parser = new VizierHtmlParser();
-
-        try {
-            Document parse = vizierService.getConnectionFromVizier("J/AJ/134/1963/EBs", VizierService.OutputType.HTML)
-                    .data("LC", "LC")
-                    .data("-out", "MACHO")
-                    .data("-out", "LC")
-                    .data("-c", "MACHO 208.16083.86").method(Connection.Method.POST).execute().parse();
-            List<Map<String, String>> results = parser.getResults(parse);
-            for (Map<String, String> result : results) {
-                result.forEach((s, s2) -> {
-                    System.out.println(s + ": " + s2);
-                });
-                System.out.println("---------------------------------------------");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

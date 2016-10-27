@@ -1,7 +1,6 @@
 package cz.muni.physics.pdr.app;
 
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
-import com.sun.javafx.application.LauncherImpl;
 import cz.muni.physics.pdr.app.spring.AppConfig;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.AppInitializer;
@@ -11,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.prefs.BackingStoreException;
@@ -25,6 +23,7 @@ public class MainApp extends Application {
 
     private static final Logger logger = LogManager.getLogger(MainApp.class);
 
+    private AnnotationConfigApplicationContext context;
     private Screens app;
     private AppInitializer initializer;
 
@@ -33,8 +32,8 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) throws BackingStoreException {
-//        launch(MainApp.class);g
-        LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
+        launch(MainApp.class);
+//        LauncherImpl.launchApplication(MainApp.class, MainPreloader.class, args);
 
     }
 
@@ -49,14 +48,16 @@ public class MainApp extends Application {
         app.setPrimaryStage(primaryStage);
         app.setHostServices(HostServicesFactory.getInstance(this));
         app.initRootLayout();
-        initializer.start(primaryStage);
-        app.showSearch();
-
+        if (initializer.start(primaryStage)) {
+            app.showSearch();
+        } else {
+            stop();
+        }
     }
 
     @Override
     public void init() throws InterruptedException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        context = new AnnotationConfigApplicationContext(AppConfig.class);
         app = context.getBean(Screens.class);
         initializer = context.getBean(AppInitializer.class);
         initializer.initialize(this);
@@ -64,6 +65,7 @@ public class MainApp extends Application {
 
     @Override
     public void stop() {
+        context.close();
         app.getPrimaryStage().close();
     }
 }

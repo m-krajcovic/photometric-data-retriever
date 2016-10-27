@@ -12,6 +12,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,8 @@ import java.util.regex.PatternSyntaxException;
  */
 @Component
 public class PatternsOverviewController extends StageController {
+
+    private static final Logger logger = LogManager.getLogger(PatternsOverviewController.class);
 
     @Autowired
     private Screens app;
@@ -63,6 +67,7 @@ public class PatternsOverviewController extends StageController {
                 Pattern.compile(value.getText());
                 isRegex = true;
             } catch (PatternSyntaxException e) {
+                logger.debug(e);
                 isRegex = false;
             }
             return !key.getText().isEmpty()
@@ -79,6 +84,7 @@ public class PatternsOverviewController extends StageController {
                 tableView.getItems().add(patternModel);
                 starSurveyManager.insertPattern(patternModel.key(), patternModel.getValue().get());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             tableView.refresh();
@@ -95,6 +101,7 @@ public class PatternsOverviewController extends StageController {
                 try {
                     starSurveyManager.insertPattern(selectedRecord.key(), selectedRecord.getValue().get());
                 } catch (ResourceAvailabilityException e) {
+                    logger.error(e);
                     errorAlert();
                 }
                 tableView.refresh();
@@ -112,6 +119,7 @@ public class PatternsOverviewController extends StageController {
                 tableView.getItems().remove(selectedRecord);
                 starSurveyManager.removePattern(selectedRecord.key());
             } catch (ResourceAvailabilityException e) {
+                logger.error(e);
                 errorAlert();
             }
             tableView.refresh();
