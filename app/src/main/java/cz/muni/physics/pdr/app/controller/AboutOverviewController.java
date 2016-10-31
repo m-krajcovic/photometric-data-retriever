@@ -1,14 +1,23 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.spring.Screens;
+import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ResourceBundle;
 
 /**
  * @author Michal
@@ -18,10 +27,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AboutOverviewController extends StageController {
 
+    private static final Logger logger = LogManager.getLogger(AboutOverviewController.class);
+
     @Autowired
     private Screens app;
     @Value("${version}")
     private String version;
+    @Value("${github.project.url}")
+    private String githubUrl;
+
+    @FXML
+    private ResourceBundle resources;
 
     @FXML
     private ImageView imageView;
@@ -43,6 +59,15 @@ public class AboutOverviewController extends StageController {
 
     @FXML
     private void onTopHyperlinkClick() {
-        app.getHostServices().showDocument("https://github.com/m-krajcovic/photometric-data-retriever");
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(URI.create(githubUrl));
+            } catch (IOException e) {
+                logger.error("Failed to open browser with url " + githubUrl, e);
+                FXMLUtils.alert("Error!", "Failed to open browser", "", Alert.AlertType.ERROR).showAndWait();
+            }
+        } else {
+            FXMLUtils.alert(resources.getString("not.supported"), resources.getString("desktop.open.not.supported"),"", Alert.AlertType.ERROR).showAndWait();
+        }
     }
 }

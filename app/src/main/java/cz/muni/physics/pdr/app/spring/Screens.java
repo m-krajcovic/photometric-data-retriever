@@ -1,6 +1,5 @@
 package cz.muni.physics.pdr.app.spring;
 
-import com.sun.javafx.application.HostServicesDelegate;
 import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.SearchReportDialogController;
@@ -46,7 +45,7 @@ public class Screens {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private HostServicesDelegate hostServices;
+//    private HostServicesDelegate hostServices;
 
 
     public void initRootLayout() {
@@ -184,15 +183,6 @@ public class Screens {
 
     public void setRootLayout(BorderPane rootLayout) {
         this.rootLayout = rootLayout;
-    }
-
-
-    public void setHostServices(HostServicesDelegate hostServices) {
-        this.hostServices = hostServices;
-    }
-
-    public HostServicesDelegate getHostServices() {
-        return hostServices;
     }
 
     public void showReportErrorWindow(Stage owner) {

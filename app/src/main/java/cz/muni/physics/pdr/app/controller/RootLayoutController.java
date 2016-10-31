@@ -2,7 +2,6 @@ package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
@@ -13,7 +12,7 @@ import javafx.scene.input.KeyCombination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
