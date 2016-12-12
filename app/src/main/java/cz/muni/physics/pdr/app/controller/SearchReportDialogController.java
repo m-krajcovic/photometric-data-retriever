@@ -23,10 +23,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.prefs.Preferences;
 
@@ -93,9 +97,17 @@ public class SearchReportDialogController extends StageController {
 
     public void setData(StellarObjectModel stellarObject, Map<StarSurveyModel, List<PhotometricDataModel>> data) {
         String output = new Date().toString() + " - PDR Search report" + System.lineSeparator() + stellarObject.getName() + " (" + stellarObject.getRightAscension() + " " + stellarObject.getDeclination() + ")" + System.lineSeparator();
-        for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : data.entrySet()) {
+        int maxDots = 20;
+        SortedMap<StarSurveyModel, List<PhotometricDataModel>> sortedMap = new TreeMap<>(Comparator.comparing(StarSurveyModel::getName));
+        sortedMap.putAll(data);
+        Optional<Integer> longestNameLength = sortedMap.keySet().stream().max(Comparator.comparing(StarSurveyModel::getName))
+                .map(starSurveyModel -> starSurveyModel.getName().length());
+        if (longestNameLength.isPresent() && longestNameLength.get() >= maxDots) {
+            maxDots = longestNameLength.get() + 5;
+        }
+        for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : sortedMap.entrySet()) {
             output += entry.getKey().getName();
-            output += StringUtils.repeat('.', 15 - entry.getKey().getName().length());
+            output += StringUtils.repeat('.', maxDots - entry.getKey().getName().length());
             output += entry.getValue().size() + System.lineSeparator();
         }
         text.set(output);
