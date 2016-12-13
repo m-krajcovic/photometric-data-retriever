@@ -8,7 +8,6 @@ import org.jsoup.Jsoup;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
 
 /**
  * @author Michal
@@ -17,6 +16,8 @@ import java.net.URL;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
+
+        if (args.length == 0) return;
 
         String input = args.length == 1 ? args[0] : args[0] + " " + args[1];
 
@@ -43,7 +44,7 @@ public class Main {
                 String hjd = row[24];
                 double hjdDouble;
                 try {
-                    hjdDouble = Double.parseDouble(hjd) + 2400000;
+                    hjdDouble = Double.parseDouble(hjd) + 2400000.5;
                 } catch (NumberFormatException e) {
                     continue;
                 }
