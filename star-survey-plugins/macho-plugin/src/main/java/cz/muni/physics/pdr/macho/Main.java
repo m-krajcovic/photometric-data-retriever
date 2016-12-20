@@ -58,7 +58,7 @@ public class Main {
                                     String[] cols = line.split("\\s+");
                                     double jd;
                                     try {
-                                        jd = Double.parseDouble(cols[0].trim()) + 2400000;
+                                        jd = Double.parseDouble(cols[0].trim()) + 2440000.5;
                                     } catch (Exception exc) {
                                         continue;
                                     }

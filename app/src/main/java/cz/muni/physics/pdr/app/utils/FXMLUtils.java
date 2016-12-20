@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.utils;
 
+import cz.muni.physics.pdr.app.spring.Screens;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -8,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Control;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Michal Krajčovič
@@ -94,7 +97,7 @@ public class FXMLUtils {
         return fileChooser.showSaveDialog(dialogStage);
     }
 
-    public static void showExceptionAlert(String title, String header, String content, Throwable exc) {
+    public static void showExceptionAlert(String title, String header, String content, Throwable exc, Screens app) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(header);
@@ -120,7 +123,12 @@ public class FXMLUtils {
         expContent.add(textArea, 0, 1);
 
         alert.getDialogPane().setExpandableContent(expContent);
-        alert.showAndWait();
+        ButtonType e = new ButtonType("Report error", ButtonBar.ButtonData.OTHER);
+        alert.getDialogPane().getButtonTypes().add(e);
+        Optional<ButtonType> buttonType = alert.showAndWait();
+        buttonType.ifPresent(buttonType1 -> {
+            app.showReportErrorWindow(app.getPrimaryStage());
+        });
     }
 
     public static Dialog getProgressDialog(Window owner, Task task) {

@@ -40,7 +40,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
             logger.error(e.getMessage(), e);
-            FXMLUtils.showExceptionAlert("Something went terribly wrong!", "Your best bet is to restart this application", e.getMessage(), e);
+            FXMLUtils.showExceptionAlert("Something went terribly wrong!", "Your best bet is to restart this application", e.getMessage(), e, app);
         });
         primaryStage.setTitle(app.getName());
         primaryStage.getIcons().add(new Image(MainApp.class.getResourceAsStream(app.getIconPath())));

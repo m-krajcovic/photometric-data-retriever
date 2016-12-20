@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.app.utils;
 
 import cz.muni.physics.pdr.app.javafx.PreloaderHandlerEvent;
+import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.updater.UpdaterService;
 import cz.muni.physics.pdr.app.updater.UpdaterStatus;
 import cz.muni.physics.pdr.app.updater.UpdaterUnavailableException;
@@ -49,6 +50,9 @@ public class AppInitializerImpl implements AppInitializer {
 
     @Autowired
     private UpdaterService updaterService;
+
+    @Autowired
+    private Screens app;
 
     private List<Exception> initExceptions = new ArrayList<>();
     private List<String> initErrors = new ArrayList<>();
@@ -147,7 +151,7 @@ public class AppInitializerImpl implements AppInitializer {
 
     private void showInitExceptions() {
         for (Exception initException : initExceptions) {
-            FXMLUtils.showExceptionAlert("What a mess!", "Something went wrong during initialization.", initException.getMessage(), initException);
+            FXMLUtils.showExceptionAlert("What a mess!", "Something went wrong during initialization.", initException.getMessage(), initException, app);
         }
     }
 

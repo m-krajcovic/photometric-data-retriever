@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -97,19 +98,25 @@ public class SearchReportDialogController extends StageController {
 
     public void setData(StellarObjectModel stellarObject, Map<StarSurveyModel, List<PhotometricDataModel>> data) {
         String output = new Date().toString() + " - PDR Search report" + System.lineSeparator() + stellarObject.getName() + " (" + stellarObject.getRightAscension() + " " + stellarObject.getDeclination() + ")" + System.lineSeparator();
-        int maxDots = 20;
         SortedMap<StarSurveyModel, List<PhotometricDataModel>> sortedMap = new TreeMap<>(Comparator.comparing(StarSurveyModel::getName));
         sortedMap.putAll(data);
-        Optional<Integer> longestNameLength = sortedMap.keySet().stream().max(Comparator.comparing(StarSurveyModel::getName))
-                .map(starSurveyModel -> starSurveyModel.getName().length());
-        if (longestNameLength.isPresent() && longestNameLength.get() >= maxDots) {
-            maxDots = longestNameLength.get() + 5;
-        }
+        int maxDots = getLongestNameLength(sortedMap.keySet());
         for (Map.Entry<StarSurveyModel, List<PhotometricDataModel>> entry : sortedMap.entrySet()) {
             output += entry.getKey().getName();
             output += StringUtils.repeat('.', maxDots - entry.getKey().getName().length());
             output += entry.getValue().size() + System.lineSeparator();
         }
         text.set(output);
+    }
+
+
+    private int getLongestNameLength(Collection<StarSurveyModel> names) {
+        int maxDots = 20;
+        Optional<Integer> longestNameLength = names.stream().max(Comparator.comparingInt(value -> value.getName().length()))
+                .map(starSurveyModel -> starSurveyModel.getName().length());
+        if (longestNameLength.isPresent() && longestNameLength.get() >= maxDots) {
+            maxDots = longestNameLength.get() + 5;
+        }
+        return maxDots;
     }
 }
