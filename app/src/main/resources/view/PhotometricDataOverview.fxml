@@ -76,8 +76,9 @@
                         <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#handleSaveAllMenuItem"
                                   text="%menu.item.save.all"/>
                         <Menu fx:id="saveMenu" mnemonicParsing="false" text="%menu.item.save"/>
-                        <MenuItem fx:id="reportMenuItem" mnemonicParsing="false" onAction="#showReportMenuItem" text="%menu.item.report"/>
+                        <MenuItem fx:id="exportOneFileMenuItem" onAction="#handleExportInOneFileMenuItem" text="%menu.item.export.one.file"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem fx:id="reportMenuItem" mnemonicParsing="false" onAction="#showReportMenuItem" text="%menu.item.report"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem"
                                   text="%menu.item.close"/>

@@ -17,13 +17,22 @@ import javafx.scene.CacheHint;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.*;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.converter.NumberStringConverter;
 import org.apache.logging.log4j.LogManager;
@@ -33,13 +42,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -69,6 +83,8 @@ public class PhotometricDataOverviewController extends StageController {
     @Autowired
     private File pluginsDir;
 
+    @FXML
+    private MenuItem exportOneFileMenuItem;
     @FXML
     private TitledTextFieldBox epochTextField;
     @FXML
@@ -109,6 +125,38 @@ public class PhotometricDataOverviewController extends StageController {
         chart.setCacheHint(CacheHint.SPEED);
 
 
+    }
+
+    @FXML
+    private void handleExportInOneFileMenuItem() {
+        String coords = stellarObject.getRightAscension() + " " + stellarObject.getDeclination();
+        File file = FXMLUtils.showSaveFileChooser(resources.getString("choose.output.file"),
+                lastSavePath,
+                coords,
+                stage,
+                new FileChooser.ExtensionFilter("Csv file (*.csv)", "*.csv"),
+                new FileChooser.ExtensionFilter("Ascii table (*.txt)", "*.txt"));
+        if (file != null) {
+            updateLastSavePath(file.getParent());
+            PhotometricDataModelConverter converter = PhotometricDataModelConverter.get(file.getName());
+            Task task = new Task() {
+                @Override
+                protected Object call() throws Exception {
+                    try (OutputStream out = new FileOutputStream(file)) {
+                        List<PhotometricDataModel> models =
+                                data.values().stream().flatMap(List::stream).collect(Collectors.toList());
+                        write(out, models, converter);
+                    } catch (IOException e) {
+                        logger.error(e);
+                        errorAlert();
+                    }
+                    return null;
+                }
+            };
+            Dialog dialog = FXMLUtils.getProgressDialog(stage, task);
+            executor.execute(task);
+            dialog.showAndWait();
+        }
     }
 
     @FXML
