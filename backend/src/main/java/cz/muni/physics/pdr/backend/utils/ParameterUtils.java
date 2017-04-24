@@ -29,7 +29,7 @@ public class ParameterUtils {
      * @return
      */
     public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult, List<Pattern> patterns, Map<String, String> valueParameters) {
-        Map<String, String> params = resolvePatternParameters(resolverResult.toLines(), patterns);
+        Map<String, String> params = resolvePatternParameters(resolverResult.paramList(), patterns);
         resolveStarResolverParameters(resolverResult, params);
         resolveValueParameters(valueParameters, params);
         resolveUrlParameter(survey.getUrls(), params);
@@ -39,17 +39,22 @@ public class ParameterUtils {
         return params;
     }
 
-    public static Map<String, String> resolvePatternParameters(String input, List<Pattern> patterns) {
+    public static Map<String, String> resolvePatternParameters(List<String> paramList, List<Pattern> patterns) {
         Map<String, String> params = new HashMap<>();
         for (Pattern pattern : patterns) {
-            Set<String> groups = findRegexGroups(pattern);
-            Matcher m = pattern.matcher(input);
-            if (m.find()) {
-                for (String group : groups) {
-                    params.put(group, m.group(group));
+            for (String input : paramList) {
+                Set<String> groups = findRegexGroups(pattern);
+                Matcher m = pattern.matcher(input);
+                if (m.find()) {
+                    for (String group : groups) {
+                        params.put(group, m.group(group));
+                    }
                 }
             }
         }
+        params.forEach((k, v) -> {
+            System.out.println(k + ": " + v);
+        });
         return params;
     }
 

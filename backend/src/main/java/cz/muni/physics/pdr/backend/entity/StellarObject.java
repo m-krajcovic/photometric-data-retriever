@@ -1,7 +1,9 @@
 package cz.muni.physics.pdr.backend.entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -118,12 +120,22 @@ public class StellarObject {
                 '}';
     }
 
+    public List<String> paramList() {
+        List<String> result = new ArrayList<>();
+        result.add(oName);
+        result.addAll(names);
+        for (Map.Entry<String, String> id : ids.entrySet()) {
+            result.add(id.getKey() + ":" + id.getValue());
+        }
+        return result;
+    }
+
     public String toLines() {
         String output = oName + "\n";
         output += String.join("\n", names);
         for (Map.Entry<String, String> id : ids.entrySet()) {
             output += id.getKey() + ":" + id.getValue() + "\n";
         }
-        return output;
+        return output.toString();
     }
 }

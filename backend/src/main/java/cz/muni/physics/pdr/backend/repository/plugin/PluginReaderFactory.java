@@ -27,9 +27,9 @@ public abstract class PluginReaderFactory {
                 fileSet.add(file.getName());
             }
             if (fileSet.contains("plugin.xml")) {
-
+                throw new UnsupportedOperationException("xml files are not supported yet.");
             } else if (fileSet.contains("plugin.json")) {
-
+                throw new UnsupportedOperationException("json files are not supported yet.");
             } else if (fileSet.contains("plugin.properties")) {
                 return new PropertiesPluginReader(pluginDir);
             }

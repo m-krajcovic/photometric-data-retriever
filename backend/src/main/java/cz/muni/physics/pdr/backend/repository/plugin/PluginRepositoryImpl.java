@@ -66,10 +66,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     public Plugin searchFor(Predicate<Plugin> predicate) {
         checkAndLoadPlugins();
         Optional<Plugin> optional = plugins.values().stream().filter(predicate).findFirst();
-        if (optional.isPresent()) {
-            return new Plugin(optional.get());
-        }
-        return null;
+        return optional.map(Plugin::new).orElse(null);
     }
 
     @Override
@@ -96,15 +93,17 @@ public class PluginRepositoryImpl implements PluginRepository {
     private synchronized void loadPlugins() {
         Map<String, Plugin> tempPlugins = new HashMap<>();
         String[] dirs = pluginsFolder.list((file, name) -> new File(file, name).isDirectory());
-        for (String pluginDirName : dirs) {
-            String pluginDirPath = pluginsFolder.getAbsolutePath() + File.separator + pluginDirName + File.separator;
-            try {
-                PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
-                Plugin plugin = reader.readPlugin();
-                logger.debug("Loaded plugin {}", plugin.getName());
-                tempPlugins.put(plugin.getName(), plugin);
-            } catch (PluginReaderException exc) {
-                logger.error("Failed loading plugin from {}", pluginDirPath, exc);
+        if (dirs != null) {
+            for (String pluginDirName : dirs) {
+                String pluginDirPath = pluginsFolder.getAbsolutePath() + File.separator + pluginDirName + File.separator;
+                try {
+                    PluginReader reader = PluginReaderFactory.getReader(new File(pluginDirPath));
+                    Plugin plugin = reader.readPlugin();
+                    logger.debug("Loaded plugin {}", plugin.getName());
+                    tempPlugins.put(plugin.getName(), plugin);
+                } catch (PluginReaderException exc) {
+                    logger.error("Failed loading plugin from {}", pluginDirPath, exc);
+                }
             }
         }
         plugins = new HashMap<>(tempPlugins);

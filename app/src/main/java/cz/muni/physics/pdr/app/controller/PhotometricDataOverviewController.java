@@ -467,7 +467,9 @@ public class PhotometricDataOverviewController extends StageController {
             if (list.length == 0) {
                 list = outputDir.listFiles((dir, name) -> name.startsWith(pluginName));
             }
-            return getNewest(list);
+            if (list.length > 0) {
+                return getNewest(list);
+            }
         }
         return null;
     }

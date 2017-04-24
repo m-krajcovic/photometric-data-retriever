@@ -103,6 +103,7 @@ public class Screens {
         StellarObjectOverviewController controller = builder.controller();
         controller.setItems(models);
         Stage stage = builder.get();
+//        stage.setResizable(true);
         stage.showAndWait();
         return controller.getSelected();
     }
