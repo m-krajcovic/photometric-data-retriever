@@ -9,9 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Michal
@@ -40,10 +44,10 @@ public class Main {
     private List<OgleConfig> ogleConfigs;
     private Map<String, String> idCache = new HashMap<>();
     private String starId;
-    private String field;
+    private Set<String> fields;
 
-    public Main(String field, String starId) {
-        this.field = field;
+    public Main(Set<String> fields, String starId) {
+        this.fields = fields;
         this.starId = starId;
         ogleConfigs = loadOgleConfigs();
     }
@@ -70,7 +74,7 @@ public class Main {
     }
 
     private void doMagic() throws IOException {
-        ogleConfigs.stream().filter(config -> config.ogleId != null).forEach(ogleConfig -> {
+        findRightConfigs().forEach(ogleConfig -> {
             FTPClient ftpClient = new FTPClient();
             try {
                 ftpClient.connect("ogle.astrouw.edu.pl");
@@ -94,18 +98,18 @@ public class Main {
                     PluginUtils.saveOriginal("OGLE-" + ogleConfig.name + "-" + ogleConfig.ogleId + ".dat", original.toString(), 5);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if (ftpClient.isConnected()) {
+                        try {
+                            ftpClient.logout();
+                            ftpClient.disconnect();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (ftpClient.isConnected()) {
-                    try {
-                        ftpClient.logout();
-                        ftpClient.disconnect();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         });
     }
@@ -118,10 +122,19 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] cols = line.split("\\s+"); // 0 a 6
-                if (cols.length >= 7 && cols[6].startsWith(field) && cols[6].endsWith("_" + starId)) {
-                    idCache.put(identFilePath, cols[0]);
-                    return cols[0];
-                } else if (cols.length == 6 && cols[5].startsWith(field) && cols[5].endsWith("_" + starId)) {
+                int colToCheck = 0;
+                for (String field : fields) {
+                    if (field.contains("SC")) {
+                        if (cols.length == 6) {
+                            colToCheck = 5;
+                        } else if (cols.length >= 7) {
+                            colToCheck = 6;
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+                if (checkObject(cols[colToCheck])) {
                     idCache.put(identFilePath, cols[0]);
                     return cols[0];
                 }
@@ -132,6 +145,31 @@ public class Main {
         return null;
     }
 
+    private List<OgleConfig> findRightConfigs() {
+        List<OgleConfig> configs = new ArrayList<>();
+        for (OgleConfig ogleConfig : ogleConfigs) {
+            List<String> sc = fields.stream().filter(f -> !f.contains("SC")).collect(Collectors.toList());
+            boolean check = true;
+            for (String field : sc) {
+                check = check && ogleConfig.name.contains(field);
+            }
+            if (check) {
+                configs.add(ogleConfig);
+            }
+        }
+        return configs;
+    }
+
+    private boolean checkObject(String value) {
+        boolean result = true;
+        for (String field : fields) {
+            result = result && value.contains(field);
+        }
+        String[] split = value.split("-");
+        result = result && split[split.length -1].matches("0*"+starId);
+        return result;
+    }
+
     private BufferedReader openIdentReader(String identFilePath) {
         InputStream is = Main.class.getResourceAsStream(identFilePath);
         return new BufferedReader(new InputStreamReader(is));
@@ -139,16 +177,28 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length == 2) {
+            Set<String> fields = new HashSet<>();
             String field = args[0];
             String starId = args[1];
             String[] split = args[0].trim().split("[\\-\\s_]");
-            if (split.length > 1) {
-                field = split[0];
-                if (starId.trim().isEmpty()) {
-                    starId = split[split.length - 1];
+            int length = split.length;
+            if (length > 1) {
+                fields.addAll(Arrays.asList(split).subList(0, length - 1));
+                if (starId.trim().isEmpty() || split[length - 1].matches("\\d+")) {
+                    starId = split[length - 1];
+                } else {
+                    fields.add(split[length - 1]);
                 }
+            } else {
+                fields.add(field);
             }
-            Main main = new Main(field, starId);
+            if (fields.contains("OGLE")) {
+                fields.remove("OGLE");
+            }
+            for (String s : fields) {
+                System.out.println(s);
+            }
+            Main main = new Main(fields, starId);
             try {
                 main.doMagic();
             } catch (IOException e) {

@@ -71,16 +71,12 @@ public class NameSearchTaskService extends Service<StellarObject> {
     protected void succeeded() {
         logger.debug("Succeeded in retrieving star resolver data.");
         StellarObject result = getValue();
-        if (result != null) {
-            starSurveySearchTaskService.setResolverResult(getValue());
-            starSurveySearchTaskService.start();
-        } else {
-            if (onError != null)
-                onError.accept(resources.getString("no.results.found"));
-            if (onDone != null) {
-                onDone.call();
-            }
+        if (result == null) {
+            result = new StellarObject();
+            result.setoName(searchModel.getQuery());
         }
+        starSurveySearchTaskService.setResolverResult(result);
+        starSurveySearchTaskService.start();
         reset();
     }
 

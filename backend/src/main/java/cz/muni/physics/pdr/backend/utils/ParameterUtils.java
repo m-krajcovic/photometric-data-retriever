@@ -52,9 +52,6 @@ public class ParameterUtils {
                 }
             }
         }
-        params.forEach((k, v) -> {
-            System.out.println(k + ": " + v);
-        });
         return params;
     }
 
