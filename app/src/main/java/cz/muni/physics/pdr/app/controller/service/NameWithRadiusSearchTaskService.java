@@ -61,6 +61,12 @@ public class NameWithRadiusSearchTaskService extends Service<StellarObject> {
                     object.setoName(vsxResult.get(0).getName());
                     object.setEpoch(vsxResult.get(0).getEpoch());
                     object.setPeriod(vsxResult.get(0).getPeriod());
+                    if(object.getDeclination() == null) {
+                        object.setDeclination(vsxResult.get(0).getDeclination());
+                    }
+                    if(object.getRightAscension() == null) {
+                        object.setRightAscension(vsxResult.get(0).getRightAscension());
+                    }
                 }
                 return object.getoName() != null ? object : null;
             }

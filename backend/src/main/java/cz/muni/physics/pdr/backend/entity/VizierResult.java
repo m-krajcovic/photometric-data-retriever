@@ -83,7 +83,6 @@ public class VizierResult {
 
         VizierResult that = (VizierResult) o;
 
-        if (Double.compare(that.distance, distance) != 0) return false;
         if (Double.compare(that.epoch, epoch) != 0) return false;
         if (Double.compare(that.period, period) != 0) return false;
         if (Double.compare(that.rightAscension, rightAscension) != 0) return false;
@@ -97,8 +96,6 @@ public class VizierResult {
         int result;
         long temp;
         result = name != null ? name.hashCode() : 0;
-        temp = Double.doubleToLongBits(distance);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(epoch);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(period);
