@@ -1,0 +1,25 @@
+version: '1.3.{build}'
+os: Windows Server 2012
+skip_non_tags: true
+install:
+  - cmd: SET JAVA_HOME=C:\Program Files (x86)\Java\jdk1.8.0
+  - cmd: SET PATH=%JAVA_HOME%\bin;%PATH%
+  - cmd: choco install -y curl innosetup
+  - cmd: SET PATH="C:\Program Files (x86)\Inno Setup 5";%PATH%
+build_script:
+  - mvn clean install
+  - mvn jfx:native -pl app
+artifacts:
+  - path: app\target\jfx\native\PDR-setup.exe
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: XNx6Rig99i8xdyqVaUCGujtnWgeg1FlxCcNTHyUsu7QamIa3v414/ozczGC2zT11
+  artifact: app\target\jfx\native\PDR-setup.exe
+  draft: true
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true
+cache:
+  - C:\Users\appveyor\.m2
