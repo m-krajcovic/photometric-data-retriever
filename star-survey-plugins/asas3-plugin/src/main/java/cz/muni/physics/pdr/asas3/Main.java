@@ -34,6 +34,9 @@ public class Main {
             String decdeg = args[2];
             id = main.getIdFromForm(rah + " " + decdeg);
         }
+        if (id.startsWith("J")) {
+            id = id.substring(1);
+        }
         main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
     }
 
@@ -60,6 +63,7 @@ public class Main {
             double[] avgErr = new double[5];
             Arrays.fill(avgErr, 0);
             while ((line = in.readLine()) != null) {
+                System.out.println(line);
                 if (line.startsWith("#")) continue;
                 String[] csv = line.split("\\s+");
                 if (csv.length == 14) {

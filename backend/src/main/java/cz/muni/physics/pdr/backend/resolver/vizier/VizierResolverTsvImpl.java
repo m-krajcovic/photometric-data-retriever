@@ -59,7 +59,9 @@ public class VizierResolverTsvImpl implements VizierResolver {
         } catch (IOException e) {
             logger.error(e);
         }
-        return new ArrayList<>(result);
+        ArrayList<VizierResult> vizierResults = new ArrayList<>(result);
+        vizierResults.sort(Comparator.comparingDouble(VizierResult::getDistance));
+        return vizierResults;
     }
 
     public boolean isAvailable() {

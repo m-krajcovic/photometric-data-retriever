@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Michal Krajčovič
@@ -46,7 +47,7 @@ public class PhotometricDataProcessStarter implements ProcessStarter<List<Photom
         if (parameters == null) {
             throw new IllegalArgumentException("parameters cannot be null.");
         }
-        logger.debug("Preparing command '{}'", command);
+        logger.debug("Preparing command '{}' with parameters '{}'", command, String.join(", ", parameters.entrySet().stream().map(n -> n.getKey() + ": " + n.getValue()).collect(Collectors.joining(", "))));
         this.command = command;
         this.parameters = parameters;
         return (readyToRun = ParameterUtils.isResolvableWithParameters(command, parameters));
