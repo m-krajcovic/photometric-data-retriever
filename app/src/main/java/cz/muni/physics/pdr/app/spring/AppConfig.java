@@ -124,8 +124,7 @@ public class AppConfig {
     public ThreadPoolTaskExecutor searchServiceExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.prefersShortLivedTasks();
-        int cores = Runtime.getRuntime().availableProcessors();
-        executor.setCorePoolSize(cores >= 2 ? cores : 2);
+        executor.setCorePoolSize(16);
         executor.setDaemon(true);
         executor.setThreadNamePrefix("Backend Thread-");
         return executor;
