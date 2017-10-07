@@ -21,17 +21,18 @@ import java.net.URL;
 public class Main {
     public static void main(String[] args) throws IOException, FitsException {
         Main main = new Main();
-        main.readData(args);
+        main.readData("1", "Shot-by-Shot", args);
+        main.readData("630", "10minutes", args);
     }
 
-    private void readData(String... args) throws IOException, FitsException {
+    private void readData(String lct_tstep, String name, String... args) throws IOException, FitsException {
         String searchFormUrl = "https://sdc.cab.inta-csic.es/omc/secure/form_busqueda.jsp?resetForm=true";
         String searchUrl = "https://sdc.cab.inta-csic.es/omc/secure/form_busqueda.jsp";
         Connection.Response form = Jsoup.connect(searchFormUrl).method(Connection.Method.GET).execute();
         Connection post = Jsoup.connect(searchUrl)
                 .data("cookieexists", "false")
                 .data("submit", "Submit")
-                .data("lct_tstep", "630")
+                .data("lct_tstep", lct_tstep)
                 .data("lct_wcsflag", "Y")
                 .data("obj_sstar", "S")
                 .data("crv_numpoints", "1")
@@ -64,7 +65,7 @@ public class Main {
 
             for (int i = 0; i < mags.length; i++) {
                 double jd = barytimes[i] + 2451544.5 + telapses[i] / 2 / 86400;
-                System.out.println(jd + "," + mags[i] + "," + errs[i]);
+                System.out.println(jd + "," + mags[i] + "," + errs[i] + "," + name);
             }
         }
 
