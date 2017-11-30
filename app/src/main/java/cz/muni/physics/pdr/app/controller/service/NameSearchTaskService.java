@@ -57,9 +57,8 @@ public class NameSearchTaskService extends Service<StellarObject> {
                 logger.debug("Trying to get StellarObject.");
                 object.merge(sesameNameResolver.findByName(searchModel.getQuery()));
                 List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
-                System.out.println(vsxResult);
                 if (vsxResult.size() >= 1) {
-                    System.out.println(vsxResult.get(0));
+                    object.getNames().add(object.getoName());
                     object.setoName(vsxResult.get(0).getName());
                     object.setEpoch(vsxResult.get(0).getEpoch());
                     object.setPeriod(vsxResult.get(0).getPeriod());
@@ -70,7 +69,6 @@ public class NameSearchTaskService extends Service<StellarObject> {
                         object.setRightAscension(vsxResult.get(0).getRightAscension());
                     }
                 }
-                System.out.println(object);
                 return object.getoName() != null ? object : null;
             }
         };
