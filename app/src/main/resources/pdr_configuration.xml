@@ -124,7 +124,7 @@
         <entry>
             <string>V*</string>
             <java.util.regex.Pattern>
-                <pattern>(?&lt;vs&gt;V\*\s(?&lt;vsID&gt;.*))</pattern>
+                <pattern>^(?&lt;vs&gt;V\*\s(?&lt;vsID&gt;.*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </entry>
@@ -236,7 +236,7 @@
         <entry>
             <string>GCVS</string>
             <java.util.regex.Pattern>
-                <pattern>(?&lt;gcvs&gt;V\*\s(?&lt;gcvsID&gt;.*))</pattern>
+                <pattern>^(?&lt;gcvs&gt;V\*\s(?&lt;gcvsID&gt;.*))</pattern>
                 <flags>0</flags>
             </java.util.regex.Pattern>
         </entry>

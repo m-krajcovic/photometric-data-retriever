@@ -87,9 +87,4 @@ public class SimbadResolverImpl implements SimbadResolver {
     public SimbadResult findByIdentifier(String query) {
         return null;
     }
-
-    public static void main(String[] args) {
-        SimbadResolver simbadResolver = new SimbadResolverImpl();
-        simbadResolver.findByCoords("188.2510315 26.7161768", new Radius(10, Radius.Unit.ARC_MIN));
-    }
 }
