@@ -16,6 +16,7 @@
         <module>swasp-plugin</module>
         <module>hip-plugin</module>
         <module>asas3-plugin</module>
+        <module>asassn-plugin</module>
         <module>apass-plugin</module>
         <module>omc-plugin</module>
         <module>linear-plugin</module>

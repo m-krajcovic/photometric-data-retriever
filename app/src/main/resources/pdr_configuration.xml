@@ -25,6 +25,10 @@
             <plugin name="ASAS3"/>
             <urls/>
         </starSurvey>
+        <starSurvey name="ASASSN">
+            <plugin name="ASASSN"/>
+            <urls/>
+        </starSurvey>
         <starSurvey name="NSVS">
             <plugin name="NSVS"/>
             <urls>
