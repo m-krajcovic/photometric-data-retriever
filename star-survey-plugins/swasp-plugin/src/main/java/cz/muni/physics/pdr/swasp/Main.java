@@ -17,22 +17,31 @@ import java.net.URLEncoder;
 public class Main {
     public static void main(String[] args) throws IOException {
         URL u = null;
-
+        args = new String[] {"1SWASP J162646.08+510228.2"};
+        Document doc;
         if (args.length == 1) {
-            u = new URL("http://wasp.cerit-sc.cz/json?type=CSV&object=" + URLEncoder.encode(args[0], "UTF-8"));
+            String objName = args[0];
+            u = new URL("http://wasp.cerit-sc.cz/json?type=CSV&object=" + URLEncoder.encode(objName, "UTF-8"));
+            doc = Jsoup.connect("https://wasp.cerit-sc.cz/search")
+                    .data("objid", objName)
+                    .data("limit", "1")
+                    .data("radius", "1")
+                    .data("radiusUnit", "min")
+                    .post();
         } else if (args.length == 2) {
             String ra = args[0];
             String dec = args[1];
             String resultURL = "http://wasp.cerit-sc.cz/search?ra=" + ra + "&dec=" + dec + "&radius=1&radiusUnit=min&limit=1";
-            Document doc;
             doc = Jsoup.connect(resultURL).get();
-            for (Element a : doc.getElementsByTag("a")) {
-                if (a.ownText().equals("CSV")) {
-                    u = new URL(a.attr("abs:href"));
-                }
-            }
         } else {
             return;
+        }
+
+        System.out.println(doc.body());
+        for (Element a : doc.getElementsByTag("a")) {
+            if (a.ownText().equals("CSV")) {
+                u = new URL(a.attr("abs:href"));
+            }
         }
 
         if (u == null) return;
