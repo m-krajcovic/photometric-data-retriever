@@ -17,7 +17,6 @@ import java.net.URLEncoder;
 public class Main {
     public static void main(String[] args) throws IOException {
         URL u = null;
-        args = new String[] {"1SWASP J162646.08+510228.2"};
         Document doc;
         if (args.length == 1) {
             String objName = args[0];

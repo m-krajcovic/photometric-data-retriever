@@ -1,7 +1,5 @@
 package cz.muni.physics.pdr.app.updater;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.io.File;
 import java.util.Comparator;
 
