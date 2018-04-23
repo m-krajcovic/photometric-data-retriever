@@ -12,9 +12,10 @@ import java.util.Map;
  */
 public abstract class PhotometricDataModelConverter extends StringConverter<PhotometricDataModel> {
 
-    private static final Map<String, PhotometricDataModelConverter> converters = new HashMap<>();
+    private static Map<String, PhotometricDataModelConverter> converters;
 
-    static {
+    private static void init(){
+        converters = new HashMap<>();
         PhotometricDataModelConverter csvConverter = new PhotometricDataModelCsvConverter();
         PhotometricDataModelConverter asciiConverter = new PhotometricDataModelZeroFillAsciiConverter();
 
@@ -24,6 +25,9 @@ public abstract class PhotometricDataModelConverter extends StringConverter<Phot
     }
 
     public static PhotometricDataModelConverter get(String type) {
+        if (converters == null) {
+            init();
+        }
         if (type.indexOf('.') != -1)
             type = type.substring(type.lastIndexOf('.') + 1, type.length());
         return converters.getOrDefault(type, new PhotometricDataModelCsvConverter());

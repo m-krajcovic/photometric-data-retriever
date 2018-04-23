@@ -29,6 +29,7 @@
         <module>macho-plugin</module>
         <module>dk154-plugin</module>
         <module>kws-plugin</module>
+        <module>kepler-plugin</module>
     </modules>
 
     <properties>

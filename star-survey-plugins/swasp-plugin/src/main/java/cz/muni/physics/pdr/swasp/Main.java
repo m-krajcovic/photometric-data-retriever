@@ -36,7 +36,6 @@ public class Main {
             return;
         }
 
-        System.out.println(doc.body());
         for (Element a : doc.getElementsByTag("a")) {
             if (a.ownText().equals("CSV")) {
                 u = new URL(a.attr("abs:href"));
