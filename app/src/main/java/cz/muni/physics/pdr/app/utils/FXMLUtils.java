@@ -127,7 +127,9 @@ public class FXMLUtils {
         alert.getDialogPane().getButtonTypes().add(e);
         Optional<ButtonType> buttonType = alert.showAndWait();
         buttonType.ifPresent(buttonType1 -> {
-            app.showReportErrorWindow(app.getPrimaryStage());
+            if (buttonType1.getButtonData().equals(ButtonBar.ButtonData.OTHER)) {
+                app.showReportErrorWindow(app.getPrimaryStage());
+            }
         });
     }
 

@@ -5,36 +5,30 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65"
-            fx:controller="cz.muni.physics.pdr.app.controller.StarSurveyOverviewController">
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.StarSurveyOverviewController">
     <children>
-        <TableView fx:id="starSurveys" editable="true" maxHeight="-Infinity" maxWidth="600" minHeight="-Infinity"
-                   minWidth="600" prefHeight="309.0" prefWidth="600.0" AnchorPane.bottomAnchor="40.0"
-                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <TableView fx:id="starSurveys" editable="true" maxHeight="-Infinity" maxWidth="600" minHeight="-Infinity" minWidth="600" prefHeight="309.0" prefWidth="600.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="68.0" text="%starsurvey.name"/>
-                <TableColumn fx:id="pluginColumn" minWidth="0.0" prefWidth="110.0" text="%starsurvey.plugin"/>
+                <TableColumn fx:id="enabledColumn" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" resizable="false" text="%starsurvey.enabled" />
+                <TableColumn fx:id="nameColumn" prefWidth="351.0" text="%starsurvey.name" />
+                <TableColumn fx:id="pluginColumn" minWidth="0.0" prefWidth="110.0" text="%starsurvey.plugin" />
             </columns>
             <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
             </columnResizePolicy>
         </TableView>
-        <ButtonBar layoutX="336.0" layoutY="310.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
-                   AnchorPane.rightAnchor="10.0">
+        <ButtonBar layoutX="336.0" layoutY="310.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0">
             <buttons>
-                <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" text="%button.new"/>
-                <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditButton" text="%button.edit"/>
-                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton"
-                        text="%button.delete"/>
+                <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" text="%button.new" />
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditButton" text="%button.edit" />
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" text="%button.delete" />
             </buttons>
         </ButtonBar>
-        <ButtonBar layoutY="319.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="203.0"
-                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0">
+        <ButtonBar layoutY="319.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="203.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0">
             <buttons>
-                <Button fx:id="valuesButton" mnemonicParsing="false" onAction="#handleValuesButton"
-                        text="%button.values"/>
-                <Button fx:id="patternsButton" mnemonicParsing="false" onAction="#handlePatternsButton"
-                        text="%button.patterns"/>
+                <Button fx:id="valuesButton" mnemonicParsing="false" onAction="#handleValuesButton" text="%button.values" />
+                <Button fx:id="patternsButton" mnemonicParsing="false" onAction="#handlePatternsButton" text="%button.patterns" />
             </buttons>
         </ButtonBar>
     </children>

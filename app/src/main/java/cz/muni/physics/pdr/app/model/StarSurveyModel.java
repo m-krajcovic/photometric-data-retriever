@@ -1,10 +1,7 @@
 package cz.muni.physics.pdr.app.model;
 
 import cz.muni.physics.pdr.backend.entity.StarSurvey;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -17,12 +14,14 @@ import java.util.ArrayList;
  */
 public class StarSurveyModel {
     private StringProperty name = new SimpleStringProperty("");
+    private BooleanProperty enabled = new SimpleBooleanProperty(true);
     private ObjectProperty<PluginModel> plugin = new SimpleObjectProperty<>();
     private ObservableList<String> urls = FXCollections.observableArrayList();
 
     public StarSurveyModel(StarSurvey survey) {
         this(survey.getName(), survey.getPlugin() != null ? new PluginModel(survey.getPlugin()) : null);
         urls.addAll(survey.getUrls());
+        this.enabled.setValue(survey.isEnabled());
     }
 
     public StarSurveyModel(String name, PluginModel plugin) {
@@ -57,7 +56,6 @@ public class StarSurveyModel {
         return plugin;
     }
 
-
     public ObservableList<String> getUrls() {
         return urls;
     }
@@ -66,9 +64,22 @@ public class StarSurveyModel {
         this.urls = urls;
     }
 
+    public boolean isEnabled() {
+        return enabled.get();
+    }
+
+    public BooleanProperty enabledProperty() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled.set(enabled);
+    }
+
     public StarSurvey toEntity() {
         StarSurvey survey = new StarSurvey();
         survey.setName(getName());
+        survey.setEnabled(isEnabled());
         if (getPlugin() != null) {
             survey.setPlugin(getPlugin().toEntity());
         }

@@ -1,5 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
+import cz.muni.physics.pdr.app.javafx.cell.CheckBoxCellFactory;
 import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
 import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
@@ -9,6 +10,7 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michal Krajčovič
@@ -42,19 +45,27 @@ public class StarSurveyOverviewController extends StageController {
     @FXML
     private TableColumn<StarSurveyModel, String> nameColumn;
     @FXML
+    private TableColumn<StarSurveyModel, Boolean> enabledColumn;
+    @FXML
     private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
 
 
     @FXML
     private void initialize() {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
+        enabledColumn.setCellValueFactory(cell -> cell.getValue().enabledProperty());
         pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
 
+        enabledColumn.setCellFactory(new CheckBoxCellFactory<>());
         pluginColumn.setCellFactory(new PluginCellFactory());
 
         ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
         try {
-            starSurveyManager.getAll().forEach(s -> list.add(new StarSurveyModel(s)));
+            starSurveyManager.getAll().forEach(s -> {
+                StarSurveyModel e = new StarSurveyModel(s);
+                e.enabledProperty().addListener((observable, oldValue, newValue) -> starSurveyManager.insert(e.toEntity()));
+                list.add(e);
+            });
         } catch (ResourceAvailabilityException e) {
             logger.error(e);
             errorAlert();

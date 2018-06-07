@@ -8,10 +8,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,8 @@ public class StarSurveyEditDialogController extends StageController {
     private ResourceBundle resources;
     @FXML
     private TextField nameTextField;
+    @FXML
+    private CheckBox enabledCheckBox;
     @FXML
     private ChoiceBox<PluginModel> pluginChoiceBox;
     @FXML
@@ -69,6 +68,7 @@ public class StarSurveyEditDialogController extends StageController {
     private void handleOk() {
         if (isInputValid()) {
             starSurvey.setName(nameTextField.getText());
+            starSurvey.setEnabled(enabledCheckBox.isSelected());
             ObservableList<String> urls = FXCollections.observableArrayList();
             Arrays.stream(urlTextArea.getText().split(System.lineSeparator())).filter(s -> !s.trim().isEmpty()).forEach(urls::add);
             starSurvey.setUrls(urls);
@@ -93,6 +93,7 @@ public class StarSurveyEditDialogController extends StageController {
 
     public void setStarSurvey(StarSurveyModel starSurvey) {
         this.starSurvey = starSurvey;
+        enabledCheckBox.setSelected(starSurvey.isEnabled());
         nameTextField.setText(starSurvey.getName());
         if(!nameTextField.getText().trim().isEmpty()) nameTextField.setDisable(true);
         urlTextArea.setText(String.join(System.lineSeparator(), starSurvey.getUrls()));

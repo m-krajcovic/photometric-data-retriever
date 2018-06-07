@@ -20,7 +20,8 @@ public class PluginUtils {
         if (dir != null) {
             File[] files;
             while ((files = dir.listFiles()) != null && files.length > allowedCount) {
-                getOldest(files).delete();
+                File oldest = getOldest(files);
+                if (oldest != null) oldest.delete();
             }
         }
     }
@@ -60,11 +61,15 @@ public class PluginUtils {
         return f;
     }
 
+    public static File copyInputStreamToFile(InputStream is, File dest) throws IOException {
+        writeFile(is, dest);
+        return dest;
+    }
+
     public static File copyUrlToFile(URL url, File dest) throws IOException {
         try (InputStream is = url.openStream()) {
-            writeFile(is, dest);
+            return copyInputStreamToFile(is, dest);
         }
-        return dest;
     }
 
     public static File getOutputDir() {

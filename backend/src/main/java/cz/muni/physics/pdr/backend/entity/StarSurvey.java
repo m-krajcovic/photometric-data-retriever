@@ -19,11 +19,8 @@ public class StarSurvey {
     private Plugin plugin;
     @XStreamAlias("urls")
     private List<String> urls;
-
-    public StarSurvey(String name, Plugin plugin) {
-        this.name = name;
-        this.plugin = plugin;
-    }
+    @XStreamAsAttribute
+    private boolean enabled;
 
     public StarSurvey() {
     }
@@ -31,6 +28,7 @@ public class StarSurvey {
     public StarSurvey(StarSurvey survey) {
         this.name = survey.name;
         this.plugin = new Plugin(survey.plugin);
+        this.enabled = survey.enabled;
         if (survey.urls != null)
             this.urls = new ArrayList<>(survey.urls);
     }
@@ -57,5 +55,13 @@ public class StarSurvey {
 
     public void setUrls(List<String> urls) {
         this.urls = urls;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

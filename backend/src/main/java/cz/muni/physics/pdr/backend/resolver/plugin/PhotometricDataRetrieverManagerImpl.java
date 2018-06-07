@@ -50,7 +50,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     public Map<StarSurvey, List<PhotometricData>> runAll(StellarObject resolverResult) {
         Map<StarSurvey, List<PhotometricData>> resultMap = new HashMap<>();
         futures = new ArrayList<>();
-        for (StarSurvey survey : starSurveyManager.getAll()) {
+        for (StarSurvey survey : starSurveyManager.searchForAll(StarSurvey::isEnabled)) {
             if (survey.getPlugin() == null || survey.getPlugin().getName().isEmpty()) {
                 logger.debug("No plugin set for {} star survey, skipping", survey.getName());
                 continue;
