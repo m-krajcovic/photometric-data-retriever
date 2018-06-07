@@ -123,6 +123,13 @@
             </java.util.regex.Pattern>
         </entry>
         <entry>
+            <string>KIC</string>
+            <java.util.regex.Pattern>
+                <pattern>(?&lt;kic&gt;KIC\s(?&lt;kicID&gt;.*))</pattern>
+                <flags>0</flags>
+            </java.util.regex.Pattern>
+        </entry>
+        <entry>
             <string>[BM83]</string>
             <java.util.regex.Pattern>
                 <pattern>(?&lt;bm83&gt;\[BM83\]\s(?&lt;bm83ID&gt;.*))</pattern>

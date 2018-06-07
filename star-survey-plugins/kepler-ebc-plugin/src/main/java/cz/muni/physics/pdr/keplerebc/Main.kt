@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
             if (!line.trim().startsWith("#")) {
                 val tsv = line.split(Pattern.compile("\\s+"))
                 var time = tsv[0].toDouble()
-                time += (if (time <= 57139) 66.184 else 67.184) + 2454833
+                time += (if (time <= 57139) 66.184 else 67.184) + 2400000
                 val flux = tsv[6]
                 val err = tsv[7]
                 println("$time,$flux,$err")

@@ -93,7 +93,6 @@ public class VizierResolverTsvImpl implements VizierResolver {
             for (int i = 0; i < row.length; i++) {
                 row[i] = row[i].trim();
             }
-            System.out.println(s);
             int offset = -1;
             VizierResult obj = new VizierResult();
             if (row.length >= 7) {
@@ -111,7 +110,6 @@ public class VizierResolverTsvImpl implements VizierResolver {
                 obj.setRightAscension(Double.parseDouble(row[5 + offset]));
             if (NumberUtils.isParsable(row[6 + offset]))
                 obj.setDeclination(Double.parseDouble(row[6 + offset]));
-            System.out.println(obj);
             result.add(obj);
         });
         return result;

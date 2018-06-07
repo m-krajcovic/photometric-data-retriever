@@ -22,7 +22,13 @@ public class Main {
         Main plugin = new Main();
         if (args.length < 1) return;
         // "001429092"
-        plugin.getDataFromUrl(args[0]);
+        StringBuilder kic = new StringBuilder(args[0]);
+        if (args[0].length() < 9) {
+            for (int i = 0; i < 9 - args[0].length(); i++) {
+                kic.insert(0, "0");
+            }
+        }
+        plugin.getDataFromUrl(kic.toString());
     }
 
     public List<PhotometricData> getDataFromUrl(String id) {
@@ -71,13 +77,13 @@ public class Main {
                 BasicHDU<?>[] read = fits.read();
                 if (read.length > 2 && read[1] instanceof BinaryTableHDU) {
                     BinaryTableHDU table = (BinaryTableHDU) read[1];
-                    double[] fluxes = (double[]) table.getColumn("PDCSAP_FLUX");
-                    double[] errs = (double[]) table.getColumn("PDCSAP_FLUX_ERR");
+                    float[] fluxes = (float[]) table.getColumn("PDCSAP_FLUX");
+                    float[] errs = (float[]) table.getColumn("PDCSAP_FLUX_ERR");
                     double[] times = (double[]) table.getColumn("TIME");
 
                     for (int i = 0; i < fluxes.length; i++) {
                         // fixing kepler error + transform to jd
-                        double jd = (times[i] + times[i] <= 57139 ? 66.184 : 67.184 + 2454833);
+                        double jd = times[i] + (times[i] <= 57139 ? 66.184 : 67.184) + 2454833;
                         double flux = -2.5 * Math.log(fluxes[i]);
                         System.out.println(jd + "," + flux + "," + errs[i]);
                     }
