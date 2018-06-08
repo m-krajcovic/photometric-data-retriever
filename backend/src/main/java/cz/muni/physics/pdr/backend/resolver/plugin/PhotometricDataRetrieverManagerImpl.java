@@ -55,7 +55,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                 logger.debug("No plugin set for {} star survey, skipping", survey.getName());
                 continue;
             }
-            Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, resolverResult, new ArrayList<>(starSurveyManager.getAllPatterns().values()), starSurveyManager.getAllValueParameters());
+            Map<String, String> params = ParameterUtils.resolveParametersForSurvey(survey, resolverResult, new ArrayList<>(starSurveyManager.getAllPatterns().values()));
             futures.add(run(survey.getPlugin(), params)
                     .thenAccept(data -> {
                         logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());

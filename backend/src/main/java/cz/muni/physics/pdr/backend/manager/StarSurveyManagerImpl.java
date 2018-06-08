@@ -87,19 +87,4 @@ public class StarSurveyManagerImpl implements StarSurveyManager {
     public void removePattern(String key) {
         starSurveyRepository.removePattern(key);
     }
-
-    @Override
-    public Map<String, String> getAllValueParameters() {
-        return starSurveyRepository.getAllValueParameters();
-    }
-
-    @Override
-    public void insertValueParameter(String key, String value) {
-        starSurveyRepository.insertValueParameter(key, value);
-    }
-
-    @Override
-    public void removeValueParameter(String key) {
-        starSurveyRepository.removeValueParameter(key);
-    }
 }

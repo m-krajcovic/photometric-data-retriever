@@ -17,10 +17,4 @@ public interface StarSurveyRepository extends GenericRepository<StarSurvey, Stri
     void insertPattern(String key, Pattern pattern);
 
     void removePattern(String key);
-
-    Map<String, String> getAllValueParameters();
-
-    void insertValueParameter(String key, String value);
-
-    void removeValueParameter(String key);
 }

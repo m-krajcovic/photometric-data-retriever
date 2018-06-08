@@ -18,8 +18,6 @@ public class Configuration {
     private List<StarSurvey> starSurveys;
     @XStreamAlias("patterns")
     private Map<String, Pattern> patterns;
-    @XStreamAlias("valueParameters")
-    private Map<String, String> valueParameters;
 
     public List<StarSurvey> getStarSurveys() {
         return starSurveys;
@@ -35,13 +33,5 @@ public class Configuration {
 
     public void setPatterns(Map<String, Pattern> patterns) {
         this.patterns = patterns;
-    }
-
-    public Map<String, String> getValueParameters() {
-        return valueParameters;
-    }
-
-    public void setValueParameters(Map<String, String> valueParameters) {
-        this.valueParameters = valueParameters;
     }
 }

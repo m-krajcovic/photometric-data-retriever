@@ -46,18 +46,13 @@ public class StarSurveyOverviewController extends StageController {
     private TableColumn<StarSurveyModel, String> nameColumn;
     @FXML
     private TableColumn<StarSurveyModel, Boolean> enabledColumn;
-    @FXML
-    private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
-
 
     @FXML
     private void initialize() {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
         enabledColumn.setCellValueFactory(cell -> cell.getValue().enabledProperty());
-        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
 
         enabledColumn.setCellFactory(new CheckBoxCellFactory<>());
-        pluginColumn.setCellFactory(new PluginCellFactory());
 
         ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
         try {
@@ -71,63 +66,6 @@ public class StarSurveyOverviewController extends StageController {
             errorAlert();
         }
         starSurveys.setItems(list);
-    }
-
-    @FXML
-    private void handleNewButton() {
-        StarSurveyModel tempStarSurvey = new StarSurveyModel();
-        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, stage);
-        if (okClicked) {
-            try {
-                starSurveys.getItems().add(tempStarSurvey);
-                starSurveyManager.insert(tempStarSurvey.toEntity());
-            } catch (ResourceAvailabilityException e) {
-                logger.error(e);
-                errorAlert();
-            }
-            starSurveys.refresh();
-        }
-    }
-
-    @FXML
-    private void handleEditButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, stage);
-            if (okClicked) {
-                try {
-                    starSurveyManager.insert(selectedRecord.toEntity());
-                } catch (ResourceAvailabilityException e) {
-                    logger.error(e);
-                    errorAlert();
-                }
-                starSurveys.refresh();
-            }
-        } else {
-            showNoSelectionDialog();
-        }
-    }
-
-    @FXML
-    private void handleDeleteButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            try {
-                starSurveys.getItems().remove(selectedRecord);
-                starSurveyManager.delete(selectedRecord.toEntity());
-            } catch (ResourceAvailabilityException e) {
-                logger.error(e);
-                errorAlert();
-            }
-            starSurveys.refresh();
-        } else {
-            showNoSelectionDialog();
-        }
-    }
-
-    @FXML
-    private void handleValuesButton() {
-        app.showValueParameterOverview(stage);
     }
 
     @FXML
