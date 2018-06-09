@@ -33,8 +33,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     private double minThreshold;
     private double maxThreshold;
 
-    private Consumer<StarSurvey> onNoResultsFound;
-    private Consumer<StarSurvey> onResultsFound;
+    private Consumer<PluginSearchFinishResult> onSearchFinish;
     private List<CompletableFuture> futures = null;
 
     public PhotometricDataRetrieverManagerImpl(StarSurveyManager starSurveyManager,
@@ -60,13 +59,8 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
                     .thenAccept(data -> {
                         logger.debug("Found {} entries from {} star survey", data.size(), survey.getName());
                         resultMap.put(survey, data);
-                        if (!data.isEmpty()) {
-                            if (onResultsFound != null)
-                                onResultsFound.accept(survey);
-                        } else {
-                            if (onNoResultsFound != null)
-                                onNoResultsFound.accept(survey);
-                        }
+
+                        onSearchFinish.accept(new PluginSearchFinishResult(survey.getName(), data.size()));
                     }));
         }
         CompletableFuture[] cfs = futures.toArray(new CompletableFuture[futures.size()]);
@@ -105,14 +99,7 @@ public class PhotometricDataRetrieverManagerImpl implements PhotometricDataRetri
     }
 
     @Override
-    public void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound) {
-        this.onNoResultsFound = onNoResultsFound;
+    public void setOnSearchFinish(Consumer<PluginSearchFinishResult> onSearchFinish) {
+        this.onSearchFinish = onSearchFinish;
     }
-
-    @Override
-    public void setOnResultsFound(Consumer<StarSurvey> onResultsFound) {
-        this.onResultsFound = onResultsFound;
-    }
-
-
 }

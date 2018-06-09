@@ -1,8 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.javafx.cell.CheckBoxCellFactory;
-import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
-import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
@@ -10,7 +8,6 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michal Krajčovič

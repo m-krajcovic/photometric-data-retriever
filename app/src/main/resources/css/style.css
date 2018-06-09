@@ -45,3 +45,29 @@
     -fx-border-radius: 0 3 3 0;
     -fx-background-radius: 0 3 3 0;
 }
+
+.invisible-text-area {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+}
+
+.invisible-text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.invisible-text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.invisible-text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
+.invisible-text-area .scroll-bar:vertical {
+    -fx-scale-x: 0;
+}
+
+.gradient-panel {
+    -fx-background-color: linear-gradient(to bottom, -fx-background, transparent);
+}

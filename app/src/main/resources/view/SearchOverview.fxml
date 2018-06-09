@@ -2,65 +2,66 @@
 
 <?import cz.muni.physics.pdr.app.javafx.control.DecimalTextField?>
 <?import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import java.util.Locale?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import java.util.Locale?>
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
-    <children>
-        <VBox alignment="BASELINE_CENTER">
-            <children>
-                <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT"
-                           pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/planetsprite.png"/>
-                    </image>
-                    <viewport>
-                        <Rectangle2D minX="0" minY="0" width="256" height="256"/>
-                    </viewport>
-                </ImageView>
-                <HBox fx:id="searchBox" disable="false">
-                    <children>
-                        <TitledTextFieldBox fx:id="searchTextField" promptText="%textfield.search.prompt"
-                                            onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0"
-                                            maxWidth="234.0">
-                            <HBox.margin>
-                                <Insets right="5.0"/>
-                            </HBox.margin>
-                        </TitledTextFieldBox>
-                        <!--<TextField maxWidth="234" prefHeight="27" prefWidth="234" />-->
-                        <DecimalTextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0"
-                                          prefWidth="63.0" promptText="%textfield.radius.prompt"
-                                          styleClass="input-group-left">
-                            <locale><Locale fx:constant="ENGLISH"/></locale>
-                        </DecimalTextField>
-                        <ChoiceBox fx:id="radiusUnitChoiceBox" prefHeight="27" prefWidth="60.0"
-                                   styleClass="input-group-right">
-                            <HBox.margin>
-                                <Insets right="5.0"/>
-                            </HBox.margin>
-                        </ChoiceBox>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction"
-                                prefHeight="27.0" prefWidth="69.0" text="%button.search"/>
-                    </children>
-                    <VBox.margin>
-                        <Insets top="30.0"/>
-                    </VBox.margin>
-                </HBox>
-                <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text=""
-                       textAlignment="CENTER" textFill="#d35244" visible="false">
-                    <VBox.margin>
-                        <Insets top="5.0"/>
-                    </VBox.margin>
-                </Label>
-                <ProgressIndicator fx:id="searchProgressIndicator" visible="false"/>
-                <Label fx:id="progressLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0"
-                       prefWidth="306.0" text="" textAlignment="CENTER" visible="false"/>
-            </children>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="381.0" prefWidth="449.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.muni.physics.pdr.app.controller.SearchOverviewController">
+        <VBox alignment="BASELINE_CENTER" prefHeight="289.0" prefWidth="449.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                <viewport>
+                    <Rectangle2D height="256" minX="0" minY="0" width="256" />
+                </viewport>
+                <Image url="@../images/planetsprite.png" />
+            </ImageView>
+            <HBox fx:id="searchBox" disable="false">
+                <VBox.margin>
+                    <Insets top="30.0" />
+                </VBox.margin>
+                <TitledTextFieldBox fx:id="searchTextField" maxWidth="234.0" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="234.0" promptText="%textfield.search.prompt">
+                    <HBox.margin>
+                        <Insets right="5.0" />
+                    </HBox.margin>
+                </TitledTextFieldBox>
+                <!--<TextField maxWidth="234" prefHeight="27" prefWidth="234" />-->
+                <DecimalTextField fx:id="radiusTextField" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="63.0" promptText="%textfield.radius.prompt" styleClass="input-group-left">
+                    <locale>
+                        <Locale fx:constant="ENGLISH" />
+                    </locale>
+                </DecimalTextField>
+                <ChoiceBox fx:id="radiusUnitChoiceBox" prefHeight="27" prefWidth="60.0" styleClass="input-group-right">
+                    <HBox.margin>
+                        <Insets right="5.0" />
+                    </HBox.margin>
+                </ChoiceBox>
+                <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="27.0" prefWidth="69.0" text="%button.search">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Button>
+            </HBox>
+            <Label fx:id="infoLabel" alignment="TOP_CENTER" prefHeight="17.0" prefWidth="375.0" text="" textAlignment="CENTER" textFill="#d35244" visible="false">
+                <VBox.margin>
+                    <Insets top="5.0" />
+                </VBox.margin>
+            </Label>
         </VBox>
-    </children>
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <TextArea fx:id="progressTextArea" editable="false" focusTraversable="false" maxWidth="200.0" prefHeight="116.0" prefWidth="162.0" styleClass="invisible-text-area" visible="false">
+      <font>
+          <Font name="Courier New" size="13.0" />
+      </font>
+        </TextArea>
+    </VBox>
+   <Pane prefHeight="30.0" prefWidth="200.0" styleClass="gradient-panel" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 </AnchorPane>
