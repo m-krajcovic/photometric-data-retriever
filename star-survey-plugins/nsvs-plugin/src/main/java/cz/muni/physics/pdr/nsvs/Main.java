@@ -24,9 +24,9 @@ public class Main {
         } else if (args.length == 2) {
             String ra = args[0];
             String dec = args[1];
-            String url = "http://skydot.lanl.gov/nsvs/cone_search.php?ra=" + ra + "&dec=" + dec + "&rad=0.5&saturated=on&apincompl=on&nocorr=on&hiscat=on&hicorr=on";
+            String url = "https://skydot.lanl.gov/nsvs/cone_search.php?ra=" + ra + "&dec=" + dec + "&rad=0.5&saturated=on&apincompl=on&nocorr=on&hiscat=on&hicorr=on";
             try {
-                Jsoup.connect(url).get().getElementsByTag("a").forEach(a -> ids.add(a.text()));
+                Jsoup.connect(url).validateTLSCertificates(false).get().getElementsByTag("a").forEach(a -> ids.add(a.text()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -39,11 +39,11 @@ public class Main {
 
     public static void readData(String objId) {
         Document doc;
-        String url = "http://skydot.lanl.gov/nsvs/star.php?num=" + objId + "&amp;mask=6420";
+        String url = "https://skydot.lanl.gov/nsvs/star.php?num=" + objId + "&amp;mask=6420";
         try {
-            Jsoup.connect(url).get();
-            Connection.Response res = Jsoup.connect(url).execute();
-            doc = Jsoup.connect("http://skydot.lanl.gov/nsvs/print_light_curve.php").cookies(res.cookies()).get();
+            Jsoup.connect(url).validateTLSCertificates(false).get();
+            Connection.Response res = Jsoup.connect(url).validateTLSCertificates(false).execute();
+            doc = Jsoup.connect("https://skydot.lanl.gov/nsvs/print_light_curve.php").validateTLSCertificates(false).cookies(res.cookies()).get();
         } catch (IOException e) {
             e.printStackTrace();
             return;
