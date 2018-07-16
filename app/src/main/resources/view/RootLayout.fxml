@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity"
             prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"
             fx:controller="cz.muni.physics.pdr.app.controller.RootLayoutController">
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="%file">
-                    <items>
-                        <MenuItem fx:id="surveysMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
-                                  text="%menu.item.starsurveys"/>
-                        <MenuItem fx:id="openPluginsMenuItem" text="%open.plugins" mnemonicParsing="false"
-                                  onAction="#handleOpenPlugins"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false"
-                                  onAction="#handlePreferencesMenuItem"
-                                  text="%menu.item.preferences"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem"
-                                  text="%menu.item.close"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%menu.help">
-                    <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#handleAboutMenuItem" text="%menu.item.about"/>
-                    <MenuItem fx:id="reportErrorMenuItem" mnemonicParsing="false" onAction="#handleReportErrorMenuItem" text="%menu.item.report.error"/>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="%file">
+                <MenuItem fx:id="surveysMenuItem" mnemonicParsing="false" onAction="#handleDatabasesMenuItem"
+                          text="%menu.item.starsurveys"/>
+                <MenuItem fx:id="openPluginsMenuItem" text="%open.plugins" mnemonicParsing="false"
+                          onAction="#handleOpenPlugins"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false"
+                          onAction="#handlePreferencesMenuItem"
+                          text="%menu.item.preferences"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#handleCloseMenuItem"
+                          text="%menu.item.close"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="%menu.help">
+                <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#handleAboutMenuItem"
+                          text="%menu.item.about"/>
+                <MenuItem fx:id="reportErrorMenuItem" mnemonicParsing="false" onAction="#handleReportErrorMenuItem"
+                          text="%menu.item.report.error"/>
+            </Menu>
         </MenuBar>
     </top>
+    <center>
+        <Pane></Pane>
+    </center>
 </BorderPane>

@@ -25,14 +25,11 @@ public class ParameterUtils {
      * @param survey
      * @param resolverResult
      * @param patterns
-     * @param valueParameters
      * @return
      */
-    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult, List<Pattern> patterns, Map<String, String> valueParameters) {
+    public static Map<String, String> resolveParametersForSurvey(StarSurvey survey, StellarObject resolverResult, List<Pattern> patterns) {
         Map<String, String> params = resolvePatternParameters(resolverResult.paramList(), patterns);
         resolveStarResolverParameters(resolverResult, params);
-        resolveValueParameters(valueParameters, params);
-        resolveUrlParameter(survey.getUrls(), params);
         if (survey.getPlugin().getMainFile() != null && !survey.getPlugin().getMainFile().trim().isEmpty())
             params.put("mainFile", survey.getPlugin().getMainFile());
 
@@ -65,26 +62,6 @@ public class ParameterUtils {
             params.put("dech", Double.toString(result.getDeclinationInHours()));
         }
         params.putAll(result.getIds());
-        return params;
-    }
-
-    public static Map<String, String> resolveValueParameters(Map<String, String> valueParams, Map<String, String> params) {
-        valueParams.forEach((key, value) -> {
-            if (isResolvableWithParameters(value, params)) {
-                params.put(key, value);
-            }
-        });
-        return params;
-    }
-
-    public static Map<String, String> resolveUrlParameter(List<String> urls, Map<String, String> params) {
-        for (String url : urls) {
-            UriTemplate uriTemplate = new UriTemplate(url);
-            if (uriTemplate.getVariableNames().stream().allMatch(params::containsKey)) {
-                params.put("url", uriTemplate.expand(params).toString());
-                break;
-            }
-        }
         return params;
     }
 

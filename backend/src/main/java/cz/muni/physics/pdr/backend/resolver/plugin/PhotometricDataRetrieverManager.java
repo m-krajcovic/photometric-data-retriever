@@ -23,16 +23,10 @@ public interface PhotometricDataRetrieverManager {
     Map<StarSurvey, List<PhotometricData>> runAll(StellarObject result);
 
     /**
-     * Given consumer is called when no results are found in runAll
-     * @param onNoResultsFound
+     * Given consumer after each plugin's finish
+     * @param onSearchFinish
      */
-    void setOnNoResultsFound(Consumer<StarSurvey> onNoResultsFound);
-
-    /**
-     * Given consumer is called when some results were found in runAll
-     * @param onResultsFound
-     */
-    void setOnResultsFound(Consumer<StarSurvey> onResultsFound);
+    void setOnSearchFinish(Consumer<PluginSearchFinishResult> onSearchFinish);
 
     /**
      * Cancels all plugin processes

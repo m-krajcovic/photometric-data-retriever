@@ -10,14 +10,14 @@ import cz.muni.physics.pdr.app.javafx.control.DecimalTextField;
 import cz.muni.physics.pdr.app.javafx.control.TitledTextFieldBox;
 import cz.muni.physics.pdr.app.model.RadiusModel;
 import cz.muni.physics.pdr.app.model.SearchModel;
-import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
 import cz.muni.physics.pdr.backend.resolver.AvailabilityQueryable;
+import cz.muni.physics.pdr.backend.resolver.plugin.PluginSearchFinishResult;
 import javafx.animation.Animation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -44,6 +44,8 @@ import java.util.Set;
 public class SearchOverviewController extends StageController {
 
     private static final Logger logger = LogManager.getLogger(SearchOverviewController.class);
+
+    private static final int MAX_INFO_ROW_LENGTH = 20;
 
     @Autowired
     private Screens app;
@@ -77,9 +79,7 @@ public class SearchOverviewController extends StageController {
     @FXML
     private DecimalTextField radiusTextField;
     @FXML
-    private ProgressIndicator searchProgressIndicator;
-    @FXML
-    private Label progressLabel;
+    private TextArea progressTextArea;
 
     private SearchModel searchModel = new SearchModel();
     private SearchQueryParser queryParser;
@@ -178,9 +178,21 @@ public class SearchOverviewController extends StageController {
     private void initializeStarSurveySearchService() {
         starSurveySearchService.setOnError(this::showErrorMessage);
         starSurveySearchService.setOnDone(() -> disableElements(false));
-        starSurveySearchService.getStarSurveysMap().addListener((MapChangeListener<StarSurveyModel, Boolean>) change -> {
-            if (change.wasAdded())
-                Platform.runLater(() -> progressLabel.setText(change.getKey().getName() + "->" + change.getValueAdded()));
+        progressTextArea.setText("\n\n\n\n\n\n");
+        starSurveySearchService.getPluginSearchFinishResults().addListener((ListChangeListener<PluginSearchFinishResult>) change -> {
+            if (change.next() && change.wasAdded()) {
+                Platform.runLater(() -> {
+                    StringBuilder toAppend = new StringBuilder("\n");
+                    PluginSearchFinishResult addedResult = change.getAddedSubList().get(0);
+                    toAppend.append(addedResult.getStarSurveyName());
+                    for (int i = 0; i < MAX_INFO_ROW_LENGTH - addedResult.getStarSurveyName().length() - String.valueOf(addedResult.getFoundCount()).length(); i++) {
+                        toAppend.append('.');
+                    }
+                    toAppend.append(addedResult.getFoundCount());
+                    progressTextArea.appendText(toAppend.toString());
+                    progressTextArea.setScrollTop(Double.MAX_VALUE);
+                });
+            }
         });
     }
 
@@ -195,10 +207,9 @@ public class SearchOverviewController extends StageController {
         searchButton.setDisable(disable);
         searchBox.setDisable(disable);
         infoLabel.setVisible(!disable);
-        //searchProgressIndicator.setVisible(disable);
-        progressLabel.setVisible(disable);
+        progressTextArea.setVisible(disable);
         if (!disable) {
-            progressLabel.setText("");
+            progressTextArea.clear();
             imageAnimation.pause();
         } else {
             removeErrorInfo();

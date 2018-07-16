@@ -3,7 +3,6 @@ package cz.muni.physics.pdr.app.spring;
 import cz.muni.physics.pdr.app.controller.EntryEditDialogController;
 import cz.muni.physics.pdr.app.controller.PhotometricDataOverviewController;
 import cz.muni.physics.pdr.app.controller.SearchReportDialogController;
-import cz.muni.physics.pdr.app.controller.StarSurveyEditDialogController;
 import cz.muni.physics.pdr.app.controller.StellarObjectOverviewController;
 import cz.muni.physics.pdr.app.model.EntryModel;
 import cz.muni.physics.pdr.app.model.PhotometricDataModel;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -85,17 +83,6 @@ public class Screens {
                 .get().showAndWait();
     }
 
-    public boolean showStarSurveyEditDialog(StarSurveyModel record, Window owner) {
-        SpringDialogBuilder builder =
-                SpringDialogBuilder.load(fxmlLoader(), "/view/StarSurveyEditDialog.fxml")
-                        .stage(resources.getString("edit.star.survey"), owner);
-        StarSurveyEditDialogController controller = builder.controller();
-        controller.setStarSurvey(record);
-        Stage stage = builder.get();
-        stage.showAndWait();
-        return controller.isOkClicked();
-    }
-
     public StellarObjectModel showStellarObjects(Map<String, List<StellarObjectModel>> models) {
         SpringDialogBuilder builder =
                 SpringDialogBuilder.load(fxmlLoader(), "/view/StellarObjectOverview.fxml")
@@ -106,12 +93,6 @@ public class Screens {
 //        stage.setResizable(true);
         stage.showAndWait();
         return controller.getSelected();
-    }
-
-    public void showValueParameterOverview(Stage owner) {
-        SpringDialogBuilder.load(fxmlLoader(), "/view/ValuesOverview.fxml")
-                .stage(resources.getString("values"), owner)
-                .get().showAndWait();
     }
 
     public void showPatternsOverview(Stage owner) {

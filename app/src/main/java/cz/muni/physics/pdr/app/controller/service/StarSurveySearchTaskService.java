@@ -7,8 +7,9 @@ import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.plugin.PhotometricDataRetrieverManager;
+import cz.muni.physics.pdr.backend.resolver.plugin.PluginSearchFinishResult;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -16,11 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -38,7 +35,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     private Screens app;
     private PhotometricDataRetrieverManager retrieverManager;
     private StellarObject resolverResult;
-    private ObservableMap<StarSurveyModel, Boolean> starSurveysMap = FXCollections.observableMap(new HashMap<>());
+    private ObservableList<PluginSearchFinishResult> pluginSearchFinishResults = FXCollections.observableArrayList();
     private Callback onDone;
     private Consumer<String> onError;
     private ResourceBundle resources;
@@ -51,11 +48,8 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
         super.setOnCancelled(event -> {
             retrieverManager.cancelAll();
         });
-        retrieverManager.setOnNoResultsFound(s -> {
-            starSurveysMap.put(new StarSurveyModel(s), false);
-        });
-        retrieverManager.setOnResultsFound(s -> {
-            starSurveysMap.put(new StarSurveyModel(s), true);
+        retrieverManager.setOnSearchFinish(pluginSearchFinishResult -> {
+            pluginSearchFinishResults.add(pluginSearchFinishResult);
         });
     }
 
@@ -63,7 +57,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
     public void reset() {
         super.reset();
         resolverResult = new StellarObject();
-        starSurveysMap.clear();
+        pluginSearchFinishResults.clear();
     }
 
     @Override
@@ -71,7 +65,7 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
         if (resolverResult == null) {
             throw new IllegalArgumentException("resolverResult is null.");
         }
-        if (starSurveysMap == null) {
+        if (pluginSearchFinishResults == null) {
             throw new IllegalArgumentException("starSurveysMap is null.");
         }
         return new Task<Map<StarSurveyModel, List<PhotometricDataModel>>>() {
@@ -139,12 +133,12 @@ public class StarSurveySearchTaskService extends Service<Map<StarSurveyModel, Li
         this.resolverResult = resolverResult;
     }
 
-    public ObservableMap<StarSurveyModel, Boolean> getStarSurveysMap() {
-        return starSurveysMap;
+    public ObservableList<PluginSearchFinishResult> getPluginSearchFinishResults() {
+        return pluginSearchFinishResults;
     }
 
-    public void setStarSurveysMap(ObservableMap<StarSurveyModel, Boolean> starSurveysMap) {
-        this.starSurveysMap = starSurveysMap;
+    public void setPluginSearchFinishResults(ObservableList<PluginSearchFinishResult> pluginSearchFinishResults) {
+        this.pluginSearchFinishResults = pluginSearchFinishResults;
     }
 
     public Callback getOnDone() {

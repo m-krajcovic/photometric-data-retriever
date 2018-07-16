@@ -26,7 +26,6 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
 
     private Map<String, StarSurvey> starSurveysCache = new HashMap<>();
     private Map<String, Pattern> patterns = new HashMap<>();
-    private Map<String, String> valueParameters = new HashMap<>();
     private ConfigurationHolder configHolder;
 
     public StarSurveyRepositoryConfigImpl(ConfigurationHolder configHolder) {
@@ -70,10 +69,7 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
     public StarSurvey searchFor(Predicate<StarSurvey> predicate) {
         configHolder.get();
         Optional<StarSurvey> optional = starSurveysCache.values().stream().filter(predicate).findFirst();
-        if (optional.isPresent()) {
-            return new StarSurvey(optional.get());
-        }
-        return null;
+        return optional.map(StarSurvey::new).orElse(null);
     }
 
     @Override
@@ -93,13 +89,11 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
             starSurveysCache.put(starSurvey.getName(), starSurvey);
         }
         patterns = new HashMap<>(configuration.getPatterns());
-        valueParameters = new HashMap<>(configuration.getValueParameters());
     }
 
     private void saveConfig() {
         Configuration configuration = configHolder.get();
         configuration.setStarSurveys(new ArrayList<>(starSurveysCache.values()));
-        configuration.setValueParameters(valueParameters);
         configuration.setPatterns(patterns);
         configHolder.persist(configuration);
     }
@@ -123,26 +117,6 @@ public class StarSurveyRepositoryConfigImpl implements StarSurveyRepository {
         if (patterns.containsKey(key)) {
             logger.debug("Key {} found. Removing object.", key);
             patterns.remove(key);
-            saveConfig();
-        }
-    }
-
-    @Override
-    public Map<String, String> getAllValueParameters() {
-        configHolder.get();
-        return new HashMap<>(valueParameters);
-    }
-
-    @Override
-    public void insertValueParameter(String key, String value) {
-        valueParameters.put(key, value);
-        saveConfig();
-    }
-
-    @Override
-    public void removeValueParameter(String key) {
-        if (valueParameters.containsKey(key)) {
-            valueParameters.remove(key);
             saveConfig();
         }
     }

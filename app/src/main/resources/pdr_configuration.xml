@@ -2,74 +2,51 @@
     <starSurveys>
         <starSurvey enabled="true" name="SWASP">
             <plugin name="SWASP"/>
-            <urls>
-                <string>http://wasp.cerit-sc.cz/json?type=CSV&amp;object={swasp}</string>
-                <string>http://wasp.cerit-sc.cz/search?ra={radeg}&amp;dec={decdeg}&amp;radius=1&amp;radiusUnit=min&amp;limit=1</string>
-            </urls>
         </starSurvey>
         <starSurvey enabled="true" name="CRTS">
             <plugin name="CRTS"/>
-            <urls>
-                <string>http://nunuku.caltech.edu/cgi-bin/getcssconedb_release_img.cgi?RA={radeg}&amp;Dec={decdeg}&amp;Rad=0.2&amp;DB=photcat&amp;OUT=csv&amp;SHORT=short&amp;PLOT=plot</string>
-            </urls>
         </starSurvey>
         <starSurvey enabled="true" name="OMC">
             <plugin name="OMC"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="KWS">
             <plugin name="KWS"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="ASAS3">
             <plugin name="ASAS3"/>
-            <urls/>
         </starSurvey>
         <starSurvey name="ASASSN" enabled="true">
             <plugin name="ASASSN"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="NSVS">
             <plugin name="NSVS"/>
-            <urls>
-                <string>http://skydot.lanl.gov/nsvs/star.php?num={nsvsID}&amp;mask=32004</string>
-            </urls>
         </starSurvey>
         <starSurvey enabled="true" name="OGLE">
             <plugin name="OGLE"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="APASS">
             <plugin name="APASS"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="DK154">
             <plugin name="DK154"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="OGLE2">
             <plugin name="OGLE2"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="PIOTS">
             <plugin name="PIOTS"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="HIP">
             <plugin name="HIP"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="MACHO">
             <plugin name="MACHO"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="KEPLEREBC">
             <plugin name="KEPLEREBC"/>
-            <urls/>
         </starSurvey>
         <starSurvey enabled="true" name="KEPLER">
             <plugin name="KEPLER"/>
-            <urls/>
         </starSurvey>
     </starSurveys>
     <patterns>
@@ -522,5 +499,4 @@
             </java.util.regex.Pattern>
         </entry>
     </patterns>
-    <valueParameters/>
 </configuration>

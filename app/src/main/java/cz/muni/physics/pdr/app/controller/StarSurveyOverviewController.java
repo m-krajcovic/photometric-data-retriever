@@ -1,8 +1,6 @@
 package cz.muni.physics.pdr.app.controller;
 
 import cz.muni.physics.pdr.app.javafx.cell.CheckBoxCellFactory;
-import cz.muni.physics.pdr.app.javafx.cell.PluginCellFactory;
-import cz.muni.physics.pdr.app.model.PluginModel;
 import cz.muni.physics.pdr.app.model.StarSurveyModel;
 import cz.muni.physics.pdr.app.spring.Screens;
 import cz.muni.physics.pdr.app.utils.FXMLUtils;
@@ -10,7 +8,6 @@ import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.manager.StarSurveyManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michal Krajčovič
@@ -46,18 +42,13 @@ public class StarSurveyOverviewController extends StageController {
     private TableColumn<StarSurveyModel, String> nameColumn;
     @FXML
     private TableColumn<StarSurveyModel, Boolean> enabledColumn;
-    @FXML
-    private TableColumn<StarSurveyModel, PluginModel> pluginColumn;
-
 
     @FXML
     private void initialize() {
         nameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
         enabledColumn.setCellValueFactory(cell -> cell.getValue().enabledProperty());
-        pluginColumn.setCellValueFactory(cell -> cell.getValue().pluginProperty());
 
         enabledColumn.setCellFactory(new CheckBoxCellFactory<>());
-        pluginColumn.setCellFactory(new PluginCellFactory());
 
         ObservableList<StarSurveyModel> list = FXCollections.observableArrayList();
         try {
@@ -71,63 +62,6 @@ public class StarSurveyOverviewController extends StageController {
             errorAlert();
         }
         starSurveys.setItems(list);
-    }
-
-    @FXML
-    private void handleNewButton() {
-        StarSurveyModel tempStarSurvey = new StarSurveyModel();
-        boolean okClicked = app.showStarSurveyEditDialog(tempStarSurvey, stage);
-        if (okClicked) {
-            try {
-                starSurveys.getItems().add(tempStarSurvey);
-                starSurveyManager.insert(tempStarSurvey.toEntity());
-            } catch (ResourceAvailabilityException e) {
-                logger.error(e);
-                errorAlert();
-            }
-            starSurveys.refresh();
-        }
-    }
-
-    @FXML
-    private void handleEditButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            boolean okClicked = app.showStarSurveyEditDialog(selectedRecord, stage);
-            if (okClicked) {
-                try {
-                    starSurveyManager.insert(selectedRecord.toEntity());
-                } catch (ResourceAvailabilityException e) {
-                    logger.error(e);
-                    errorAlert();
-                }
-                starSurveys.refresh();
-            }
-        } else {
-            showNoSelectionDialog();
-        }
-    }
-
-    @FXML
-    private void handleDeleteButton() {
-        StarSurveyModel selectedRecord = starSurveys.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            try {
-                starSurveys.getItems().remove(selectedRecord);
-                starSurveyManager.delete(selectedRecord.toEntity());
-            } catch (ResourceAvailabilityException e) {
-                logger.error(e);
-                errorAlert();
-            }
-            starSurveys.refresh();
-        } else {
-            showNoSelectionDialog();
-        }
-    }
-
-    @FXML
-    private void handleValuesButton() {
-        app.showValueParameterOverview(stage);
     }
 
     @FXML
