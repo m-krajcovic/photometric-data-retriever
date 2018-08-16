@@ -6,6 +6,6 @@ package cz.muni.physics.pdr.backend.resolver.vizier;
 public class VizierVSXStarResolver extends VizierResolverTsvImpl {
 
     public VizierVSXStarResolver() {
-        super("http://vizier.u-strasbg.fr/viz-bin/asu-tsv", "B/vsx/vsx");
+        super("https://vizier.u-strasbg.fr/viz-bin/asu-tsv", "B/vsx/vsx");
     }
 }

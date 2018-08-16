@@ -26,7 +26,7 @@ public class NsvsPlugin implements Plugin {
         try {
             Jsoup.connect(url).get();
             Connection.Response res = Jsoup.connect(url).execute();
-            doc = Jsoup.connect("http://skydot.lanl.gov/nsvs/print_light_curve.php").cookies(res.cookies()).get();
+            doc = Jsoup.connect("https://skydot.lanl.gov/nsvs/print_light_curve.php").cookies(res.cookies()).get();
         } catch (IOException e) {
             e.printStackTrace();
             return result;

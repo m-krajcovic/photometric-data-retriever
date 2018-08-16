@@ -11,7 +11,7 @@ public class VizierMachoStarResolver extends VizierResolverTsvImpl {
 
 
     public VizierMachoStarResolver() {
-        super("http://vizier.u-strasbg.fr/viz-bin/asu-tsv", "II/247/machovar");
+        super("https://vizier.u-strasbg.fr/viz-bin/asu-tsv", "II/247/machovar");
     }
 
 

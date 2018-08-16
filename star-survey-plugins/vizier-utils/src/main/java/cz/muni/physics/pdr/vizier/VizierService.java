@@ -30,7 +30,7 @@ public class VizierService {
                 .data("source", catalogue)
                 .data("tables", catalogue)
                 .data("-source", catalogue)
-                .data("CDSportal", "http://cdsportal.u-strasbg.fr/StoreVizierData.html")
+                .data("CDSportal", "https://cdsportal.u-strasbg.fr/StoreVizierData.html")
                 .data("-out.form", outputType.getName())
                 .data("-out.add", "_r")
                 .data("outaddvalue", "default")
@@ -66,9 +66,9 @@ public class VizierService {
     }
 
     public enum OutputType {
-        TSV("http://vizier.u-strasbg.fr/viz-bin/asu-tsv", "; -Separated-Values"),
-        HTML("http://vizier.u-strasbg.fr/viz-bin/VizieR-4", "HTML Table"),
-        DETAILED("http://vizier.u-strasbg.fr/viz-bin/VizieR-4", "Detailed results");
+        TSV("https://vizier.u-strasbg.fr/viz-bin/asu-tsv", "; -Separated-Values"),
+        HTML("https://vizier.u-strasbg.fr/viz-bin/VizieR-4", "HTML Table"),
+        DETAILED("https://vizier.u-strasbg.fr/viz-bin/VizieR-4", "Detailed results");
 
         private String url;
         private String name;

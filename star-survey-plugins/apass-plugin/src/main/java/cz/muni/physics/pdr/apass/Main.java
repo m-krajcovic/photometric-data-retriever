@@ -24,7 +24,7 @@ public class Main {
         URL url;
         if (args.length == 2) { // su to suradnice
             url = new URL(
-                    MessageFormat.format("http://tombstone.physics.mcmaster.ca/APASS/conesearch_offset.php?radeg={0}&decdeg={1}&raddeg=0.005", args[0], args[1]));
+                    MessageFormat.format("https://tombstone.physics.mcmaster.ca/APASS/conesearch_offset.php?radeg={0}&decdeg={1}&raddeg=0.005", args[0], args[1]));
         } else {
             return;
         }

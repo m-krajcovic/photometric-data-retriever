@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class SimbadResolverImpl implements SimbadResolver {
     private static final Logger logger = LogManager.getLogger(SimbadResolverImpl.class);
-    private String coordsUrl = "http://simbad.u-strasbg.fr/simbad/sim-coo";
-    private String identUrl = "http://simbad.u-strasbg.fr/simbad/sim-id";
+    private String coordsUrl = "https://simbad.u-strasbg.fr/simbad/sim-coo";
+    private String identUrl = "https://simbad.u-strasbg.fr/simbad/sim-id";
 
     //http://simbad.u-strasbg.fr/simbad/sim-coo?output.format=ascii&output.format=ASCII&Coord=188.2510315%2026.7161768&Radius=10&Radius.unit=arcmin
 

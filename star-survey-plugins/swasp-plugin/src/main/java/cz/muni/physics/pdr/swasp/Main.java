@@ -30,7 +30,7 @@ public class Main {
         } else if (args.length == 2) {
             String ra = args[0];
             String dec = args[1];
-            String resultURL = "http://wasp.cerit-sc.cz/search?ra=" + ra + "&dec=" + dec + "&radius=1&radiusUnit=min&limit=1";
+            String resultURL = "https://wasp.cerit-sc.cz/search?ra=" + ra + "&dec=" + dec + "&radius=1&radiusUnit=min&limit=1";
             doc = Jsoup.connect(resultURL).get();
         } else {
             return;
@@ -39,6 +39,7 @@ public class Main {
         for (Element a : doc.getElementsByTag("a")) {
             if (a.ownText().equals("CSV")) {
                 u = new URL(a.attr("abs:href"));
+                break;
             }
         }
 
