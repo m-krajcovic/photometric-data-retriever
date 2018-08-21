@@ -37,12 +37,12 @@ public class Main {
         if (id.startsWith("J")) {
             id = id.substring(1);
         }
-        main.readData("https://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
+        main.readData("http://www.astrouw.edu.pl/cgi-asas/asas_cgi_get_data?" + id + ",asas3");
     }
 
     public String getIdFromForm(String query) {
         WebDriver driver = new HtmlUnitDriver();
-        driver.get("https://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3");
+        driver.get("http://www.astrouw.edu.pl/asas/i_aasc/aasc_form.php?catsrc=asas3");
         driver.findElement(By.name("coo")).sendKeys(query);
         driver.findElement(By.name("submit")).submit();
         driver.close();
