@@ -1,5 +1,7 @@
 # A tool for retrieving photometric data of stellar objects
 
+[![Build status](https://ci.appveyor.com/api/projects/status/86irfmpi8pbi5l0c/branch/master?svg=true)](https://ci.appveyor.com/project/m-krajcovic/photometric-data-retriever/branch/master)
+
 Goal of this thesis is to create a tool for the Department of Theoretical Physics and Astrophysics of the Faculty of Science, MU, which would help with obtaining photometric data, i.e. entries of measured brightness, from online databases.
 
 Astronomers currently use a VSX database (https://www.aavso.org/vsx/) to search for a star manually. Numerous links lead from there to circa twenty different databases that provide data in a form of charts which include time, measured brightness and other statistics. However, each of these databases has a slightly different chart format, therefore, the data has to be edited by using a method specific for every database.
