@@ -20,12 +20,11 @@ import java.text.MessageFormat;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-//        https://asas-sn.osu.edu/variables?utf8=%E2%9C%93&ra=93.058&dec=-69.766&radius=0.5&meanmag_min=0&meanmag_max=20&amplitude_min=0&amplitude_max=10&period_min=0&period_max=1000&curve_type%5B%5D=CWA&curve_type%5B%5D=CWB&curve_type%5B%5D=DCEP&curve_type%5B%5D=DCEPS&curve_type%5B%5D=DSCT&curve_type%5B%5D=EA&curve_type%5B%5D=EA%7CEB&curve_type%5B%5D=EW&curve_type%5B%5D=GCAS&curve_type%5B%5D=HADS&curve_type%5B%5D=L&curve_type%5B%5D=L%3A&curve_type%5B%5D=M&curve_type%5B%5D=RRAB&curve_type%5B%5D=RRC&curve_type%5B%5D=RRD&curve_type%5B%5D=SR&curve_type%5B%5D=SRS&curve_type%5B%5D=VAR&curve_type%5B%5D=YSO&curve_type%5B%5D=RVA&curve_type%5B%5D=ROT&curve_type%5B%5D=AHB1&curve_type%5B%5D=RRAB%2FBL&curve_type%5B%5D=RRC%2FBL&sort_type=lcnumber&sort_option=asc&commit=Search
-//        args = new String[]{"93.058", "-69.766"};
+//        args = new String[]{"15.18808", "26.80683"};
         URL url;
         if (args.length == 2) { // su to suradnice
             url = new URL(
-                    MessageFormat.format("https://asas-sn.osu.edu/variables?utf8=%E2%9C%93&ra={0}&dec={1}&radius=0.5&meanmag_min=0&meanmag_max=20&amplitude_min=0&amplitude_max=10&period_min=0&period_max=1000&curve_type%5B%5D=CWA&curve_type%5B%5D=CWB&curve_type%5B%5D=DCEP&curve_type%5B%5D=DCEPS&curve_type%5B%5D=DSCT&curve_type%5B%5D=EA&curve_type%5B%5D=EA%7CEB&curve_type%5B%5D=EW&curve_type%5B%5D=GCAS&curve_type%5B%5D=HADS&curve_type%5B%5D=L&curve_type%5B%5D=L%3A&curve_type%5B%5D=M&curve_type%5B%5D=RRAB&curve_type%5B%5D=RRC&curve_type%5B%5D=RRD&curve_type%5B%5D=SR&curve_type%5B%5D=SRS&curve_type%5B%5D=VAR&curve_type%5B%5D=YSO&curve_type%5B%5D=RVA&curve_type%5B%5D=ROT&curve_type%5B%5D=AHB1&curve_type%5B%5D=RRAB%2FBL&curve_type%5B%5D=RRC%2FBL&sort_type=lcnumber&sort_option=asc&commit=Search", args[0], args[1]));
+                    MessageFormat.format("https://asas-sn.osu.edu/variables?utf8=%E2%9C%93&ra={0}&dec={1}&radius=0.5&mean_vmag_min=0.0&mean_vmag_max=20.0&amplitude_min=0.0&amplitude_max=10.0&period_min=0.0&period_max=1000.0&sllk_statistic_min=0.0&sllk_statistic_max=1.5&class_probability_min=0.0&class_probability_max=1.0&rfr_score_min=0.0&rfr_score_max=1.0&curve_type%5B%5D=EB&curve_type%5B%5D=EW&references%5B%5D=The+ASAS-SN+Catalog+of+Variable+Stars%3A+II&references%5B%5D=The+ASAS-SN+Catalog+of+Variable+Stars%3A+I&sort_type=lcid&sort_option=asc&commit=Search", args[0], args[1]));
         } else {
             return;
         }
