@@ -48,6 +48,9 @@
         <starSurvey enabled="true" name="KEPLER">
             <plugin name="KEPLER"/>
         </starSurvey>
+        <starSurvey enabled="true" name="ZTF">
+            <plugin name="ZTF"/>
+        </starSurvey>
     </starSurveys>
     <patterns>
         <entry>
