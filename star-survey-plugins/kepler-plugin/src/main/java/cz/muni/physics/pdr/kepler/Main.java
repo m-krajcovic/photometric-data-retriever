@@ -20,6 +20,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Main plugin = new Main();
+//        args = new String[]{"001429092"};
         if (args.length < 1) return;
         // "001429092"
         StringBuilder kic = new StringBuilder(args[0]);
