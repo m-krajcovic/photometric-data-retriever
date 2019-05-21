@@ -55,7 +55,7 @@ public class Main {
         Element fetchAnchor = doc.getElementsByAttributeValueStarting("href", "fetch_lcurve.jsp?obj_id=").first();
         String href = fetchAnchor.attr("abs:href");
         URL fetchUrl = new URL(href);
-        try (InputStream is = PluginUtils.copyUrlOpenStream(fetchUrl, "OMC-" + PluginUtils.getQueryMap(fetchUrl.getQuery()).getOrDefault("obj_id", "-" + System.currentTimeMillis()) + ".fits", 3)) {
+        try (InputStream is = PluginUtils.copyUrlOpenStream(fetchUrl, "OMC-" + name + "-" + PluginUtils.getQueryMap(fetchUrl.getQuery()).getOrDefault("obj_id", "-" + System.currentTimeMillis()) + ".fits", 3)) {
             Fits fits = new Fits(is);
             TableHDU table = (TableHDU) fits.getHDU(1);
             float[] mags = (float[]) table.getColumn("MAG_V");
