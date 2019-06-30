@@ -5,16 +5,10 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -65,27 +59,28 @@ public class ReportErrorDialogController extends StageController {
         stage.close();
     }
 
-    // TODO FIX NEEDED SINCE I DONT HAVE ACCESS TO AISA ANYMORE, put the script on some other server?
     @FXML
     private void handleSend() {
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
-                Resource resource = new FileSystemResource(new File(appDataDir, "logs" + File.separator + "log.log"));
-                if (resource.exists()) {
+//                Resource resource = new FileSystemResource(new File(appDataDir, "logs" + File.separator + "log.log"));
+//                if (resource.exists()) {
+                    // https://script.google.com/macros/s/AKfycbwz-6GzlvTiqhpmKT-0JXpsJXT2BhV-2kltZPfseQ/exec
                     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
                     parts.add("text", textArea.getText());
                     parts.add("from", emailTextField.getText());
-                    parts.add("Content-Type", "text/plain");
-                    parts.add("file", resource);
+//                    parts.add("Content-Type", "text/plain");
+                    // todo: send logs as well
+//                    parts.add("file", resource);
 
                     ResponseEntity<String> exchange = restTemplate.exchange(mailServer, HttpMethod.POST,
                             new HttpEntity<MultiValueMap<String, Object>>(parts),
                             String.class);
-                    return exchange.getStatusCode().equals(HttpStatus.OK);
-                } else {
-                    return false;
-                }
+                    return exchange.getStatusCode().equals(HttpStatus.FOUND);
+//                } else {
+//                    return false;
+//                }
             }
         };
 
