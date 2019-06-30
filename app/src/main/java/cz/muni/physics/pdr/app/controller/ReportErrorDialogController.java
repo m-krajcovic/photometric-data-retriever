@@ -65,6 +65,7 @@ public class ReportErrorDialogController extends StageController {
         stage.close();
     }
 
+    // TODO FIX NEEDED SINCE I DONT HAVE ACCESS TO AISA ANYMORE, put the script on some other server?
     @FXML
     private void handleSend() {
         Task<Boolean> task = new Task<Boolean>() {

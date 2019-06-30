@@ -1,14 +1,13 @@
 package cz.muni.physics.pdr.backend.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import cz.muni.physics.pdr.backend.CosmicCoordinates;
+import cz.muni.physics.pdr.backend.resolver.vizier.VariableStarInformationModel;
+
+import java.util.*;
 
 /**
  * Data class for storing information about stellar object
+ *
  * @author Michal Krajčovič
  * @version 1.0
  * @since 13/04/16
@@ -137,5 +136,16 @@ public class StellarObject {
             output += id.getKey() + ":" + id.getValue() + "\n";
         }
         return output.toString();
+    }
+
+    public void merge(VariableStarInformationModel model) {
+        this.setoName(model.getOriginalName());
+        this.setEpoch(model.getM0().doubleValue());
+        this.setPeriod(model.getPeriod().doubleValue());
+        CosmicCoordinates coordinates = model.getCoordinates();
+        if (coordinates != null) {
+            this.setRightAscension(coordinates.getRightAscension());
+            this.setDeclination(coordinates.getDeclination());
+        }
     }
 }

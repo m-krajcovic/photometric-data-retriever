@@ -34,17 +34,23 @@ public class RadiusModel {
         this.unit.set(unit);
     }
 
+    public double toDegrees() {
+        return getUnit().getMultiplier() * getRadius();
+    }
+
     public enum Unit {
-        DEG("deg", Radius.Unit.DEG),
-        ARCSEC("arcsec", Radius.Unit.ARC_SEC),
-        ARCMIN("arcmin", Radius.Unit.ARC_MIN);
+        DEG("deg", Radius.Unit.DEG, 1),
+        ARCSEC("arcsec", Radius.Unit.ARC_SEC, 1.0/3600),
+        ARCMIN("arcmin", Radius.Unit.ARC_MIN, 1.0/60);
 
         private String id;
         private Radius.Unit backendEnum;
+        private double multiplier;
 
-        Unit(String id, Radius.Unit backendEnum) {
+        Unit(String id, Radius.Unit backendEnum, double multiplier) {
             this.id = id;
             this.backendEnum = backendEnum;
+            this.multiplier = multiplier;
         }
 
         public Radius.Unit toBackend() {
@@ -60,6 +66,10 @@ public class RadiusModel {
                 default:
                     return RadiusModel.Unit.DEG;
             }
+        }
+
+        public double getMultiplier() {
+            return multiplier;
         }
 
         @Override

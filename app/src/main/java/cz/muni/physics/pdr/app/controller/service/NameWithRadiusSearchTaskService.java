@@ -2,11 +2,10 @@ package cz.muni.physics.pdr.app.controller.service;
 
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
-import cz.muni.physics.pdr.backend.entity.VizierQuery;
-import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
-import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
+import cz.muni.physics.pdr.backend.resolver.vizier.VariableStarInformationModel;
+import cz.muni.physics.pdr.backend.resolver.vizier.VsxResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
@@ -14,13 +13,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
  * JavaFX concurrent service class for retrieving Stellar Object information by its name
+ *
  * @author Michal Krajčovič
  * @version 1.0
  * @since 06/04/16
@@ -30,7 +30,7 @@ public class NameWithRadiusSearchTaskService extends Service<StellarObject> {
     private static final Logger logger = LogManager.getLogger(NameWithRadiusSearchTaskService.class);
     protected SearchModel searchModel;
     protected SesameNameResolver sesameNameResolver;
-    protected VizierResolver vsxVizierResolver;
+    protected VsxResolver vsxResolver;
     protected Callback onDone;
     protected Consumer<String> onError;
     protected StarSurveySearchTaskService starSurveySearchTaskService;
@@ -39,9 +39,9 @@ public class NameWithRadiusSearchTaskService extends Service<StellarObject> {
     private CoordsSearchTaskService coordsSearchService;
 
     @Autowired
-    public NameWithRadiusSearchTaskService(CoordsSearchTaskService coordsSearchService,SesameNameResolver sesameNameResolver, VizierResolver vsxVizierResolver, StarSurveySearchTaskService starSurveySearchTaskService) {
+    public NameWithRadiusSearchTaskService(CoordsSearchTaskService coordsSearchService, SesameNameResolver sesameNameResolver, VsxResolver vsxResolver, StarSurveySearchTaskService starSurveySearchTaskService) {
         this.sesameNameResolver = sesameNameResolver;
-        this.vsxVizierResolver = vsxVizierResolver;
+        this.vsxResolver = vsxResolver;
         this.starSurveySearchTaskService = starSurveySearchTaskService;
         this.coordsSearchService = coordsSearchService;
     }
@@ -56,18 +56,8 @@ public class NameWithRadiusSearchTaskService extends Service<StellarObject> {
             protected StellarObject call() throws ResourceAvailabilityException {
                 logger.debug("Trying to get StellarObject.");
                 object.merge(sesameNameResolver.findByName(searchModel.getQuery()));
-                List<VizierResult> vsxResult = vsxVizierResolver.findByQuery(new VizierQuery(searchModel.getQuery()));
-                if (vsxResult.size() >= 1) {
-                    object.setoName(vsxResult.get(0).getName());
-                    object.setEpoch(vsxResult.get(0).getEpoch());
-                    object.setPeriod(vsxResult.get(0).getPeriod());
-                    if(object.getDeclination() == null) {
-                        object.setDeclination(vsxResult.get(0).getDeclination());
-                    }
-                    if(object.getRightAscension() == null) {
-                        object.setRightAscension(vsxResult.get(0).getRightAscension());
-                    }
-                }
+                Optional<VariableStarInformationModel> vsxResult = vsxResolver.findByName(searchModel.getQuery());
+                vsxResult.ifPresent(result -> object.merge(result));
                 return object.getoName() != null ? object : null;
             }
         };

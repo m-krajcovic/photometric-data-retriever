@@ -12,7 +12,7 @@ import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolver;
 import cz.muni.physics.pdr.backend.resolver.sesame.SesameNameResolverImpl;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolver;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolverImpl;
-import cz.muni.physics.pdr.backend.resolver.vizier.VizierVSXStarResolver;
+import cz.muni.physics.pdr.backend.resolver.vizier.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -75,5 +75,14 @@ public class BackendConfig {
     @Bean
     public SimbadResolver simbadResolver() {
         return new SimbadResolverImpl();
+    }
+
+    public TAPVizierService tapVizierService() {
+        return new TAPVizierServiceImpl(restTemplate());
+    }
+
+    @Bean
+    public VsxResolver vsxResolver() {
+        return new VsxResolverVizierTapImpl(tapVizierService());
     }
 }

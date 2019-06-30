@@ -3,14 +3,16 @@ package cz.muni.physics.pdr.app.controller.service;
 import cz.muni.physics.pdr.app.model.SearchModel;
 import cz.muni.physics.pdr.app.model.StellarObjectModel;
 import cz.muni.physics.pdr.app.spring.Screens;
+import cz.muni.physics.pdr.backend.CosmicCoordinates;
 import cz.muni.physics.pdr.backend.entity.Radius;
 import cz.muni.physics.pdr.backend.entity.StellarObject;
 import cz.muni.physics.pdr.backend.entity.VizierQuery;
-import cz.muni.physics.pdr.backend.entity.VizierResult;
 import cz.muni.physics.pdr.backend.exception.ResourceAvailabilityException;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResolver;
 import cz.muni.physics.pdr.backend.resolver.simbad.SimbadResult;
-import cz.muni.physics.pdr.backend.resolver.vizier.VizierResolver;
+import cz.muni.physics.pdr.backend.resolver.vizier.DistanceModel;
+import cz.muni.physics.pdr.backend.resolver.vizier.VariableStarInformationModel;
+import cz.muni.physics.pdr.backend.resolver.vizier.VsxResolver;
 import cz.muni.physics.pdr.backend.utils.NumberUtils;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -36,7 +38,7 @@ public class CoordsSearchTaskService extends Service<Map<String, List<StellarObj
     private static final Logger logger = LogManager.getLogger(CoordsSearchTaskService.class);
 
     private Screens app;
-    private VizierResolver vsxVizierResolver;
+    private VsxResolver vsxResolver;
     private SimbadResolver simbadResolver;
     private SearchModel searchModel;
     private Callback onDone;
@@ -46,11 +48,11 @@ public class CoordsSearchTaskService extends Service<Map<String, List<StellarObj
 
     @Autowired
     public CoordsSearchTaskService(Screens app,
-                                   VizierResolver vsxVizierResolver,
+                                   VsxResolver vsxResolver,
                                    SimbadResolver simbadResolver,
                                    NameSearchTaskService nameSearchTaskService) {
         this.app = app;
-        this.vsxVizierResolver = vsxVizierResolver;
+        this.vsxResolver = vsxResolver;
         this.nameSearchTaskService = nameSearchTaskService;
         this.simbadResolver = simbadResolver;
     }
@@ -89,17 +91,15 @@ public class CoordsSearchTaskService extends Service<Map<String, List<StellarObj
     }
 
     private List<StellarObjectModel> getVsxResults() {
-        List<VizierResult> vsxResults = vsxVizierResolver.findByQuery(parseModel());
-        List<StellarObjectModel> vsxModels = new ArrayList<>(vsxResults.size());
-        vsxModels.addAll(vsxResults.stream().map(r -> {
-            return new StellarObjectModel(r.getName(),
-                    r.getRightAscension(),
-                    r.getDeclination(),
-                    r.getDistance(),
-                    r.getEpoch(),
-                    r.getPeriod());
-        }).collect(Collectors.toList()));
-        return vsxModels;
+        List<DistanceModel<VariableStarInformationModel>> vsxResults = vsxResolver.findByCoords(new CosmicCoordinates(searchModel.getQuery()), searchModel.getRadius().toDegrees());
+        return vsxResults.stream().map(r -> new StellarObjectModel(
+                r.getModel().getOriginalName(),
+                r.getModel().getCoordinates().getRightAscension(),
+                r.getModel().getCoordinates().getDeclination(),
+                r.getDistance(),
+                r.getModel().getM0().doubleValue(),
+                r.getModel().getPeriod().doubleValue()
+        )).collect(Collectors.toList());
     }
 
     @Override
