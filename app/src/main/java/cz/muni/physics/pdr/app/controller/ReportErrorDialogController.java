@@ -6,6 +6,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.net.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -64,15 +66,13 @@ public class ReportErrorDialogController extends StageController {
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
-//                Resource resource = new FileSystemResource(new File(appDataDir, "logs" + File.separator + "log.log"));
+                File file = new File(appDataDir, "logs" + File.separator + "log.log");
 //                if (resource.exists()) {
                     // https://script.google.com/macros/s/AKfycbwz-6GzlvTiqhpmKT-0JXpsJXT2BhV-2kltZPfseQ/exec
                     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
                     parts.add("text", textArea.getText());
                     parts.add("from", emailTextField.getText());
-//                    parts.add("Content-Type", "text/plain");
-                    // todo: send logs as well
-//                    parts.add("file", resource);
+                    parts.add("file", Base64.encodeBase64(FileUtils.readFileToByteArray(file)));
 
                     ResponseEntity<String> exchange = restTemplate.exchange(mailServer, HttpMethod.POST,
                             new HttpEntity<MultiValueMap<String, Object>>(parts),
