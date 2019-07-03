@@ -30,7 +30,7 @@
         <module>dk154-plugin</module>
         <module>kws-plugin</module>
         <module>kepler-plugin</module>
-        <module>kepler-ebc-plugin</module>
+        <module>keplerebc-plugin</module>
         <module>ztf-plugin</module>
     </modules>
 
