@@ -4,12 +4,15 @@ import cz.muni.physics.pdr.backend.CosmicCoordinates;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 
 public interface TAPVizierService {
 
     public static String buildDistanceQuery(String catalogue, String queryFields, CosmicCoordinates coordinates, double radiusDegrees, int limit) {
-        String distanceField = MessageFormat.format("DISTANCE(POINT(''ICRS'',{0}, {1}), POINT(''ICRS'',{2}.RAJ2000, {2}.DEJ2000)) as \"DISTANCE\"", coordinates.getRightAscension(), coordinates.getDeclination(), catalogue);
-        return MessageFormat.format("SELECT TOP {0} {1}, {2} FROM {3} WHERE 1=CONTAINS(POINT(''ICRS'',{3}.RAJ2000,{3}.DEJ2000), CIRCLE(''ICRS'', {4}, {5}, {6})) ORDER BY \"DISTANCE\"", limit, queryFields, distanceField, catalogue, coordinates.getRightAscension(), coordinates.getDeclination(), radiusDegrees);
+        MessageFormat distanceFormat = new MessageFormat("DISTANCE(POINT(''ICRS'',{0}, {1}), POINT(''ICRS'',{2}.RAJ2000, {2}.DEJ2000)) as \"DISTANCE\"", Locale.ENGLISH);
+        String distanceField = distanceFormat.format(new Object[]{coordinates.getRightAscension(), coordinates.getDeclination(), catalogue});
+        MessageFormat queryFormat = new MessageFormat("SELECT TOP {0} {1}, {2} FROM {3} WHERE 1=CONTAINS(POINT(''ICRS'',{3}.RAJ2000,{3}.DEJ2000), CIRCLE(''ICRS'', {4}, {5}, {6})) ORDER BY \"DISTANCE\"", Locale.ENGLISH);
+        return queryFormat.format(new Object[]{limit, queryFields, distanceField, catalogue, coordinates.getRightAscension(), coordinates.getDeclination(), radiusDegrees});
     }
 
     TAPVizierResult query(String query);

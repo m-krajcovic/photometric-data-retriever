@@ -30,7 +30,7 @@ public class Main {
         }
 
         for (String bandname: new String[] {"r", "g", "i"}) {
-            URL url = new URL(MessageFormat.format(urlString + "&BANDNAME={0}", bandname));
+            URL url = new URL(MessageFormat.format("{0}&BANDNAME={1}", urlString, bandname));
             Document doc = Jsoup.parse(PluginUtils.copyUrlToFile(url, "ZTF-" + bandname + "-" + System.currentTimeMillis() + ".tbl", 3), null);
             Element tableData = doc.getElementsByTag("tbody").first();
 
