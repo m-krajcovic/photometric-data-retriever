@@ -140,8 +140,12 @@ public class StellarObject {
 
     public void merge(VariableStarInformationModel model) {
         this.setoName(model.getOriginalName());
-        this.setEpoch(model.getM0().doubleValue());
-        this.setPeriod(model.getPeriod().doubleValue());
+        if (model.getM0() != null) {
+            this.setEpoch(model.getM0().doubleValue());
+        }
+        if (model.getPeriod() != null) {
+            this.setPeriod(model.getPeriod().doubleValue());
+        }
         CosmicCoordinates coordinates = model.getCoordinates();
         if (coordinates != null) {
             this.setRightAscension(coordinates.getRightAscension());
