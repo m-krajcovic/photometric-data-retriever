@@ -97,8 +97,8 @@ public class CoordsSearchTaskService extends Service<Map<String, List<StellarObj
                 r.getModel().getCoordinates().getRightAscension(),
                 r.getModel().getCoordinates().getDeclination(),
                 r.getDistance(),
-                r.getModel().getM0().doubleValue(),
-                r.getModel().getPeriod().doubleValue()
+                r.getModel().getM0() != null ? r.getModel().getM0().doubleValue() : 0,
+                r.getModel().getPeriod() != null ? r.getModel().getPeriod().doubleValue() : 0
         )).collect(Collectors.toList());
     }
 

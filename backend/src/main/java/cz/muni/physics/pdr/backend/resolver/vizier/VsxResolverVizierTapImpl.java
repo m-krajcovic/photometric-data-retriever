@@ -51,10 +51,10 @@ public class VsxResolverVizierTapImpl implements VsxResolver {
         Long vsxId = data.get(0) != null ? Long.parseLong(data.get(0)) : null;
         String name = data.get(1);
         String type = data.get(2);
-        BigDecimal epoch = data.get(3) != null ? new BigDecimal(data.get(3)) : null;
-        BigDecimal period = data.get(4) != null ? new BigDecimal(data.get(4)) : null;
-        Double ra = data.get(5) != null ? Double.parseDouble(data.get(5)) : null;
-        Double dec = data.get(6) != null ? Double.parseDouble(data.get(6)) : null;
+        BigDecimal epoch = data.get(3) != null && !data.get(3).isEmpty() ? new BigDecimal(data.get(3)) : null;
+        BigDecimal period = data.get(4) != null && !data.get(4).isEmpty() ? new BigDecimal(data.get(4)) : null;
+        Double ra = data.get(5) != null && !data.get(5).isEmpty() ? Double.parseDouble(data.get(5)) : null;
+        Double dec = data.get(6) != null && !data.get(6).isEmpty() ? Double.parseDouble(data.get(6)) : null;
         CosmicCoordinates coords = null;
         if (ra != null && dec != null) {
             coords = new CosmicCoordinates(ra, dec);
