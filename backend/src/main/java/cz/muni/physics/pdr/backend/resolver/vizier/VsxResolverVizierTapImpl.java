@@ -1,6 +1,7 @@
 package cz.muni.physics.pdr.backend.resolver.vizier;
 
 import cz.muni.physics.pdr.backend.CosmicCoordinates;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -22,7 +23,8 @@ public class VsxResolverVizierTapImpl implements VsxResolver {
 
     @Override
     public Optional<VariableStarInformationModel> findByName(String name) {
-        String query = MessageFormat.format("SELECT TOP 1 {0} FROM {1} WHERE {1}.Name LIKE ''{2}''", QUERY_FIELDS, VSX_CAT, name.replace("'", "''"));
+        String fixedGCVSName = fixGCVSName(name);
+        String query = MessageFormat.format("SELECT TOP 1 {0} FROM {1} WHERE {1}.Name LIKE ''{2}''", QUERY_FIELDS, VSX_CAT, fixedGCVSName.replace("'", "''"));
         TAPVizierService.TAPVizierResult tapResult = tapVizierService.query(query);
         if (!tapResult.getData().isEmpty() && tapResult.getData().get(0).size() == 7) {
             return Optional.of(getSingleModel(tapResult.getData().get(0)));
@@ -45,6 +47,17 @@ public class VsxResolverVizierTapImpl implements VsxResolver {
             }
         });
         return result;
+    }
+
+    private String fixGCVSName(String name) {
+        if (!name.matches("..\\s.+")) {
+            return name;
+        }
+        String[] split = name.split("\\s");
+        if (split.length != 2) {
+            return name;
+        }
+        return String.format("%s %s", split[0].toUpperCase(), StringUtils.capitalize(split[1]));
     }
 
     private VariableStarInformationModel getSingleModel(List<String> data) {
